@@ -1,0 +1,26 @@
+name: "CI"
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nixbuild/nix-quick-install-action@v22
+        with:
+          # We use newer Nix for:
+          # - https://github.com/NixOS/nix/issues/7263
+          # - https://github.com/NixOS/nix/issues/7026
+          nix_version: 2.14.1
+          nix_conf: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Build example
+        id: example
+        run: |
+          cd ./example
+          nix build .#nixosConfigurations.example1.config.system.build.toplevel
+          ls result/
