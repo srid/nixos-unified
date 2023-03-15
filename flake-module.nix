@@ -1,4 +1,3 @@
-# Support code for this repo. This module could be made its own external repo.
 { self, inputs, config, flake-parts-lib, lib, ... }:
 let
   inherit (flake-parts-lib)
@@ -70,7 +69,7 @@ in
           modules = [ mod ];
         };
 
-        mkMacosSystem = mod: inputs.darwin.lib.darwinSystem rec {
+        mkMacosSystem = mod: inputs.nix-darwin.lib.darwinSystem rec {
           system = "aarch64-darwin";
           specialArgs = specialArgsFor.${system};
           modules = [ mod ];
