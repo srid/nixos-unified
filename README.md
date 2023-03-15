@@ -13,3 +13,9 @@ The `flakeModule` (flake-parts module) contains the following:
 | `packages.activate`          | Flake app to build & activate the system       |
 | `nixosModules.home-manager`  | Home-manager setup module for NixOS            |
 | `darwinModules.home-manager` | Home-manager setup module for Darwin           |
+
+In addition, all modules implicitly receive the following `specialArgs`:
+
+- `flake@{inputs, config}` (corresponding to flake-parts' arguments)
+- `system` (the system type, e.g. `x86_64-linux`)
+- `rosettaPkgs` (if on darwin)
