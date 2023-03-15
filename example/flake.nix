@@ -42,7 +42,7 @@
           };
         };
 
-        # Configurations for my (only) macOS machine (using nix-darwin)
+        # Configurations for a single macOS machine (using nix-darwin)
         darwinConfigurations = {
           default = self.lib.mkMacosSystem {
             imports = [
