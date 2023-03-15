@@ -5,8 +5,11 @@ on:
       - '*'
   pull_request:
 jobs:
-  checks:
-    runs-on: ubuntu-latest
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: nixbuild/nix-quick-install-action@v22
@@ -22,5 +25,10 @@ jobs:
         id: example
         run: |
           cd ./example
-          nix build .#nixosConfigurations.example1.config.system.build.toplevel
+          if [ "$(uname)" == "Darwin" ]; then
+            CONF="darwinConfigurations.default"
+          else
+            CONF="nixosConfigurations.example1"
+          fi
+          nix build .#${CONF}.config.system.build.toplevel
           ls result/
