@@ -27,7 +27,7 @@ in
             options = {
               primary-inputs = lib.mkOption {
                 type = types.listOf types.str;
-                default = [ "nixpkgs" "home-manager" "darwin" "nixos-hardware" ];
+                default = [ "nixpkgs" "home-manager" "darwin" ];
                 description = ''
                   List of flake inputs to update when running `nix run .#update`.
                 '';
