@@ -2,7 +2,7 @@
 
 **!! WIP !!**
 
-A flake-parts module, extracting common stuff out of https://github.com/srid/nixos-config. We aim to support Linux (NixOS), macOS and home-manager, unified as a flake.
+A flake-parts module, extracting common stuff out of https://github.com/srid/nixos-config. We aim to support Linux (NixOS), macOS and home-manager, unified as a single flake.
 
 ## Usage
 
@@ -31,3 +31,5 @@ In addition, all modules implicitly receive the following `specialArgs`:
 - `flake@{inputs, config}` (corresponding to flake-parts' arguments)
 - `system` (the system type, e.g. `x86_64-linux`)
 - `rosettaPkgs` (if on darwin)
+
+The module API will be heavily refactored over the coming days/weeks. DO NOT USE THIS PROJECT YET.

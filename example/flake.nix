@@ -22,10 +22,13 @@
       flake = {
         # Configurations for Linux (NixOS) systems
         nixosConfigurations = {
+          # TODO: Change hostname fromm "example1" to something else.
           example1 = self.lib.mkLinuxSystem {
             imports = [
               self.nixosModules.home-manager
+              # Your configuration.nix goes here
               ({ pkgs, ... }: {
+                # TODO: Use your real hardware configuration here
                 boot.loader.grub.device = "nodev";
                 fileSystems."/" = {
                   device = "/dev/disk/by-label/nixos";
@@ -44,6 +47,7 @@
           default = self.lib.mkMacosSystem {
             imports = [
               self.darwinModules.home-manager
+              # Your configuration.nix goes here
               ({ pkgs, ... }: {
                 environment.systemPackages = with pkgs; [
                   hello
