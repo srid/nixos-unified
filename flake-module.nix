@@ -21,7 +21,7 @@ in
   options = {
     perSystem = mkPerSystemOption
       ({ config, self', inputs', pkgs, system, ... }: {
-        options.nixos-template = lib.mkOption {
+        options.nixos-flake = lib.mkOption {
           default = { };
           type = types.submodule {
             options = {
@@ -81,7 +81,7 @@ in
       packages = {
         update =
           let
-            inputs = config.nixos-template.primary-inputs;
+            inputs = config.nixos-flake.primary-inputs;
           in
           pkgs.writeShellApplication {
             name = "update-main-flake-inputs";
