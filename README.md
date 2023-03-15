@@ -1,6 +1,18 @@
 # nixos-flake
 
-WIP: Extracting common stuff out of https://github.com/srid/nixos-config
+**!! WIP !!**
+
+A flake-parts module, extracting common stuff out of https://github.com/srid/nixos-config. We aim to support Linux (NixOS), macOS and home-manager, unified as a single flake.
+
+## Usage
+
+To create a nixos configuration project using this module, run:
+
+```sh
+nix flake init -t github:srid/nixos-flake
+```
+
+Change the hostname (from "example1") and run `nix run .#activate` as appropriate.
 
 ## Module
 
@@ -19,3 +31,5 @@ In addition, all modules implicitly receive the following `specialArgs`:
 - `flake@{inputs, config}` (corresponding to flake-parts' arguments)
 - `system` (the system type, e.g. `x86_64-linux`)
 - `rosettaPkgs` (if on darwin)
+
+The module API will be heavily refactored over the coming days/weeks. DO NOT USE THIS PROJECT YET.
