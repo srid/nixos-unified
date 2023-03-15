@@ -18,69 +18,74 @@
         inputs.nixos-flake.flakeModule
       ];
 
-      flake = let myUserName = "john"; in {
-        # home-manager configuration you want to share between Linux and macOS.
-        homeConfigurations.default = { pkgs, ... }: {
-          programs.git.enable = true;
-          programs.starship.enable = true;
-        };
+      flake =
+        let
+          # TODO: Change username
+          myUserName = "john";
+        in
+        {
+          # home-manager configuration you want to share between Linux and macOS.
+          homeConfigurations.default = { pkgs, ... }: {
+            programs.git.enable = true;
+            programs.starship.enable = true;
+          };
 
-        # Configurations for Linux (NixOS) systems
-        nixosConfigurations = {
-          # TODO: Change hostname fromm "example1" to something else.
-          example1 = self.lib.mkLinuxSystem {
-            imports = [
-              self.nixosModules.home-manager
-              # Your configuration.nix goes here
-              ({ pkgs, ... }: {
-                # TODO: Use your real hardware configuration here
-                boot.loader.grub.device = "nodev";
-                fileSystems."/" = {
-                  device = "/dev/disk/by-label/nixos";
-                  fsType = "btrfs";
-                };
-                users.users.${myUserName}.isNormalUser = true;
-                environment.systemPackages = with pkgs; [
-                  hello
-                ];
-              })
-              # Your home-manager configuration
-              {
-                home-manager.users.${myUserName} = {
-                  imports = [
-                    self.homeConfigurations.default
+          # Configurations for Linux (NixOS) systems
+          nixosConfigurations = {
+            # TODO: Change hostname from "example1" to something else.
+            example1 = self.lib.mkLinuxSystem {
+              imports = [
+                self.nixosModules.home-manager
+                # Your configuration.nix goes here
+                ({ pkgs, ... }: {
+                  # TODO: Use your real hardware configuration here
+                  boot.loader.grub.device = "nodev";
+                  fileSystems."/" = {
+                    device = "/dev/disk/by-label/nixos";
+                    fsType = "btrfs";
+                  };
+                  users.users.${myUserName}.isNormalUser = true;
+                  environment.systemPackages = with pkgs; [
+                    hello
                   ];
-                  home.stateVersion = "22.11";
-                };
-              }
-            ];
+                })
+                # Your home-manager configuration
+                {
+                  home-manager.users.${myUserName} = {
+                    imports = [
+                      self.homeConfigurations.default
+                    ];
+                    home.stateVersion = "22.11";
+                  };
+                }
+              ];
+            };
+          };
+
+          # Configurations for a single macOS machine (using nix-darwin)
+          darwinConfigurations = {
+            default = self.lib.mkMacosSystem {
+              imports = [
+                self.darwinModules.home-manager
+                # Your configuration.nix goes here
+                ({ pkgs, ... }: {
+                  environment.systemPackages = with pkgs; [
+                    hello
+                  ];
+                })
+                # Your home-manager configuration
+                {
+                  home-manager.users.${myUserName} = {
+                    imports = [
+                      self.homeConfigurations.default
+                    ];
+                    home.stateVersion = "22.11";
+                  };
+                }
+              ];
+            };
           };
         };
-
-        # Configurations for a single macOS machine (using nix-darwin)
-        darwinConfigurations = {
-          default = self.lib.mkMacosSystem {
-            imports = [
-              self.darwinModules.home-manager
-              # Your configuration.nix goes here
-              ({ pkgs, ... }: {
-                environment.systemPackages = with pkgs; [
-                  hello
-                ];
-              })
-              # Your home-manager configuration
-              {
-                home-manager.users.${myUserName} = {
-                  imports = [
-                    self.homeConfigurations.default
-                  ];
-                  home.stateVersion = "22.11";
-                };
-              }
-            ];
-          };
-        };
-      };
 
       perSystem = { pkgs, ... }: {
         devShells.default = pkgs.mkShell {
