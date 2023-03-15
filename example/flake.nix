@@ -18,7 +18,13 @@
         inputs.nixos-flake.flakeModule
       ];
 
-      flake = {
+      flake = let myUserName = "john"; in {
+        # home-manager configuration you want to share between Linux and macOS.
+        homeConfigurations.default = { pkgs, ... }: {
+          programs.git.enable = true;
+          programs.starship.enable = true;
+        };
+
         # Configurations for Linux (NixOS) systems
         nixosConfigurations = {
           # TODO: Change hostname fromm "example1" to something else.
@@ -33,10 +39,20 @@
                   device = "/dev/disk/by-label/nixos";
                   fsType = "btrfs";
                 };
+                users.users.${myUserName}.isNormalUser = true;
                 environment.systemPackages = with pkgs; [
                   hello
                 ];
               })
+              # Your home-manager configuration
+              {
+                home-manager.users.${myUserName} = {
+                  imports = [
+                    self.homeConfigurations.default
+                  ];
+                  home.stateVersion = "22.11";
+                };
+              }
             ];
           };
         };
@@ -52,6 +68,15 @@
                   hello
                 ];
               })
+              # Your home-manager configuration
+              {
+                home-manager.users.${myUserName} = {
+                  imports = [
+                    self.homeConfigurations.default
+                  ];
+                  home.stateVersion = "22.11";
+                };
+              }
             ];
           };
         };
