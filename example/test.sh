@@ -6,6 +6,9 @@ else
   CONF="nixosConfigurations.example1"
 fi
 
-nix build .#${CONF}.config.system.build.toplevel
+nix build \
+  --override-input nixos-flake ../. \
+  .#${CONF}.config.system.build.toplevel
+
 ls result/
-rm result flake.lock
+rm -f result flake.lock
