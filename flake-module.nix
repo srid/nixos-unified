@@ -95,7 +95,7 @@ in
             name = "activate";
             text =
               # TODO: Replace with deploy-rs or (new) nixinate
-              if system == "aarch64-darwin" then
+              if system == "aarch64-darwin" || system == "x86_64-darwin" then
                 ''
                   set -x
                   ${self.darwinConfigurations.default.system}/sw/bin/darwin-rebuild \
