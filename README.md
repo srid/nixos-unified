@@ -2,17 +2,19 @@
 
 **!! WIP !!**
 
-A flake-parts module, extracting common stuff out of https://github.com/srid/nixos-config. We aim to support Linux (NixOS), macOS and home-manager, unified as a single flake.
+A [flake-parts](https://flake.parts/) module to manage NixOS and macOS machines, along with home-manager support, in a unified fashion.
+
+See https://github.com/srid/nixos-config for an example of a project using this module.
 
 ## Usage
 
-To create a nixos configuration project using this module, run:
+To create a template configuration repo this module, run:
 
 ```sh
 nix flake init -t github:srid/nixos-flake
 ```
 
-Change the hostname (from "example1") and run `nix run .#activate` as appropriate.
+Change the user (from "john") and hostname (from "example1") to match that of your environment; then run `nix run .#activate` to activate the configuration.
 
 ## Module
 
