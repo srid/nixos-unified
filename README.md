@@ -20,11 +20,11 @@ The `flakeModule` (flake-parts module) contains the following:
 
 | Name                         | Description                                    |
 | ---------------------------- | ---------------------------------------------- |
-| `lib`                        | Functions `mkLinuxSystem` and `mkDarwinSystem` |
-| `packages.update`            | Flake app to update key inputs                 |
-| `packages.activate`          | Flake app to build & activate the system       |
+| `nixos-flake.lib`             | Functions `mkLinuxSystem` and `mkDarwinSystem` |
 | `nixosModules.home-manager`  | Home-manager setup module for NixOS            |
 | `darwinModules.home-manager` | Home-manager setup module for Darwin           |
+| `packages.update`            | Flake app to update key flake inputs            |
+| `packages.activate`          | Flake app to build & activate the system       |
 
 In addition, all modules implicitly receive the following `specialArgs`:
 

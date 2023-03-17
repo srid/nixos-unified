@@ -33,7 +33,7 @@
           # Configurations for Linux (NixOS) systems
           nixosConfigurations = {
             # TODO: Change hostname from "example1" to something else.
-            example1 = self.lib.mkLinuxSystem {
+            example1 = self.nixos-flake.lib.mkLinuxSystem {
               imports = [
                 # Your configuration.nix goes here
                 ({ pkgs, ... }: {
@@ -65,7 +65,7 @@
           # Configurations for a single macOS machine (using nix-darwin)
           darwinConfigurations = {
             # TODO: Change hostname from "example1" to something else.
-            example1 = self.lib.mkARMMacosSystem {
+            example1 = self.nixos-flake.lib.mkARMMacosSystem {
               imports = [
                 # Your configuration.nix goes here
                 ({ pkgs, ... }: {
