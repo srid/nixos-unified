@@ -106,7 +106,7 @@ in
                   HOSTNAME=$(hostname)
                   set -x
                   ${lib.getExe pkgs.nixos-rebuild} --use-remote-sudo switch -j auto \
-                    --flake .#''${HOSTNAME}
+                    --flake .#"''${HOSTNAME}"
                 '';
           };
       };
