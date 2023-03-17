@@ -24,18 +24,14 @@
           myUserName = "john";
         in
         {
-          # Common home-manager configuration shared between Linux and macOS.
-          homeConfigurations.common = { pkgs, ... }: {
-            programs.git.enable = true;
-            programs.starship.enable = true;
-          };
-
           # Configurations for Linux (NixOS) machines
           nixosConfigurations = {
             # TODO: Change hostname from "example1" to something else.
             example1 = self.nixos-flake.lib.mkLinuxSystem {
               imports = [
-                # Your configuration.nix goes here
+                self.nixosModules.common # See below for "nixosModules"!
+                self.nixosModules.linux
+                # Your machine's configuration.nix goes here
                 ({ pkgs, ... }: {
                   # TODO: Use your real hardware configuration here
                   boot.loader.grub.device = "nodev";
@@ -43,21 +39,14 @@
                     device = "/dev/disk/by-label/nixos";
                     fsType = "btrfs";
                   };
-                  users.users.${myUserName}.isNormalUser = true;
-                  environment.systemPackages = with pkgs; [
-                    hello
-                  ];
                 })
                 # Your home-manager configuration
                 self.nixosModules.home-manager
                 {
                   home-manager.users.${myUserName} = {
                     imports = [
-                      self.homeConfigurations.common
-                      # home-manager config unique to NixOS
-                      {
-                        xsession.enable = true;
-                      }
+                      self.homeModules.common # See below for "homeModules"!
+                      self.homeModules.linux
                     ];
                     home.stateVersion = "22.11";
                   };
@@ -71,27 +60,58 @@
             # TODO: Change hostname from "example1" to something else.
             example1 = self.nixos-flake.lib.mkARMMacosSystem {
               imports = [
-                # Your configuration.nix goes here
-                ({ pkgs, ... }: {
-                  environment.systemPackages = with pkgs; [
-                    hello
-                  ];
-                })
+                self.nixosModules.common # See below for "nixosModules"!
+                self.nixosModules.darwin
+                # Your machine's configuration.nix goes here
+                ({ pkgs, ... }: { })
                 # Your home-manager configuration
                 self.darwinModules.home-manager
                 {
                   home-manager.users.${myUserName} = {
                     imports = [
-                      self.homeConfigurations.common
-                      # home-manager config unique to Darwin
-                      {
-                        targets.darwin.search = "Bing";
-                      }
+                      self.homeModules.common # See below for "homeModules"!
+                      self.homeModules.darwin
                     ];
                     home.stateVersion = "22.11";
                   };
                 }
               ];
+            };
+          };
+
+          # All nixos/nix-darwin configurations are kept here.
+          nixosModules = {
+            # Common nixos/nix-darwin configuration shared between Linux and macOS.
+            common = { pkgs, ... }: {
+              environment.systemPackages = with pkgs; [
+                hello
+              ];
+            };
+            # NixOS specific configuration
+            linux = { pkgs, ... }: {
+              users.users.${myUserName}.isNormalUser = true;
+              services.netdata.enable = true;
+            };
+            # nix-darwin specific configuration
+            darwin = { pkgs, ... }: {
+              security.pam.enableSudoTouchIdAuth = true;
+            };
+          };
+
+          # All home-manager configurations are kept here.
+          homeModules = {
+            # Common home-manager configuration shared between Linux and macOS.
+            common = { pkgs, ... }: {
+              programs.git.enable = true;
+              programs.starship.enable = true;
+            };
+            # home-manager config specific to NixOS
+            linux = {
+              xsession.enable = true;
+            };
+            # home-manager config specifi to Darwin
+            darwin = {
+              targets.darwin.search = "Bing";
             };
           };
         };
