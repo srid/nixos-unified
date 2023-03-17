@@ -2,8 +2,6 @@ set -euo pipefail
 
 if [ "$(uname)" == "Darwin" ]; then
   CONF="darwinConfigurations.default"
-  # Github Action runners do not support M1 yet.
-  nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem
 else
   CONF="nixosConfigurations.example1"
 fi
