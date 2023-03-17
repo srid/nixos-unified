@@ -30,7 +30,7 @@
             programs.starship.enable = true;
           };
 
-          # Configurations for Linux (NixOS) systems
+          # Configurations for Linux (NixOS) machines
           nixosConfigurations = {
             # TODO: Change hostname from "example1" to something else.
             example1 = self.nixos-flake.lib.mkLinuxSystem {
@@ -54,6 +54,10 @@
                   home-manager.users.${myUserName} = {
                     imports = [
                       self.homeConfigurations.common
+                      # home-manager config unique to NixOS
+                      {
+                        xsession.enable = true;
+                      }
                     ];
                     home.stateVersion = "22.11";
                   };
@@ -62,7 +66,7 @@
             };
           };
 
-          # Configurations for a single macOS machine (using nix-darwin)
+          # Configurations for macOS machines
           darwinConfigurations = {
             # TODO: Change hostname from "example1" to something else.
             example1 = self.nixos-flake.lib.mkARMMacosSystem {
@@ -79,6 +83,10 @@
                   home-manager.users.${myUserName} = {
                     imports = [
                       self.homeConfigurations.common
+                      # home-manager config unique to Darwin
+                      {
+                        targets.darwin.search = "Bing";
+                      }
                     ];
                     home.stateVersion = "22.11";
                   };
