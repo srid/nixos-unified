@@ -103,8 +103,10 @@ in
                 ''
               else
                 ''
+                  HOSTNAME=$(hostname)
                   set -x
-                  ${lib.getExe pkgs.nixos-rebuild} --use-remote-sudo switch -j auto
+                  ${lib.getExe pkgs.nixos-rebuild} --use-remote-sudo switch -j auto \
+                    --flake .#"''${HOSTNAME}"
                 '';
           };
       };
