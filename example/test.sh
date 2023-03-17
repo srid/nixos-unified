@@ -1,7 +1,7 @@
 set -euo pipefail
 
 if [ "$(uname)" == "Darwin" ]; then
-  CONF="darwinConfigurations.default"
+  CONF="darwinConfigurations.example1"
 else
   CONF="nixosConfigurations.example1"
 fi

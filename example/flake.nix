@@ -64,7 +64,8 @@
 
           # Configurations for a single macOS machine (using nix-darwin)
           darwinConfigurations = {
-            default = self.lib.mkARMMacosSystem {
+            # TODO: Change hostname from "example1" to something else.
+            example1 = self.lib.mkARMMacosSystem {
               imports = [
                 # Your configuration.nix goes here
                 ({ pkgs, ... }: {
