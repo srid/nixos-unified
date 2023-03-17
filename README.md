@@ -29,7 +29,6 @@ The `flakeModule` (flake-parts module) contains the following:
 In addition, all modules implicitly receive the following `specialArgs`:
 
 - `flake@{inputs, config}` (corresponding to flake-parts' arguments)
-- `system` (the system type, e.g. `x86_64-linux`)
 - `rosettaPkgs` (if on darwin)
 
 The module API will be heavily refactored over the coming days/weeks. DO NOT USE THIS PROJECT YET.
