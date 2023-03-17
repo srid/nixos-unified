@@ -8,11 +8,8 @@ let
     common = {
       flake = { inherit inputs config; };
     };
-    x86_64-linux = common // {
-      system = "x86_64-linux";
-    };
-    aarch64-darwin = common // {
-      system = "aarch64-darwin";
+    nixos = common;
+    darwin = common // {
       rosettaPkgs = import inputs.nixpkgs { system = "x86_64-darwin"; };
     };
   };
@@ -46,7 +43,7 @@ in
           ({
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = specialArgsFor.x86_64-linux;
+            home-manager.extraSpecialArgs = specialArgsFor.nixos;
           })
         ];
       };
@@ -57,23 +54,26 @@ in
           ({
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = specialArgsFor.aarch64-darwin;
+            home-manager.extraSpecialArgs = specialArgsFor.darwin;
           })
         ];
       };
-      lib = {
-        mkLinuxSystem = mod: inputs.nixpkgs.lib.nixosSystem rec {
+      lib = rec {
+        mkLinuxSystem = mod: inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           # Arguments to pass to all modules.
-          specialArgs = specialArgsFor.${system};
+          specialArgs = specialArgsFor.nixos;
           modules = [ mod ];
         };
 
-        mkMacosSystem = mod: inputs.nix-darwin.lib.darwinSystem rec {
-          system = "aarch64-darwin";
-          specialArgs = specialArgsFor.${system};
+        mkMacosSystem = system: mod: inputs.nix-darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = specialArgsFor.darwin;
           modules = [ mod ];
         };
+
+        mkARMMacosSystem = mkMacosSystem "aarch64-darwin";
+        mkIntelMacosSystem = mkMacosSystem "x86_64-darwin";
       };
     };
 

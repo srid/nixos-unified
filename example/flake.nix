@@ -64,7 +64,7 @@
 
           # Configurations for a single macOS machine (using nix-darwin)
           darwinConfigurations = {
-            default = self.lib.mkMacosSystem {
+            default = self.lib.mkARMMacosSystem {
               imports = [
                 self.darwinModules.home-manager
                 # Your configuration.nix goes here
