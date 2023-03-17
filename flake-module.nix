@@ -6,7 +6,7 @@ let
     types;
   specialArgsFor = rec {
     common = {
-      flake = { inherit inputs config; };
+      flake = { inherit self inputs config; };
     };
     nixos = common;
     darwin = common // {
