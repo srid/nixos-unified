@@ -32,8 +32,50 @@ in
             };
           };
         };
+        config = {
+          packages = {
+            update =
+              let
+                inputs = config.nixos-flake.primary-inputs;
+              in
+              pkgs.writeShellApplication {
+                name = "update-main-flake-inputs";
+                text = ''
+                  nix flake lock ${lib.foldl' (acc: x: acc + " --update-input " + x) "" inputs}
+                '';
+              };
+
+            activate =
+              pkgs.writeShellApplication {
+                name = "activate";
+                text =
+                  # TODO: Replace with deploy-rs or (new) nixinate
+                  if system == "aarch64-darwin" || system == "x86_64-darwin" then
+                    let
+                      # This is used just to pull out the `darwin-rebuild` script.
+                      emptyConfiguration = self.nixos-flake.lib.mkMacosSystem system { };
+                    in
+                    ''
+                      HOSTNAME=$(hostname)
+                      set -x
+                      ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
+                        switch \
+                        --flake .#"''${HOSTNAME}"
+                    ''
+                  else
+                    ''
+                      HOSTNAME=$(hostname)
+                      set -x
+                      ${lib.getExe pkgs.nixos-rebuild} \
+                        --use-remote-sudo switch -j auto \
+                        --flake .#"''${HOSTNAME}"
+                    '';
+              };
+          };
+        };
       });
   };
+
   config = {
     flake = {
       # Linux home-manager module
@@ -74,48 +116,6 @@ in
 
         mkARMMacosSystem = mkMacosSystem "aarch64-darwin";
         mkIntelMacosSystem = mkMacosSystem "x86_64-darwin";
-      };
-    };
-
-    perSystem = { system, config, pkgs, lib, ... }: {
-      packages = {
-        update =
-          let
-            inputs = config.nixos-flake.primary-inputs;
-          in
-          pkgs.writeShellApplication {
-            name = "update-main-flake-inputs";
-            text = ''
-              nix flake lock ${lib.foldl' (acc: x: acc + " --update-input " + x) "" inputs}
-            '';
-          };
-
-        activate =
-          pkgs.writeShellApplication {
-            name = "activate";
-            text =
-              # TODO: Replace with deploy-rs or (new) nixinate
-              if system == "aarch64-darwin" || system == "x86_64-darwin" then
-                let
-                  # This is used just to pull out the `darwin-rebuild` script.
-                  emptyConfiguration = self.lib.mkMacosSystem system { };
-                in
-                ''
-                  HOSTNAME=$(hostname)
-                  set -x
-                  ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
-                    switch \
-                    --flake .#"''${HOSTNAME}"
-                ''
-              else
-                ''
-                  HOSTNAME=$(hostname)
-                  set -x
-                  ${lib.getExe pkgs.nixos-rebuild} \
-                    --use-remote-sudo switch -j auto \
-                    --flake .#"''${HOSTNAME}"
-                '';
-          };
       };
     };
   };
