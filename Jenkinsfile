@@ -4,8 +4,11 @@ pipeline {
         stage ('Tests') {
             steps {
                 sh '''
-                    cd ./examples/both
-                    ./test.sh
+                    pushd ./examples/both
+                    ./test.sh && popd
+
+                    pushd ./examples/linux
+                    ./test.sh && popd
                    '''
             }
         }

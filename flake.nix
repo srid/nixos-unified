@@ -11,6 +11,10 @@
           description = "nixos-flake template for both Linux and macOS in same flake";
           path = tmplPath ./examples/both;
         };
+        linux = {
+          description = "nixos-flake template for NixOS configuration.nix";
+          path = tmplPath ./examples/linux;
+        };
       };
   };
 }

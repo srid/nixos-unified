@@ -8,13 +8,25 @@ See https://github.com/srid/nixos-config for an example of a project using this 
 
 ## Usage
 
-To create a template configuration repo this module, run:
+To create a template configuration repo using this module, run:
 
 ```sh
 nix flake init -t github:srid/nixos-flake
 ```
 
 Change the user (from "john") and hostname (from "example1") to match that of your environment; then run `nix run .#activate` to activate the configuration.
+
+This will create a complex `flake.nix` containing configuration for *both* NixOS and nix-darwin. If you just want NixOS configuration, run instead:
+
+```sh
+nix flake init -t github:srid/nixos-flake#linux
+```
+
+Or if you just want nix-darwin configuration, run:
+
+```sh
+nix flake init -t github:srid/nixos-flake#macos
+```
 
 ## Module
 
