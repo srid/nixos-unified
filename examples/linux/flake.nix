@@ -26,7 +26,7 @@
             imports = [
               # Your machine's configuration.nix goes here
               ({ pkgs, ... }: {
-                # TODO: Use your real hardware configuration here
+                # TODO: Put your /etc/nixos/hardware-configuration.nix here
                 boot.loader.grub.device = "nodev";
                 fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "btrfs"; };
                 users.users.${myUserName}.isNormalUser = true;
