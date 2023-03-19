@@ -31,7 +31,7 @@
                 fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "btrfs"; };
                 users.users.${myUserName}.isNormalUser = true;
               })
-              # Your home-manager configuration
+              # Setup home-manager in NixOS config
               self.nixosModules.home-manager
               {
                 home-manager.users.${myUserName} = {

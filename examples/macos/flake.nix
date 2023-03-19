@@ -24,23 +24,22 @@
         {
           # Configurations for macOS machines
           # TODO: Change hostname from "example1" to something else.
-          darwinConfigurations.example1 =
-            self.nixos-flake.lib.mkARMMacosSystem {
-              imports = [
-                # Your machine's configuration.nix goes here
-                ({ pkgs, ... }: {
-                  security.pam.enableSudoTouchIdAuth = true;
-                })
-                # Your home-manager configuration
-                self.darwinModules.home-manager
-                {
-                  home-manager.users.${myUserName} = {
-                    imports = [ self.homeModules.default ];
-                    home.stateVersion = "22.11";
-                  };
-                }
-              ];
-            };
+          darwinConfigurations.example1 = self.nixos-flake.lib.mkARMMacosSystem {
+            imports = [
+              # Your nix-darwin configuration goes here
+              ({ pkgs, ... }: {
+                security.pam.enableSudoTouchIdAuth = true;
+              })
+              # Setup home-manager in nix-darwin config
+              self.darwinModules.home-manager
+              {
+                home-manager.users.${myUserName} = {
+                  imports = [ self.homeModules.default ];
+                  home.stateVersion = "22.11";
+                };
+              }
+            ];
+          };
 
           # home-manager configuration goes here.
           homeModules.default = { pkgs, ... }: {
