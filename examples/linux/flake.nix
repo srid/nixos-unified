@@ -40,33 +40,7 @@
                 self.nixosModules.home-manager
                 {
                   home-manager.users.${myUserName} = {
-                    imports = [
-                      self.homeModules.common # See below for "homeModules"!
-                      self.homeModules.linux
-                    ];
-                    home.stateVersion = "22.11";
-                  };
-                }
-              ];
-            };
-          };
-
-          # Configurations for macOS machines
-          darwinConfigurations = {
-            # TODO: Change hostname from "example1" to something else.
-            example1 = self.nixos-flake.lib.mkARMMacosSystem {
-              imports = [
-                self.nixosModules.common # See below for "nixosModules"!
-                self.nixosModules.darwin
-                # Your machine's configuration.nix goes here
-                ({ pkgs, ... }: { })
-                # Your home-manager configuration
-                self.darwinModules.home-manager
-                {
-                  home-manager.users.${myUserName} = {
-                    imports = [
-                      self.homeModules.default # See below for "homeModules"!
-                    ];
+                    imports = [ self.homeModules.default ];
                     home.stateVersion = "22.11";
                   };
                 }
