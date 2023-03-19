@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - '*'
-  pull_request:
 jobs:
   tests:
     strategy:
@@ -24,7 +23,18 @@ jobs:
       - name: Build example
         id: example
         run: |
-          cd ./example
+          pushd ./examples/both
           # Github Action runners do not support M1 yet.
           nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem flake.nix
           ./test.sh
+          popd
+
+          pushd ./examples/linux
+          ./test.sh
+          popd
+
+          pushd ./examples/macos
+          # Github Action runners do not support M1 yet.
+          nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem flake.nix
+          ./test.sh
+          popd

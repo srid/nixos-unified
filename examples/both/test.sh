@@ -7,7 +7,7 @@ else
 fi
 
 nix build \
-  --override-input nixos-flake ../. \
+  --override-input nixos-flake ../.. \
   .#${CONF}.config.system.build.toplevel
 
 ls result/
