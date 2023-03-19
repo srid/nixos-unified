@@ -12,9 +12,7 @@
   outputs = inputs@{ self, ... }:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
-      imports = [
-        inputs.nixos-flake.flakeModule
-      ];
+      imports = [ inputs.nixos-flake.flakeModule ];
 
       flake =
         let
@@ -23,46 +21,33 @@
         in
         {
           # Configurations for Linux (NixOS) machines
-          nixosConfigurations = {
-            # TODO: Change hostname from "example1" to something else.
-            example1 = self.nixos-flake.lib.mkLinuxSystem {
-              imports = [
-                # Your machine's configuration.nix goes here
-                ({ pkgs, ... }: {
-                  # TODO: Use your real hardware configuration here
-                  boot.loader.grub.device = "nodev";
-                  fileSystems."/" = {
-                    device = "/dev/disk/by-label/nixos";
-                    fsType = "btrfs";
-                  };
-                  users.users.${myUserName}.isNormalUser = true;
-                })
-                # Your home-manager configuration
-                self.nixosModules.home-manager
-                {
-                  home-manager.users.${myUserName} = {
-                    imports = [ self.homeModules.default ];
-                    home.stateVersion = "22.11";
-                  };
-                }
-              ];
-            };
+          # TODO: Change hostname from "example1" to something else.
+          nixosConfigurations.example1 = self.nixos-flake.lib.mkLinuxSystem {
+            imports = [
+              # Your machine's configuration.nix goes here
+              ({ pkgs, ... }: {
+                # TODO: Use your real hardware configuration here
+                boot.loader.grub.device = "nodev";
+                fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "btrfs"; };
+                users.users.${myUserName}.isNormalUser = true;
+              })
+              # Your home-manager configuration
+              self.nixosModules.home-manager
+              {
+                home-manager.users.${myUserName} = {
+                  imports = [ self.homeModules.default ];
+                  home.stateVersion = "22.11";
+                };
+              }
+            ];
           };
 
           # home-manager configuration goes here.
           homeModules.default = { pkgs, ... }: {
+            imports = [ ];
             programs.git.enable = true;
             programs.starship.enable = true;
           };
         };
-
-      perSystem = { pkgs, ... }: {
-        devShells.default = pkgs.mkShell {
-          buildInputs = [
-            pkgs.nixpkgs-fmt
-          ];
-        };
-        formatter = pkgs.nixpkgs-fmt;
-      };
     };
 }
