@@ -15,6 +15,10 @@
           description = "nixos-flake template for NixOS configuration.nix";
           path = tmplPath ./examples/linux;
         };
+        macos = {
+          description = "nixos-flake template for nix-darwin configuration";
+          path = tmplPath ./examples/macos;
+        };
       };
   };
 }
