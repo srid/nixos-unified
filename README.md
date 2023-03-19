@@ -1,8 +1,7 @@
 # nixos-flake
 
-A [flake-parts](https://flake.parts/) module to manage NixOS and macOS machines, along with home-manager support, in a unified fashion.
+A [flake-parts](https://flake.parts/) module to unify [NixOS](https://nixos.org/manual/nixos/stable/) + [nix-darwin](https://github.com/LnL7/nix-darwin) + [home-manager](https://github.com/nix-community/home-manager) configuration in a single flake, while providing a consistent interface (and enabling common modules) for both Linux and macOS.
 
-See https://github.com/srid/nixos-config for an example of a project using this module.
 
 ## Usage
 
@@ -14,9 +13,9 @@ We provide three templates, depending on your needs:
 | NixOS only | `nix flake init -t github:srid/nixos-flake#linux` | NixOS configuration only, with home-manager |
 | macOS only | `nix flake init -t github:srid/nixos-flake#macos` | nix-darwin configuration only, with home-manager |
 
-Once you have created the flake template, open the generated `flake.nix` and change the user (from "john") and hostname (from "example1") to match that of your environment; then run `nix run .#activate` to activate the configuration.
+After initializing the template, open the generated `flake.nix` and change the user (from "john") as well as hostname (from "example1") to match that of your environment. Then run `nix run .#activate` to activate the configuration.
 
-## Module
+## Module outputs
 
 Importing this flake-parts module will autowire the following flake outputs:
 
@@ -34,3 +33,8 @@ In addition, all of your NixOS/nix-darwin/home-manager modules implicitly receiv
 - `rosettaPkgs` (if on darwin)
 
 The module API maybe be heavily refactored over the coming days/weeks. [All feedback welcome](https://github.com/srid/nixos-flake/issues/new).
+
+## Examples
+
+- https://github.com/srid/nixos-config (using `#both` template)
+- https://github.com/hkmangla/nixos (using `#linux` template)
