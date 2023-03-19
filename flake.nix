@@ -1,9 +1,16 @@
 {
   outputs = inputs: {
     flakeModule = ./flake-module.nix;
-    templates.default = {
-      description = "Example nixos-config using nixos-flake";
-      path = builtins.path { path = ./example; filter = path: _: baseNameOf path != "test.sh"; };
-    };
+    templates =
+      let
+        tmplPath = path: builtins.path { inherit path; filter = path: _: baseNameOf path != "test.sh"; };
+      in
+      rec {
+        default = both;
+        both = {
+          description = "nixos-flake template for both Linux and macOS in same flake";
+          path = tmplPath ./examples/both;
+        };
+      };
   };
 }

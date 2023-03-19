@@ -24,7 +24,7 @@ jobs:
       - name: Build example
         id: example
         run: |
-          cd ./example
+          cd ./examples/both
           # Github Action runners do not support M1 yet.
           nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem flake.nix
           ./test.sh
