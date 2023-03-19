@@ -34,5 +34,7 @@ jobs:
           popd
 
           pushd ./examples/macos
+          # Github Action runners do not support M1 yet.
+          nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem flake.nix
           ./test.sh
           popd
