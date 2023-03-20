@@ -70,6 +70,7 @@ in
                       ${lib.getExe pkgs.nixos-rebuild} \
                         switch \
                         --flake .#"''${HOSTNAME}" \
+                        --use-remote-sudo \
                         "$@"
                     '';
               };
