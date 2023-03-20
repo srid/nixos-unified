@@ -48,11 +48,30 @@ in
             activate =
               pkgs.writeShellApplication {
                 name = "activate";
-                text = ''
-                  HOSTNAME=$(hostname -s)
-                  set -x
-                  ${self.nixos-flake.lib.system-rebuild pkgs system} switch --flake .#"''${HOSTNAME}" "$@"
-                '';
+                text =
+                  # TODO: Replace with deploy-rs or (new) nixinate
+                  if system == "aarch64-darwin" || system == "x86_64-darwin" then
+                    let
+                      # This is used just to pull out the `darwin-rebuild` script.
+                      emptyConfiguration = self.nixos-flake.lib.mkMacosSystem system { };
+                    in
+                    ''
+                      HOSTNAME=$(hostname -s)
+                      set -x
+                      ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
+                        switch \
+                        --flake .#"''${HOSTNAME}" \
+                        "$@"
+                    ''
+                  else
+                    ''
+                      HOSTNAME=$(hostname -s)
+                      set -x
+                      ${lib.getExe pkgs.nixos-rebuild} \
+                        switch \
+                        --flake .#"''${HOSTNAME}" \
+                        "$@"
+                    '';
               };
           };
         };
@@ -99,17 +118,6 @@ in
 
         mkARMMacosSystem = mkMacosSystem "aarch64-darwin";
         mkIntelMacosSystem = mkMacosSystem "x86_64-darwin";
-
-        # Like nixos-rebuild, but also works on macOS.
-        system-rebuild = pkgs: system:
-          if system == "aarch64-darwin" || system == "x86_64-darwin" then
-            let
-              # This is used just to pull out the `darwin-rebuild` script.
-              emptyConfiguration = self.nixos-flake.lib.mkMacosSystem system { };
-            in
-            "${emptyConfiguration.system}/sw/bin/darwin-rebuild"
-          else
-            "${lib.getExe pkgs.nixos-rebuild}";
       };
     };
   };
