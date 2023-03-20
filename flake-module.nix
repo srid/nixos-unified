@@ -60,15 +60,17 @@ in
                       set -x
                       ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
                         switch \
-                        --flake .#"''${HOSTNAME}"
+                        --flake .#"''${HOSTNAME}" \
+                        "$@"
                     ''
                   else
                     ''
                       HOSTNAME=$(hostname -s)
                       set -x
                       ${lib.getExe pkgs.nixos-rebuild} \
-                        --use-remote-sudo switch -j auto \
-                        --flake .#"''${HOSTNAME}"
+                        switch \
+                        --flake .#"''${HOSTNAME}" \
+                        "$@"
                     '';
               };
           };
