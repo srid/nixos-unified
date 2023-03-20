@@ -64,7 +64,7 @@ in
                     ''
                   else
                     ''
-                      HOSTNAME=$(hostname)
+                      HOSTNAME=$(hostname -s)
                       set -x
                       ${lib.getExe pkgs.nixos-rebuild} \
                         --use-remote-sudo switch -j auto \
