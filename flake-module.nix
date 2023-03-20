@@ -56,7 +56,7 @@ in
                       emptyConfiguration = self.nixos-flake.lib.mkMacosSystem system { };
                     in
                     ''
-                      HOSTNAME=$(hostname)
+                      HOSTNAME=$(hostname -s)
                       set -x
                       ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
                         switch \
