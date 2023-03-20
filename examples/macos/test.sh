@@ -5,6 +5,12 @@ if [ "$(uname)" == "Darwin" ]; then
 
   nix build \
     --override-input nixos-flake ../.. \
+    .#activate
+  nix build \
+    --override-input nixos-flake ../.. \
+    .#update
+  nix build \
+    --override-input nixos-flake ../.. \
     .#${CONF}.config.system.build.toplevel
 
   ls result/
