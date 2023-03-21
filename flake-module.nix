@@ -76,6 +76,7 @@ in
                     '';
               };
 
+            # TODO: Add this only when `homeConfigurations` exists.
             activate-home =
               pkgs.writeShellApplication {
                 name = "activate-home";
