@@ -83,7 +83,7 @@ in
                   ''
                     set -x
                     nix run \
-                      .#homeConfigurations."''${HOSTNAME}".activationPackage \
+                      .#homeConfigurations."''${USER}".activationPackage \
                       "$@"
                   '';
               };
