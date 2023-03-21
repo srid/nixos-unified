@@ -25,12 +25,12 @@
           homeConfigurations.${myUserName} =
             self.nixos-flake.lib.mkHomeConfiguration
               "x86_64-linux"  # FIXME: how to not hardcode this?
-              {
+              ({ pkgs, ... }: {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;
-                home.homeDirectory = "/Users/${myUserName}"; # FIXME: Don't hardcode
+                home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
                 home.stateVersion = "22.11";
-              };
+              });
 
           # All home-manager configurations are kept here.
           homeModules.default = { pkgs, ... }: {
