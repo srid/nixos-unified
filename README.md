@@ -30,7 +30,7 @@ Importing this flake-parts module will autowire the following flake outputs:
 | `darwinModules.home-manager` | Home-manager setup module for Darwin           |
 | `packages.update`            | Flake app to update key flake inputs            |
 | `packages.activate`          | Flake app to build & activate the system       |
-| `packages.activate-home`          | Flake app to build & activate home-manager configuration for current user       |
+| `packages.activate-home`          | Flake app to build & activate the `homeConfigurations` for current user       |
 
 In addition, all of your NixOS/nix-darwin/home-manager modules implicitly receive the following `specialArgs`:
 
