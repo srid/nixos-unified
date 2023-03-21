@@ -75,6 +75,18 @@ in
                         "$@"
                     '';
               };
+
+            activate-home =
+              pkgs.writeShellApplication {
+                name = "activate-home";
+                text =
+                  ''
+                    set -x
+                    nix run \
+                      .#homeConfigurations."''${HOSTNAME}".activationPackage \
+                      "$@"
+                  '';
+              };
           };
         };
       });
@@ -117,9 +129,14 @@ in
           specialArgs = specialArgsFor.darwin;
           modules = [ mod ];
         };
-
         mkARMMacosSystem = mkMacosSystem "aarch64-darwin";
         mkIntelMacosSystem = mkMacosSystem "x86_64-darwin";
+
+        mkHomeConfiguration = system: mod: inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = inputs.nixpkgs.legacyPackages.${system};
+          extraSpecialArgs = specialArgsFor.common;
+          modules = [ mod ];
+        };
       };
     };
   };

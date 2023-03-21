@@ -19,6 +19,10 @@
           description = "nixos-flake template for nix-darwin configuration";
           path = tmplPath ./examples/macos;
         };
+        home = {
+          description = "nixos-flake template for home-manager configuration";
+          path = tmplPath ./examples/home;
+        };
       };
   };
 }

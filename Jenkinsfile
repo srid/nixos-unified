@@ -12,6 +12,9 @@ pipeline {
 
                     pushd ./examples/macos
                     ./test.sh && popd
+
+                    pushd ./examples/home
+                    ./test.sh && popd
                    '''
             }
         }

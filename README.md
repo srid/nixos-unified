@@ -12,6 +12,7 @@ We provide three templates, depending on your needs:
 | Both platforms | `nix flake init -t github:srid/nixos-flake` | NixOS, nix-darwin, home-manager configuration combined, with common modules |
 | NixOS only | `nix flake init -t github:srid/nixos-flake#linux` | NixOS configuration only, with home-manager |
 | macOS only | `nix flake init -t github:srid/nixos-flake#macos` | nix-darwin configuration only, with home-manager |
+| Either, home only | `nix flake init -t github:srid/nixos-flake#home` | Home-manager configuration only |
 
 After initializing the template, open the generated `flake.nix` and change the user (from "john") as well as hostname (from "example1") to match that of your environment (Run `echo $USER` and `hostname -s` to determine the new values).[^intel] Then run `nix run .#activate` to activate the configuration.
 
