@@ -24,7 +24,7 @@
         {
           homeConfigurations.${myUserName} =
             self.nixos-flake.lib.mkHomeConfiguration
-              "x86_64-darwin"  # FIXME: how to not hardcode this?
+              "x86_64-linux"  # FIXME: how to not hardcode this?
               {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;
@@ -34,6 +34,7 @@
 
           # All home-manager configurations are kept here.
           homeModules.default = { pkgs, ... }: {
+            imports = [ ];
             programs.git.enable = true;
             programs.starship.enable = true;
           };
