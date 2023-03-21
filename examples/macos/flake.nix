@@ -46,6 +46,7 @@
             imports = [ ];
             programs.git.enable = true;
             programs.starship.enable = true;
+            programs.zsh.enable = true;
           };
         };
     };

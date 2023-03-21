@@ -28,15 +28,18 @@
               {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;
-                home.homeDirectory = "/Users/${myUserName}";
+                home.homeDirectory = "/Users/${myUserName}"; # FIXME: Don't hardcode
                 home.stateVersion = "22.11";
               };
 
           # All home-manager configurations are kept here.
           homeModules.default = { pkgs, ... }: {
             imports = [ ];
-            programs.git.enable = true;
-            programs.starship.enable = true;
+            programs = {
+              git.enable = true;
+              starship.enable = true;
+              bash.enable = true;
+            };
           };
         };
     };
