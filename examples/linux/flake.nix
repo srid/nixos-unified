@@ -30,6 +30,7 @@
                 boot.loader.grub.device = "nodev";
                 fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "btrfs"; };
                 users.users.${myUserName}.isNormalUser = true;
+                system.stateVersion = "23.05";
               })
               # Setup home-manager in NixOS config
               self.nixosModules.home-manager
