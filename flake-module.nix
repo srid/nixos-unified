@@ -33,7 +33,7 @@ in
           };
         };
         config = {
-          packages = {
+          packages = lib.filterAttrs (_: v: v != null) {
             update =
               let
                 inputs = config.nixos-flake.primary-inputs;
@@ -76,18 +76,21 @@ in
                     '';
               };
 
-          } // lib.optionalAttrs (lib.hasAttr "homeConfigurations" self || lib.hasAttrByPath [ "legacyPackages" system "homeConfigurations" ] self) {
             activate-home =
-              pkgs.writeShellApplication {
-                name = "activate-home";
-                text =
-                  ''
-                    set -x
-                    nix run \
-                      .#homeConfigurations."''${USER}".activationPackage \
-                      "$@"
-                  '';
-              };
+              if (lib.hasAttr "homeConfigurations" self || lib.hasAttrByPath [ "legacyPackages" system "homeConfigurations" ] self)
+              then
+                pkgs.writeShellApplication
+                  {
+                    name = "activate-home";
+                    text =
+                      ''
+                        set -x
+                        nix run \
+                          .#homeConfigurations."''${USER}".activationPackage \
+                          "$@"
+                      '';
+                  }
+              else null;
           };
         };
       });
