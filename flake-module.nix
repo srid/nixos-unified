@@ -33,7 +33,7 @@ in
           };
         };
         config = {
-          packages = {
+          packages = lib.filterAttrs (_: v: v != null) {
             update =
               let
                 inputs = config.nixos-flake.primary-inputs;
@@ -75,6 +75,22 @@ in
                         "$@"
                     '';
               };
+
+            activate-home =
+              if (lib.hasAttr "homeConfigurations" self || lib.hasAttrByPath [ "legacyPackages" system "homeConfigurations" ] self)
+              then
+                pkgs.writeShellApplication
+                  {
+                    name = "activate-home";
+                    text =
+                      ''
+                        set -x
+                        nix run \
+                          .#homeConfigurations."''${USER}".activationPackage \
+                          "$@"
+                      '';
+                  }
+              else null;
           };
         };
       });
@@ -117,9 +133,14 @@ in
           specialArgs = specialArgsFor.darwin;
           modules = [ mod ];
         };
-
         mkARMMacosSystem = mkMacosSystem "aarch64-darwin";
         mkIntelMacosSystem = mkMacosSystem "x86_64-darwin";
+
+        mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          extraSpecialArgs = specialArgsFor.common;
+          modules = [ mod ];
+        };
       };
     };
   };

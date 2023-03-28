@@ -104,6 +104,7 @@
             common = { pkgs, ... }: {
               programs.git.enable = true;
               programs.starship.enable = true;
+              programs.bash.enable = true;
             };
             # home-manager config specific to NixOS
             linux = {
