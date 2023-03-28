@@ -24,7 +24,7 @@
         {
           legacyPackages.homeConfigurations.${myUserName} =
             self.nixos-flake.lib.mkHomeConfiguration
-              pkgs.system
+              pkgs
               ({ pkgs, ... }: {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;

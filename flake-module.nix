@@ -136,8 +136,8 @@ in
         mkARMMacosSystem = mkMacosSystem "aarch64-darwin";
         mkIntelMacosSystem = mkMacosSystem "x86_64-darwin";
 
-        mkHomeConfiguration = system: mod: inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
+        mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
           extraSpecialArgs = specialArgsFor.common;
           modules = [ mod ];
         };
