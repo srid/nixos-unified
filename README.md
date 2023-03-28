@@ -6,7 +6,7 @@ A [flake-parts](https://flake.parts/) module to unify [NixOS](https://nixos.org/
 
 ## Usage
 
-We provide three templates, depending on your needs:
+We provide four templates, depending on your needs:
 
 |Template | Command | Description |
 | -- | -------- | ----------- |
@@ -25,7 +25,7 @@ Importing this flake-parts module will autowire the following flake outputs:
 
 | Name                         | Description                                    |
 | ---------------------------- | ---------------------------------------------- |
-| `nixos-flake.lib`             | Functions `mkLinuxSystem` and `mkDarwinSystem` |
+| `nixos-flake.lib`             | Functions `mkLinuxSystem`, `mkDarwinSystem` and `mkHomeConfiguration` |
 | `nixosModules.home-manager`  | Home-manager setup module for NixOS            |
 | `darwinModules.home-manager` | Home-manager setup module for Darwin           |
 | `packages.update`            | Flake app to update key flake inputs            |
