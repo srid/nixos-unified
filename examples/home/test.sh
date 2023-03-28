@@ -12,7 +12,21 @@ nix build \
 nix build \
   --override-input nixos-flake ../.. \
   .#homeConfigurations.${USER}.activationPackage
+ls result/
+rm -f result
+
+# Actually run 'home-manager switch' and look for installed programs.
+mkdir tmp
+HOME=$(pwd)/tmp/home USER=john nix run \
+  --override-input nixos-flake ../.. \
+  .#activate-home
+ls -la ./tmp/home
+ls ./tmp/home/.nix-profile/bin/git
+ls ./tmp/home/.nix-profile/bin/starship
+ls ./tmp/home/.bash_profile
+rm -rf ./tmp
+
 set +x
 
-ls result/
-rm -f result flake.lock
+
+rm -f flake.lock
