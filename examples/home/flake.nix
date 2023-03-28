@@ -16,31 +16,33 @@
         inputs.nixos-flake.flakeModule
       ];
 
-      flake =
+      perSystem = { pkgs, ... }:
         let
           # TODO: Change username
           myUserName = "john";
         in
         {
-          homeConfigurations.${myUserName} =
+          legacyPackages.homeConfigurations.${myUserName} =
             self.nixos-flake.lib.mkHomeConfiguration
-              "x86_64-linux"  # FIXME: how to not hardcode this?
+              pkgs.system
               ({ pkgs, ... }: {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;
                 home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
                 home.stateVersion = "22.11";
               });
+        };
 
-          # All home-manager configurations are kept here.
-          homeModules.default = { pkgs, ... }: {
-            imports = [ ];
-            programs = {
-              git.enable = true;
-              starship.enable = true;
-              bash.enable = true;
-            };
+      flake = {
+        # All home-manager configurations are kept here.
+        homeModules.default = { pkgs, ... }: {
+          imports = [ ];
+          programs = {
+            git.enable = true;
+            starship.enable = true;
+            bash.enable = true;
           };
         };
+      };
     };
 }

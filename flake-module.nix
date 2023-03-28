@@ -76,7 +76,7 @@ in
                     '';
               };
 
-          } // lib.optionalAttrs (lib.hasAttr "homeConfigurations" self) {
+          } // lib.optionalAttrs (lib.hasAttr "homeConfigurations" self || lib.hasAttrByPath [ "legacyPackages" system "homeConfigurations" ] self) {
             activate-home =
               pkgs.writeShellApplication {
                 name = "activate-home";
