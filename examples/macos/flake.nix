@@ -29,6 +29,9 @@
               # Your nix-darwin configuration goes here
               ({ pkgs, ... }: {
                 security.pam.enableSudoTouchIdAuth = true;
+                # Used for backwards compatibility, please read the changelog before changing.
+                # $ darwin-rebuild changelog
+                system.stateVersion = 4;
               })
               # Setup home-manager in nix-darwin config
               self.darwinModules.home-manager

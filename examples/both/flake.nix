@@ -39,6 +39,7 @@
                     device = "/dev/disk/by-label/nixos";
                     fsType = "btrfs";
                   };
+                  system.stateVersion = "23.05";
                 })
                 # Your home-manager configuration
                 self.nixosModules.home-manager
@@ -63,7 +64,11 @@
                 self.nixosModules.common # See below for "nixosModules"!
                 self.nixosModules.darwin
                 # Your machine's configuration.nix goes here
-                ({ pkgs, ... }: { })
+                ({ pkgs, ... }: {
+                  # Used for backwards compatibility, please read the changelog before changing.
+                  # $ darwin-rebuild changelog
+                  system.stateVersion = 4;
+                })
                 # Your home-manager configuration
                 self.darwinModules.home-manager
                 {
