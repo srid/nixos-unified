@@ -86,7 +86,7 @@ in
                       ''
                         set -x
                         nix run \
-                          .#homeConfigurations."''${USER}".activationPackage \
+                          .#homeConfigurations."\"''${USER}\"".activationPackage \
                           "$@"
                       '';
                   }
