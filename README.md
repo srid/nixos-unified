@@ -44,3 +44,8 @@ The module API maybe be heavily refactored over the coming days/weeks. [All feed
 - https://github.com/srid/nixos-config (using `#both` template)
 - https://github.com/hkmangla/nixos (using `#linux` template)
 - https://github.com/juspay/nix-dev-home (using `#home` template)
+
+## Discussion
+
+To discuss the project, visit https://github.com/srid/nixos-flake/discussions
+
