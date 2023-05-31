@@ -11,15 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - uses: nixbuild/nix-quick-install-action@v22
-        with:
-          # We use newer Nix for:
-          # - https://github.com/NixOS/nix/issues/7263
-          # - https://github.com/NixOS/nix/issues/7026
-          nix_version: 2.14.1
-          nix_conf: |
-            experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
       - name: Build example
         id: example
         run: |
@@ -38,3 +31,23 @@ jobs:
           nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem flake.nix
           ./test.sh
           popd
+  www:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: cachix/cachix-action@v12
+        with:
+          name: srid
+      - name: Build the website
+        run: |
+          mkdir ./www
+          nix --accept-flake-config run github:srid/emanote -- -L ./doc gen ./www
+      - name: Deploy to gh-pages 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./www/
+          cname: nixos.flake.page
