@@ -1,0 +1,22 @@
+page:
+  siteTitle: nixos-flake
+  siteName: nixos-flake
+  headHtml: |
+    <snippet var="js.highlightjs" />
+
+template:
+  name: /templates/layouts/book
+
+  theme: red
+  sidebar:
+    collapsed: false
+  urlStrategy: pretty
+  editBaseUrl: https://github.com/srid/nixos-flake/edit/master/doc
+
+pandoc:
+  rewriteClass:
+    prose: max-w-prose mx-auto
+    page-note: text-sm text-gray-600 flex items-center justify-center my-4 italic
+    editor-note: text-gray-500 text-sm
+    more: border-l-4 border-gray-300 pl-4 bg-gray-100 pt-2.5 pb-0.5 mb-2 text-sm opacity-50 hover:opacity-100 hover:border-gray-400
+    tip: border-l-4 border-blue-300 pl-4 bg-blue-50 pt-2.5 pb-0.5 mb-2
