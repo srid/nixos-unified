@@ -17,7 +17,9 @@ rm -f result
 
 # Actually run 'home-manager switch' and look for installed programs.
 mkdir tmp
-HOME=$(pwd)/tmp/home USER=john nix run \
+export HOME=$(pwd)/tmp/home 
+export USER=john 
+nix run \
   --override-input nixos-flake ../.. \
   .#activate-home
 ls -la ./tmp/home
