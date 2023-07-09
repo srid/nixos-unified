@@ -121,6 +121,8 @@ in
         ];
       };
       nixos-flake.lib = rec {
+        inherit specialArgsFor;
+
         mkLinuxSystem = mod: inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           # Arguments to pass to all modules.
