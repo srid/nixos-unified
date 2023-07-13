@@ -13,6 +13,8 @@ let
       rosettaPkgs = import inputs.nixpkgs { system = "x86_64-darwin"; };
     };
   };
+  hasNonEmptyAttr = attrPath: self:
+    lib.attrByPath attrPath { } self != { };
 in
 {
   options = {
@@ -46,38 +48,42 @@ in
               };
 
             activate =
-              pkgs.writeShellApplication {
-                name = "activate";
-                text =
-                  # TODO: Replace with deploy-rs or (new) nixinate
-                  if system == "aarch64-darwin" || system == "x86_64-darwin" then
-                    let
-                      # This is used just to pull out the `darwin-rebuild` script.
-                      # See also: https://github.com/LnL7/nix-darwin/issues/613
-                      emptyConfiguration = self.nixos-flake.lib.mkMacosSystem system { };
-                    in
-                    ''
-                      HOSTNAME=$(hostname -s)
-                      set -x
-                      ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
-                        switch \
-                        --flake .#"''${HOSTNAME}" \
-                        "$@"
-                    ''
-                  else
-                    ''
-                      HOSTNAME=$(hostname -s)
-                      set -x
-                      ${lib.getExe pkgs.nixos-rebuild} \
-                        switch \
-                        --flake .#"''${HOSTNAME}" \
-                        --use-remote-sudo \
-                        "$@"
-                    '';
-              };
+              if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
+              then
+                pkgs.writeShellApplication
+                  {
+                    name = "activate";
+                    text =
+                      # TODO: Replace with deploy-rs or (new) nixinate
+                      if system == "aarch64-darwin" || system == "x86_64-darwin" then
+                        let
+                          # This is used just to pull out the `darwin-rebuild` script.
+                          # See also: https://github.com/LnL7/nix-darwin/issues/613
+                          emptyConfiguration = self.nixos-flake.lib.mkMacosSystem system { };
+                        in
+                        ''
+                          HOSTNAME=$(hostname -s)
+                          set -x
+                          ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
+                            switch \
+                            --flake .#"''${HOSTNAME}" \
+                            "$@"
+                        ''
+                      else
+                        ''
+                          HOSTNAME=$(hostname -s)
+                          set -x
+                          ${lib.getExe pkgs.nixos-rebuild} \
+                            switch \
+                            --flake .#"''${HOSTNAME}" \
+                            --use-remote-sudo \
+                            "$@"
+                        '';
+                  }
+              else null;
 
             activate-home =
-              if (lib.hasAttr "homeConfigurations" self || lib.hasAttrByPath [ "legacyPackages" system "homeConfigurations" ] self)
+              if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
               then
                 pkgs.writeShellApplication
                   {
