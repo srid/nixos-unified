@@ -3,7 +3,8 @@ pipeline {
     stages {
         stage ('NixCI') {
             steps {
-                sh 'nix run --refresh github:srid/nixci'
+                // TODO: Upstream https://github.com/juspay/jenkins-nix-ci/issues/29
+                sh 'nix run github:srid/nixci'
             }
         }
     }
