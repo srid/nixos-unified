@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage ('NixCI') {
             steps {
-                sh 'nix run github:srid/nixci'
+                sh 'nix run --refresh github:srid/nixci'
             }
         }
         stage ('Tests') {
