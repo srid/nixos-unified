@@ -1,6 +1,11 @@
 pipeline {
     agent any
     stages {
+        stage ('NixCI') {
+            steps {
+                sh 'nix run github:srid/nixci'
+            }
+        }
         stage ('Tests') {
             steps {
                 sh '''
