@@ -1,6 +1,7 @@
 {
   outputs = inputs: {
     flakeModule = ./flake-module.nix;
+
     templates =
       let
         tmplPath = path: builtins.path { inherit path; filter = path: _: baseNameOf path != "test.sh"; };
@@ -24,5 +25,24 @@
           path = tmplPath ./examples/home;
         };
       };
+
+    nixci = let overrideInputs = { nixos-flake = ./.; }; in {
+      macos = {
+        inherit overrideInputs;
+        dir = "examples/macos";
+      };
+      home = {
+        inherit overrideInputs;
+        dir = "examples/home";
+      };
+      linux = {
+        inherit overrideInputs;
+        dir = "examples/linux";
+      };
+      both = {
+        inherit overrideInputs;
+        dir = "examples/both";
+      };
+    };
   };
 }

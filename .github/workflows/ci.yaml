@@ -13,24 +13,16 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-      - name: Build example
-        id: example
+      - uses: cachix/cachix-action@v12
+        with:
+          name: srid
+      - name: Build examples
+        id: examples
         run: |
-          pushd ./examples/both
           # Github Action runners do not support M1 yet.
-          nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem flake.nix
-          ./test.sh
-          popd
+          nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem ./examples/*/flake.nix
 
-          pushd ./examples/linux
-          ./test.sh
-          popd
-
-          pushd ./examples/macos
-          # Github Action runners do not support M1 yet.
-          nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem flake.nix
-          ./test.sh
-          popd
+          nix run github:srid/nixci
   www:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'

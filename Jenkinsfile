@@ -1,21 +1,10 @@
 pipeline {
     agent any
     stages {
-        stage ('Tests') {
+        stage ('NixCI') {
             steps {
-                sh '''
-                    pushd ./examples/both
-                    ./test.sh && popd
-
-                    pushd ./examples/linux
-                    ./test.sh && popd
-
-                    pushd ./examples/macos
-                    ./test.sh && popd
-
-                    pushd ./examples/home
-                    ./test.sh && popd
-                   '''
+                // TODO: Upstream https://github.com/juspay/jenkins-nix-ci/issues/29
+                sh 'nix run github:srid/nixci'
             }
         }
     }
