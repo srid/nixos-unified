@@ -1,5 +1,5 @@
 ---
-slug: templates
+slug: /nixos-flake/templates
 ---
 
 # Flake Templates

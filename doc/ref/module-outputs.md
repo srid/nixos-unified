@@ -1,5 +1,5 @@
 ---
-slug: module-outputs
+slug: /nixos-flake/module-outputs
 ---
 
 # Module outputs

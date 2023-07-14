@@ -23,23 +23,3 @@ jobs:
           nix run nixpkgs#sd mkARMMacosSystem mkIntelMacosSystem ./examples/*/flake.nix
 
           nix run github:srid/nixci
-  www:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
-      - uses: cachix/cachix-action@v12
-        with:
-          name: srid
-      - name: Build the website
-        run: |
-          mkdir ./www
-          nix --accept-flake-config run github:srid/emanote -- -L ./doc gen ./www
-      - name: Deploy to gh-pages 🚀
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./www/
-          cname: nixos.flake.page
