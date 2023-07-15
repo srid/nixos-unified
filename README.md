@@ -6,7 +6,7 @@ A [flake-parts](https://flake.parts/) module to unify [NixOS](https://nixos.org/
 
 ## Getting Started
 
-https://nixos.flake.page/start
+https://zero-to-flakes.com/nixos-flake/start
 
 ## Discussion
 
