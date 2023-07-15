@@ -21,7 +21,7 @@ Pick your desired operating system and follow the below instructions.
 
 ## macOS
 
-1. [Install Nix](https://haskell.flake.page/nix)
+1. [Install Nix](/install)
 1. [Install nix-darwin](https://github.com/LnL7/nix-darwin)
 1. Use the [macOS only template](/nixos-flake/templates)[^both]
 
