@@ -9,6 +9,10 @@ Pick your desired operating system and follow the below instructions.
 
 ## NixOS
 
+:::tip
+For a more automated way to install NixOS, see [nixos-anywhere](https://github.com/numtide/nixos-anywhere).
+:::
+
 1. [Install NixOS](https://nixos.org/download.html)
 1. [Enable Flakes](https://nixos.wiki/wiki/Flakes#Enable_flakes)
 1. Flakify your `/etc/nixos/configuration.nix`: https://nixos.wiki/wiki/Flakes#Using_nix_flakes_with_NixOS
@@ -17,7 +21,7 @@ Pick your desired operating system and follow the below instructions.
 ## non-NixOS Linux
 
 1. [Install Nix](/install)
-1. Use the [$HOME only template](/nixos-flake/templates)
+1. Use the [HOME only template](/nixos-flake/templates)
 
 ## macOS
 
@@ -25,4 +29,4 @@ Pick your desired operating system and follow the below instructions.
 1. [Install nix-darwin](https://github.com/LnL7/nix-darwin)
 1. Use the [macOS only template](/nixos-flake/templates)[^both]
 
-[^both]: Alternative, use the "Both platforms" template if you are sharing your configuration with the other platform as well.
+[^both]: Alternatively, use the "Both platforms" [template](/nixos-flake/templates) if you are sharing your configuration with the other platform as well.

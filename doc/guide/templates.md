@@ -11,15 +11,15 @@ We provide four templates, depending on your needs:
 
 :::info Available Flake templates
 <Tabs>
-  <TabItem value="both" label="Both Platforms">
+  <TabItem value="both" label="Both platforms">
   <pre><code>nix flake init -t github:srid/nixos-flake</code></pre>
   <p>NixOS, nix-darwin, home-manager configuration combined, with common modules</p>
   </TabItem>
-  <TabItem value="nixos" label="NixOS">
+  <TabItem value="nixos" label="NixOS only">
   <pre><code>nix flake init -t github:srid/nixos-flake#linux</code></pre>
   <p>NixOS configuration only, with home-manager</p>
   </TabItem>
-  <TabItem value="macos" label="macOS">
+  <TabItem value="macos" label="macOS only">
   <pre><code>nix flake init -t github:srid/nixos-flake#macos</code></pre>
   <p>nix-darwin configuration only, with home-manager</p>
   </TabItem>

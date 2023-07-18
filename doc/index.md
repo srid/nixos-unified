@@ -1,5 +1,6 @@
 ---
 slug: /nixos-flake
+sidebar_label: Systems (nixos-flake)
 ---
 
 # nixos-flake
