@@ -129,8 +129,8 @@ in
       nixos-flake.lib = rec {
         inherit specialArgsFor;
 
-        mkLinuxSystem = mod: inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+        mkLinuxSystem = system: mod: inputs.nixpkgs.lib.nixosSystem {
+          inherit system;
           # Arguments to pass to all modules.
           specialArgs = specialArgsFor.nixos;
           modules = [ mod ];
@@ -141,8 +141,6 @@ in
           specialArgs = specialArgsFor.darwin;
           modules = [ mod ];
         };
-        mkARMMacosSystem = mkMacosSystem "aarch64-darwin";
-        mkIntelMacosSystem = mkMacosSystem "x86_64-darwin";
 
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;

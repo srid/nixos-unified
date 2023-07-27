@@ -8,7 +8,7 @@ Importing the `nixos-flake` flake-parts module will autowire the following flake
 
 | Name                         | Description                                    |
 | ---------------------------- | ---------------------------------------------- |
-| `nixos-flake.lib`             | Functions `mkLinuxSystem`, `mkDarwinSystem` and `mkHomeConfiguration` |
+| `nixos-flake.lib`             | Functions `mkLinuxSystem`, `mkMacosSystem` and `mkHomeConfiguration` |
 | `nixosModules.home-manager`  | Home-manager setup module for NixOS            |
 | `darwinModules.home-manager` | Home-manager setup module for Darwin           |
 | `packages.update`            | Flake app to update key flake inputs            |
