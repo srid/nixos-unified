@@ -27,7 +27,7 @@
           # Configurations for Linux (NixOS) machines
           nixosConfigurations = {
             # TODO: Change hostname from "example1" to something else.
-            example1 = self.nixos-flake.lib.mkLinuxSystem {
+            example1 = self.nixos-flake.lib.mkLinuxSystem "x86_64-linux" {
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
                 self.nixosModules.linux
@@ -59,7 +59,7 @@
           # Configurations for macOS machines
           darwinConfigurations = {
             # TODO: Change hostname from "example1" to something else.
-            example1 = self.nixos-flake.lib.mkARMMacosSystem {
+            example1 = self.nixos-flake.lib.mkMacosSystem "aarch64-darwin" {
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
                 self.nixosModules.darwin
