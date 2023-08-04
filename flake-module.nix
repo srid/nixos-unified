@@ -59,7 +59,7 @@ in
                         let
                           # This is used just to pull out the `darwin-rebuild` script.
                           # See also: https://github.com/LnL7/nix-darwin/issues/613
-                          emptyConfiguration = self.nixos-flake.lib.mkMacosSystem system { };
+                          emptyConfiguration = self.nixos-flake.lib.mkMacosSystem { nixpkgs.system = system; };
                         in
                         ''
                           HOSTNAME=$(hostname -s)
@@ -129,15 +129,13 @@ in
       nixos-flake.lib = rec {
         inherit specialArgsFor;
 
-        mkLinuxSystem = system: mod: inputs.nixpkgs.lib.nixosSystem {
-          inherit system;
+        mkLinuxSystem = mod: inputs.nixpkgs.lib.nixosSystem {
           # Arguments to pass to all modules.
           specialArgs = specialArgsFor.nixos;
           modules = [ mod ];
         };
 
-        mkMacosSystem = system: mod: inputs.nix-darwin.lib.darwinSystem {
-          inherit system;
+        mkMacosSystem = mod: inputs.nix-darwin.lib.darwinSystem {
           specialArgs = specialArgsFor.darwin;
           modules = [ mod ];
         };
