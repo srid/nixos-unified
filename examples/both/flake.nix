@@ -28,7 +28,7 @@
           nixosConfigurations = {
             # TODO: Change hostname from "example1" to something else.
             example1 = self.nixos-flake.lib.mkLinuxSystem {
-              nixpkgs.system = "x86_64-linux";
+              nixpkgs.hostPlatform = "x86_64-linux";
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
                 self.nixosModules.linux
@@ -61,7 +61,7 @@
           darwinConfigurations = {
             # TODO: Change hostname from "example1" to something else.
             example1 = self.nixos-flake.lib.mkMacosSystem {
-              nixpkgs.system = "aarch64-darwin";
+              nixpkgs.hostPlatform = "aarch64-darwin";
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
                 self.nixosModules.darwin

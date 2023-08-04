@@ -59,7 +59,7 @@ in
                         let
                           # This is used just to pull out the `darwin-rebuild` script.
                           # See also: https://github.com/LnL7/nix-darwin/issues/613
-                          emptyConfiguration = self.nixos-flake.lib.mkMacosSystem { nixpkgs.system = system; };
+                          emptyConfiguration = self.nixos-flake.lib.mkMacosSystem { nixpkgs.hostPlatform = system; };
                         in
                         ''
                           HOSTNAME=$(hostname -s)
