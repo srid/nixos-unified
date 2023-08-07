@@ -115,17 +115,6 @@ in
           })
         ];
       };
-      # macOS home-manager module
-      darwinModules.home-manager = {
-        imports = [
-          inputs.home-manager.darwinModules.home-manager
-          ({
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = specialArgsFor.darwin;
-          })
-        ];
-      };
       nixos-flake.lib = rec {
         inherit specialArgsFor;
 
@@ -138,6 +127,18 @@ in
         mkMacosSystem = mod: inputs.nix-darwin.lib.darwinSystem {
           specialArgs = specialArgsFor.darwin;
           modules = [ mod ];
+        };
+
+        mkMacosHomeManagerSystem = mod: inputs.nix-darwin.lib.darwinSystem {
+          specialArgs = specialArgsFor.darwin;
+          modules = [
+            inputs.home-manager.darwinModules.home-manager
+            ({
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = specialArgsFor.darwin;
+            })
+          ] ++[ mod ];
         };
 
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
