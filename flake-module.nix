@@ -116,7 +116,9 @@ in
         ];
       };
       # macOS home-manager module
-      darwinModules.home-manager = {
+      # This is named with an underscope, because flake-parts segfaults otherwise!
+      # See https://github.com/srid/nixos-config/issues/31
+      darwinModules_.home-manager = {
         imports = [
           inputs.home-manager.darwinModules.home-manager
           ({

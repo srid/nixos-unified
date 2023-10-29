@@ -72,7 +72,7 @@
                   system.stateVersion = 4;
                 })
                 # Your home-manager configuration
-                self.darwinModules.home-manager
+                self.darwinModules_.home-manager
                 {
                   home-manager.users.${myUserName} = {
                     imports = [

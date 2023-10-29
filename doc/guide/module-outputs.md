@@ -10,7 +10,7 @@ Importing the `nixos-flake` flake-parts module will autowire the following flake
 | ---------------------------- | ---------------------------------------------- |
 | `nixos-flake.lib`             | Functions `mkLinuxSystem`, `mkMacosSystem` and `mkHomeConfiguration` |
 | `nixosModules.home-manager`  | Home-manager setup module for NixOS            |
-| `darwinModules.home-manager` | Home-manager setup module for Darwin           |
+| `darwinModules_.home-manager` | Home-manager setup module for Darwin           |
 | `packages.update`            | Flake app to update key flake inputs            |
 | `packages.activate`          | Flake app to build & activate the system       |
 | `packages.activate-home`          | Flake app to build & activate the `homeConfigurations` for current user       |
