@@ -22,4 +22,5 @@ jobs:
           # Github Action runners do not support M1 yet.
           nix run nixpkgs#sd 'nixpkgs.hostPlatform = "aarch64-darwin"' 'nixpkgs.hostPlatform = "x86_64-darwin"' ./examples/*/flake.nix
 
-          nix run nixpkgs#nixci
+          # nix run nixpkgs#nixci
+          nix run github:srid/nixci

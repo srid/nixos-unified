@@ -26,10 +26,11 @@
         };
       };
 
-    nixci = let overrideInputs = { nixos-flake = ./.; }; in {
+    nixci.default = let overrideInputs = { nixos-flake = ./.; }; in {
       macos = {
         inherit overrideInputs;
         dir = "examples/macos";
+        systems = [ "x86_64-darwin" "aarch64-darwin" ];
       };
       home = {
         inherit overrideInputs;
@@ -38,6 +39,7 @@
       linux = {
         inherit overrideInputs;
         dir = "examples/linux";
+        systems = [ "x86_64-linux" "aarch64-linux" ];
       };
       both = {
         inherit overrideInputs;
