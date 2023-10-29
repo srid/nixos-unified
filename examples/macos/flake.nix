@@ -35,7 +35,7 @@
                 system.stateVersion = 4;
               })
               # Setup home-manager in nix-darwin config
-              self.darwinModules.home-manager
+              self.darwinModules_.home-manager
               {
                 home-manager.users.${myUserName} = {
                   imports = [ self.homeModules.default ];
