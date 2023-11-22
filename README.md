@@ -12,4 +12,4 @@ https://flakular.in/nixos-flake/start
 
 ## Discussion
 
-To discuss the project, visit https://github.com/srid/nixos-flake/discussions
+To discuss the project, visit [our Zulip](https://nixos.zulipchat.com/#narrow/stream/413948-nixos) or post in [Github Discussions](https://github.com/srid/nixos-flake/discussions).
