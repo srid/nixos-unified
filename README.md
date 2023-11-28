@@ -8,7 +8,7 @@ Why? [See here](https://github.com/srid/nixos-flake/discussions/40#discussioncom
 
 ## Getting Started
 
-https://flakular.in/nixos-flake/start
+https://community.flake.parts/nixos-flake/start
 
 ## Discussion
 
