@@ -20,12 +20,12 @@ For a more automated way to install NixOS, see [nixos-anywhere](https://github.c
 
 ## non-NixOS Linux
 
-1. [Install Nix](https://flakular.in/install)
+1. [Install Nix](https://nixos.asia/en/install)
 1. Use the [HOME only template](/nixos-flake/templates)
 
 ## macOS
 
-1. [Install Nix](https://flakular.in/install)
+1. [Install Nix](https://nixos.asia/en/install)
 1. [Install nix-darwin](https://github.com/LnL7/nix-darwin)
 1. Use the [macOS only template](/nixos-flake/templates)[^both]
 
