@@ -2,47 +2,46 @@
 
 We provide four templates, depending on your needs:
 
-:::info Available Flake templates
-<Tabs>
-  <TabItem value="both" label="Both platforms">
+## Available templates
 
-  ```bash
-  nix flake init -t github:srid/nixos-flake
-  ```
+{#both}
+### Both platforms
 
-  NixOS, nix-darwin, [home-manager] configuration combined, with common modules.
+NixOS, nix-darwin, [home-manager] configuration combined, with common modules.
 
-  </TabItem>
-  <TabItem value="nixos" label="NixOS only">
+```bash
+nix flake init -t github:srid/nixos-flake
+```
 
-  ```bash
-  nix flake init -t github:srid/nixos-flake#linux
-  ```
+{#nixos}
+### NixOS only
 
-  NixOS configuration only, with [home-manager]
+NixOS configuration only, with [home-manager]
 
-  </TabItem>
-  <TabItem value="macos" label="macOS only">
+```sh
+nix flake init -t github:srid/nixos-flake#linux
+```
 
-  ```bash
-  nix flake init -t github:srid/nixos-flake#macos
-  ```
+{#macos}
+### macOS only
 
-  nix-darwin configuration only, with [home-manager]
-  </TabItem>
-  <TabItem value="other-linux" label="Home only">
+nix-darwin configuration only, with [home-manager]
 
-  ```bash
-  nix flake init -t github:srid/nixos-flake#home
-  ```
+```sh
+nix flake init -t github:srid/nixos-flake#macos
+```
 
-  [home-manager] configuration only (useful if you use other Linux distros or do not have admin access to the machine)
+{#home}
+### Home only
 
-  </TabItem>
-</Tabs>
-:::
+[home-manager] configuration only (useful if you use other Linux distros or do not have admin access to the machine)
 
-After initializing the template, 
+```bash
+nix flake init -t github:srid/nixos-flake#home
+```
+
+## After initializing the template
+
 1. open the generated `flake.nix` and change the user (from "john") as well as hostname (from "example1") to match that of your environment (Run `echo $USER` and `hostname -s` to determine the new values).[^intel] 
 2. Then run `nix run .#activate` (`nix run .#activate-home` if you are using the 4th template) to activate the configuration.
 
