@@ -1,5 +1,8 @@
 ---
 short-title: nixos-flake ❄️
+template:
+  sidebar:
+    collapsed: true
 emanote:
   folder-folgezettel: false
 ---
