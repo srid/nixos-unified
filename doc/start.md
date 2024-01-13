@@ -1,8 +1,3 @@
----
-sidebar_position: -10
-slug: /nixos-flake/start
----
-
 # Getting Started
 
 Pick your desired operating system and follow the below instructions.

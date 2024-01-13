@@ -1,7 +1,3 @@
----
-slug: /nixos-flake/templates
----
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 

@@ -1,6 +1,5 @@
 ---
-slug: /nixos-flake
-sidebar_label: Systems
+short-title: nixos-flake
 ---
 
 # Managing OS and home configurations using `nixos-flake`
