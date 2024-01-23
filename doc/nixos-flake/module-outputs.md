@@ -1,7 +1,3 @@
----
-slug: /nixos-flake/module-outputs
----
-
 # Module outputs
 
 Importing the `nixos-flake` flake-parts module will autowire the following flake outputs in your flake:
