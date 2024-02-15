@@ -2,25 +2,19 @@ name: "CI"
 on:
   push:
     branches:
-      - '*'
+      - master
+  pull_request:
 jobs:
   tests:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [self-hosted, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
-      # Don't upgrade Nix until https://github.com/srid/nixci/issues/35 is fixed
-      - uses: cachix/install-nix-action@v22
-      - uses: cachix/cachix-action@v12
-        with:
-          name: srid
-      - name: Build examples
-        id: examples
-        run: |
+      - uses: actions/checkout@v4
+      - run: |
           # Github Action runners do not support M1 yet.
           nix run nixpkgs#sd 'nixpkgs.hostPlatform = "aarch64-darwin"' 'nixpkgs.hostPlatform = "x86_64-darwin"' ./examples/*/flake.nix
 
-          # nix run nixpkgs#nixci
-          nix run github:srid/nixci
+          nixci
+
