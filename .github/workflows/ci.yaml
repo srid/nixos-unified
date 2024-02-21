@@ -2,25 +2,17 @@ name: "CI"
 on:
   push:
     branches:
-      - '*'
+      - master
+  pull_request:
 jobs:
-  tests:
+  build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+        os: [self-hosted, macos-14]
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
-      # Don't upgrade Nix until https://github.com/srid/nixci/issues/35 is fixed
-      - uses: cachix/install-nix-action@v22
-      - uses: cachix/cachix-action@v12
-        with:
-          name: srid
-      - name: Build examples
-        id: examples
-        run: |
-          # Github Action runners do not support M1 yet.
-          nix run nixpkgs#sd 'nixpkgs.hostPlatform = "aarch64-darwin"' 'nixpkgs.hostPlatform = "x86_64-darwin"' ./examples/*/flake.nix
-
-          # nix run nixpkgs#nixci
-          nix run github:srid/nixci
+      - uses: actions/checkout@v4
+      - run: |
+          # My self hosted runner is ARM
+          nix run nixpkgs#sd 'nixpkgs.hostPlatform = "x86_64-linux"' 'nixpkgs.hostPlatform = "aarch64-linux"' ./examples/*/flake.nix
+          nixci
