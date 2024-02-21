@@ -12,4 +12,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - run: nixci
+      - run: |
+          # My self hosted runner is ARM
+          nix run nixpkgs#sd 'nixpkgs.hostPlatform = "x86_64-linux"' 'nixpkgs.hostPlatform = "aarch64-linux"' ./examples/*/flake.nix
+          nixci
