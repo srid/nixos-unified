@@ -1,18 +1,21 @@
 name: "CI"
+
 on:
   push:
     branches:
       - master
   pull_request:
+
 jobs:
-  build:
+  nix:
+    runs-on: self-hosted
     strategy:
       matrix:
-        os: [self-hosted, macos-14]
-    runs-on: self-hosted
+        system: [aarch64-linux, aarch64-darwin]
     steps:
       - uses: actions/checkout@v4
       - run: |
           # My self hosted runner is ARM
           nix run nixpkgs#sd 'nixpkgs.hostPlatform = "x86_64-linux"' 'nixpkgs.hostPlatform = "aarch64-linux"' ./examples/*/flake.nix
-          nixci
+          
+          nixci --build-systems "github:nix-systems/${{ matrix.system }}"
