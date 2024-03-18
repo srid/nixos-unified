@@ -3,8 +3,6 @@ short-title: nixos-flake ❄️
 template:
   sidebar:
     collapsed: true
-emanote:
-  folder-folgezettel: false
 ---
 
 # Managing OS and home configurations using `nixos-flake`
