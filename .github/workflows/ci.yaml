@@ -16,6 +16,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           # My self hosted runner is ARM
-          nix run nixpkgs#sd 'nixpkgs.hostPlatform = "x86_64-linux"' 'nixpkgs.hostPlatform = "aarch64-linux"' ./examples/*/flake.nix
+          sd \
+            'nixpkgs.hostPlatform = "x86_64-linux"' \
+            'nixpkgs.hostPlatform = "aarch64-linux"' \
+            ./examples/*/flake.nix
           
           nixci --build-systems "github:nix-systems/${{ matrix.system }}"
