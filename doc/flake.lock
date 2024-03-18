@@ -1,5 +1,39 @@
 {
   "nodes": {
+    "cfp": {
+      "inputs": {
+        "emanote": "emanote",
+        "flake-parts": [
+          "cfp",
+          "emanote",
+          "flake-parts"
+        ],
+        "haskell-flake": "haskell-flake_2",
+        "hercules-ci-effects": "hercules-ci-effects",
+        "mission-control": "mission-control",
+        "nixos-flake": "nixos-flake",
+        "nixpkgs": [
+          "cfp",
+          "emanote",
+          "nixpkgs"
+        ],
+        "process-compose-flake": "process-compose-flake",
+        "services-flake": "services-flake"
+      },
+      "locked": {
+        "lastModified": 1710706174,
+        "narHash": "sha256-zRRri+Y6bEkm9ssS8BTxTrn9HAfEtoucizoWq3OwvF4=",
+        "owner": "flake-parts",
+        "repo": "community.flake.parts",
+        "rev": "6dbfdf97894c1853ae22d18403f852058841add5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "flake-parts",
+        "repo": "community.flake.parts",
+        "type": "github"
+      }
+    },
     "commonmark-simple": {
       "flake": false,
       "locked": {
@@ -32,65 +66,30 @@
         "type": "github"
       }
     },
-    "community-flake-parts": {
-      "inputs": {
-        "emanote": "emanote",
-        "flake-parts": [
-          "community-flake-parts",
-          "emanote",
-          "flake-parts"
-        ],
-        "haskell-flake": "haskell-flake_2",
-        "hercules-ci-effects": "hercules-ci-effects",
-        "mission-control": "mission-control",
-        "nixos-flake": "nixos-flake",
-        "nixpkgs": [
-          "community-flake-parts",
-          "emanote",
-          "nixpkgs"
-        ],
-        "process-compose-flake": "process-compose-flake",
-        "services-flake": "services-flake"
-      },
-      "locked": {
-        "lastModified": 1710098706,
-        "narHash": "sha256-hpJtYPHPeePkWWidmeRfGZSM7Y8KPKjpinI4Q2KvgGU=",
-        "owner": "flake-parts",
-        "repo": "community.flake.parts",
-        "rev": "6c7bd1af8883241e5ec0aa31263f6338a2c73f78",
-        "type": "github"
-      },
-      "original": {
-        "owner": "flake-parts",
-        "ref": "mod",
-        "repo": "community.flake.parts",
-        "type": "github"
-      }
-    },
     "ema": {
       "inputs": {
         "flake-parts": [
-          "community-flake-parts",
+          "cfp",
           "emanote",
           "flake-parts"
         ],
         "flake-root": [
-          "community-flake-parts",
+          "cfp",
           "emanote",
           "flake-root"
         ],
         "haskell-flake": [
-          "community-flake-parts",
+          "cfp",
           "emanote",
           "haskell-flake"
         ],
         "nixpkgs": [
-          "community-flake-parts",
+          "cfp",
           "emanote",
           "nixpkgs"
         ],
         "treefmt-nix": [
-          "community-flake-parts",
+          "cfp",
           "emanote",
           "treefmt-nix"
         ]
@@ -175,7 +174,7 @@
     "flake-parts_2": {
       "inputs": {
         "nixpkgs-lib": [
-          "community-flake-parts",
+          "cfp",
           "hercules-ci-effects",
           "nixpkgs"
         ]
@@ -374,13 +373,13 @@
     },
     "root": {
       "inputs": {
-        "community-flake-parts": "community-flake-parts",
+        "cfp": "cfp",
         "flake-parts": [
-          "community-flake-parts",
+          "cfp",
           "flake-parts"
         ],
         "nixpkgs": [
-          "community-flake-parts",
+          "cfp",
           "nixpkgs"
         ]
       }
@@ -419,7 +418,7 @@
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": [
-          "community-flake-parts",
+          "cfp",
           "emanote",
           "nixpkgs"
         ]
