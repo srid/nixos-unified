@@ -7,11 +7,20 @@ on:
   pull_request:
 
 jobs:
+  configure:
+    runs-on: self-hosted
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+     - uses: actions/checkout@v4
+     - id: set-matrix
+       run: echo "matrix=$(nixci gh-matrix --systems=aarch64-linux,aarch64-darwin | jq -c .)" >> $GITHUB_OUTPUT
   nix:
     runs-on: self-hosted
+    needs: configure
     strategy:
-      matrix:
-        system: [aarch64-linux, aarch64-darwin]
+      matrix: ${{ fromJson(needs.configure.outputs.matrix) }}
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -20,5 +29,5 @@ jobs:
             'nixpkgs.hostPlatform = "x86_64-linux"' \
             'nixpkgs.hostPlatform = "aarch64-linux"' \
             ./examples/*/flake.nix
-          
-          nixci --build-systems "github:nix-systems/${{ matrix.system }}"
+
+          nixci build --systems "github:nix-systems/${{ matrix.system }}" .#default.${{ matrix.subflake}}
