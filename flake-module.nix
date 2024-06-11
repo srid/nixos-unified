@@ -31,6 +31,30 @@ in
                   List of flake inputs to update when running `nix run .#update`.
                 '';
               };
+              apps = {
+                activate.enable = lib.mkOption {
+                  type = types.bool;
+                  default = true;
+                  description = ''
+                    Add flake apps to activate current host / home
+                  '';
+                };
+                deploy = {
+                  enable = lib.mkOption {
+                    type = types.bool;
+                    default = true;
+                    description = ''
+                      Add flake app to remotely activate current host / home through SSH.
+                    '';
+                  };
+                  sshTarget = lib.mkOption {
+                    type = types.str;
+                    description = ''
+                      SSH target to deploy to.
+                    '';
+                  };
+                };
+              };
             };
           };
         };
@@ -48,7 +72,7 @@ in
               };
 
             activate =
-              if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
+              if config.nixos-flake.apps.activate.enable && hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
               then
                 pkgs.writeShellApplication
                   {
@@ -83,7 +107,7 @@ in
               else null;
 
             activate-home =
-              if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
+              if config.nixos-flake.apps.activate.enable && hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
               then
                 pkgs.writeShellApplication
                   {
@@ -96,6 +120,35 @@ in
                           "$@"
                       '';
                   }
+              else null;
+
+            deploy =
+              if config.nixos-flake.apps.deploy.enable
+              then
+                let
+                  mkDeployApp = { flake, sshTarget }:
+                    let
+                      name = lib.replaceStrings [ "@" ] [ "_" ] sshTarget;
+                      # Workaround https://github.com/NixOS/nix/issues/8752
+                      cleanFlake = lib.cleanSourceWith {
+                        name = "${name}-flake";
+                        src = flake;
+                      };
+                    in
+                    pkgs.writeShellApplication {
+                      name = "${name}-deploy";
+                      runtimeInputs = [ pkgs.nix ];
+                      text = ''
+                        set -x
+                        nix copy ${cleanFlake} --to ssh-ng://${sshTarget}
+                        ssh -t ${sshTarget} nix run "${cleanFlake}#activate"
+                      '';
+                    };
+                in
+                mkDeployApp {
+                  flake = self;
+                  inherit (config.nixos-flake.apps.deploy) sshTarget;
+                }
               else null;
           };
         };
