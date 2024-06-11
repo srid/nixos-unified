@@ -66,7 +66,7 @@ in
                           set -x
                           ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
                             switch \
-                            --flake "${self}#''${HOSTNAME}" \
+                            --flake "path:${self}#''${HOSTNAME}" \
                             "$@"
                         ''
                       else
@@ -75,7 +75,7 @@ in
                           set -x
                           ${lib.getExe pkgs.nixos-rebuild} \
                             switch \
-                            --flake "${self}#''${HOSTNAME}" \
+                            --flake "path:${self}#''${HOSTNAME}" \
                             --use-remote-sudo \
                             "$@"
                         '';
