@@ -42,7 +42,7 @@ in
                 deploy = {
                   enable = lib.mkOption {
                     type = types.bool;
-                    default = true;
+                    default = false;
                     description = ''
                       Add flake app to remotely activate current host / home through SSH.
                     '';
