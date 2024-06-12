@@ -31,21 +31,19 @@ in
                   List of flake inputs to update when running `nix run .#update`.
                 '';
               };
-              apps = {
-                deploy = {
-                  enable = lib.mkOption {
-                    type = types.bool;
-                    default = false;
-                    description = ''
-                      Add flake app to remotely activate current host / home through SSH.
-                    '';
-                  };
-                  sshTarget = lib.mkOption {
-                    type = types.str;
-                    description = ''
-                      SSH target to deploy to.
-                    '';
-                  };
+              deploy = {
+                enable = lib.mkOption {
+                  type = types.bool;
+                  default = false;
+                  description = ''
+                    Add flake app to remotely activate current host / home through SSH.
+                  '';
+                };
+                sshTarget = lib.mkOption {
+                  type = types.str;
+                  description = ''
+                    SSH target to deploy to.
+                  '';
                 };
               };
             };
@@ -116,7 +114,7 @@ in
               else null;
 
             deploy =
-              if config.nixos-flake.apps.deploy.enable
+              if config.nixos-flake.deploy.enable
               then
                 let
                   mkDeployApp = { flake, sshTarget }:
@@ -140,7 +138,7 @@ in
                 in
                 mkDeployApp {
                   flake = self;
-                  inherit (config.nixos-flake.apps.deploy) sshTarget;
+                  inherit (config.nixos-flake.deploy) sshTarget;
                 }
               else null;
           };
