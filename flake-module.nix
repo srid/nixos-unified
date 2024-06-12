@@ -74,7 +74,7 @@ in
               if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
               then
                 let
-                  overrideArgs = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.name}") config.nixos-flake.overrideInputs);
+                  overrideArgs = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);
                 in
                 pkgs.writeShellApplication
                   {
