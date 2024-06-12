@@ -55,7 +55,7 @@ in
               };
               outputs = {
                 nixArgs = lib.mkOption {
-                  type = types.listOf types.str;
+                  type = types.str;
                   default = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);
                   description = ''
                     Arguments to pass to `nix`
@@ -151,6 +151,7 @@ in
                       text = ''
                         set -x
                         nix copy ${cleanFlake} --to ssh-ng://${sshTarget}
+                        ${lib.concatStringsSep "\n" (builtins.map (name: "nix copy ${inputs.${name}} --to ssh-ng://${sshTarget}") config.nixos-flake.overrideInputs)}
                         ssh -t ${sshTarget} nix --extra-experimental-features \"nix-command flakes\" \
                           run \
                           ${config.nixos-flake.outputs.nixArgs} \
