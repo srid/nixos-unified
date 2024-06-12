@@ -32,13 +32,6 @@ in
                 '';
               };
               apps = {
-                activate.enable = lib.mkOption {
-                  type = types.bool;
-                  default = true;
-                  description = ''
-                    Add flake apps to activate current host / home
-                  '';
-                };
                 deploy = {
                   enable = lib.mkOption {
                     type = types.bool;
@@ -72,7 +65,7 @@ in
               };
 
             activate =
-              if config.nixos-flake.apps.activate.enable && hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
+              if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
               then
                 pkgs.writeShellApplication
                   {
@@ -107,7 +100,7 @@ in
               else null;
 
             activate-home =
-              if config.nixos-flake.apps.activate.enable && hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
+              if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
               then
                 pkgs.writeShellApplication
                   {
