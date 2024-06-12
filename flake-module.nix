@@ -52,7 +52,15 @@ in
                     SSH target to deploy to.
                   '';
                 };
-
+              };
+              outputs = {
+                nixArgs = lib.mkOption {
+                  type = types.listOf types.str;
+                  default = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);
+                  description = ''
+                    Arguments to pass to `nix`
+                  '';
+                };
               };
             };
           };
@@ -73,9 +81,6 @@ in
             activate =
               if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
               then
-                let
-                  overrideArgs = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);
-                in
                 pkgs.writeShellApplication
                   {
                     name = "activate";
@@ -93,7 +98,7 @@ in
                           ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
                             switch \
                             --flake "path:${self}#''${HOSTNAME}" \
-                            ${overrideArgs} \
+                            ${config.nixos-flake.outputs.nixArgs} \
                             "$@"
                         ''
                       else
@@ -103,7 +108,7 @@ in
                           ${lib.getExe pkgs.nixos-rebuild} \
                             switch \
                             --flake "path:${self}#''${HOSTNAME}" \
-                            ${overrideArgs} \
+                            ${config.nixos-flake.outputs.nixArgs} \
                             --use-remote-sudo \
                             "$@"
                         '';
@@ -120,6 +125,7 @@ in
                       ''
                         set -x
                         nix run \
+                          ${config.nixos-flake.outputs.nixArgs} \
                           .#homeConfigurations."\"''${USER}\"".activationPackage \
                           "$@"
                       '';
@@ -145,7 +151,10 @@ in
                       text = ''
                         set -x
                         nix copy ${cleanFlake} --to ssh-ng://${sshTarget}
-                        ssh -t ${sshTarget} nix --extra-experimental-features \"nix-command flakes\" run "${cleanFlake}#activate"
+                        ssh -t ${sshTarget} nix --extra-experimental-features \"nix-command flakes\" \
+                          run \
+                          ${config.nixos-flake.outputs.nixArgs} \
+                          "${cleanFlake}#activate"
                       '';
                     };
                 in
