@@ -141,7 +141,7 @@ in
                       text = ''
                         set -x
                         nix copy ${cleanFlake} --to ssh-ng://${sshTarget}
-                        ssh -t ${sshTarget} nix run --extra-experimental-features "nix-command flakes" "${cleanFlake}#activate"
+                        ssh -t ${sshTarget} nix --extra-experimental-features \"nix-command flakes\" run "${cleanFlake}#activate"
                       '';
                     };
                 in
