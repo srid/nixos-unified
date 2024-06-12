@@ -31,6 +31,13 @@ in
                   List of flake inputs to update when running `nix run .#update`.
                 '';
               };
+              overrideInputs = lib.mkOption {
+                type = types.listOf types.str;
+                default = [ ];
+                description = ''
+                  List of flake inputs to override when deploying or activating.
+                '';
+              };
               deploy = {
                 enable = lib.mkOption {
                   type = types.bool;
@@ -45,6 +52,7 @@ in
                     SSH target to deploy to.
                   '';
                 };
+
               };
             };
           };
@@ -75,6 +83,7 @@ in
                           # This is used just to pull out the `darwin-rebuild` script.
                           # See also: https://github.com/LnL7/nix-darwin/issues/613
                           emptyConfiguration = self.nixos-flake.lib.mkMacosSystem { nixpkgs.hostPlatform = system; };
+                          overrideArgs = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.name}") config.nixos-flake.overrideInputs);
                         in
                         ''
                           HOSTNAME=$(hostname -s)
@@ -82,6 +91,7 @@ in
                           ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
                             switch \
                             --flake "path:${self}#''${HOSTNAME}" \
+                            ${overrideArgs} \
                             "$@"
                         ''
                       else
@@ -91,6 +101,7 @@ in
                           ${lib.getExe pkgs.nixos-rebuild} \
                             switch \
                             --flake "path:${self}#''${HOSTNAME}" \
+                            ${overrideArgs} \
                             --use-remote-sudo \
                             "$@"
                         '';
