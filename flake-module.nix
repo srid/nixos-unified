@@ -73,6 +73,9 @@ in
             activate =
               if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
               then
+                let
+                  overrideArgs = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.name}") config.nixos-flake.overrideInputs);
+                in
                 pkgs.writeShellApplication
                   {
                     name = "activate";
@@ -83,7 +86,6 @@ in
                           # This is used just to pull out the `darwin-rebuild` script.
                           # See also: https://github.com/LnL7/nix-darwin/issues/613
                           emptyConfiguration = self.nixos-flake.lib.mkMacosSystem { nixpkgs.hostPlatform = system; };
-                          overrideArgs = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.name}") config.nixos-flake.overrideInputs);
                         in
                         ''
                           HOSTNAME=$(hostname -s)
