@@ -33,6 +33,13 @@ let
         '';
       };
       nixos-flake.outputs = {
+        system = lib.mkOption {
+          type = lib.types.str;
+          default = config.nixpkgs.hostPlatform.system;
+          description = ''
+            System to activate.
+          '';
+        };
         nixArgs = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);
@@ -153,17 +160,11 @@ in
                     script = ''
                       use std log
                       let data = '${builtins.toJSON nixos-flake-configs}' | from json
-
-                      version
-
                       def main [host: string] {
                         let CURRENT_HOSTNAME = (hostname | str trim)
                         let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
-
-                        log info $"Working with host ($HOSTNAME)"
-
                         let hostData = ($data | get $HOSTNAME)
-                        ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${cleanFlake} ($hostData | to json -r)
+                        ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${system} ${cleanFlake} ($hostData | to json -r)
                       }
                     '';
                   };
