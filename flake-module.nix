@@ -153,7 +153,7 @@ in
                     # Gather `config.nixos-flake.sshTarget` from all nixosConfigurations and darwinConfigurations
                     # 
                     # Should output, { "hostname1" = "nix-infra@whatever"; ... } for every nixosConfiguration.hostname1 and such
-                    nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations // self.darwinConfigurations);
+                    nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
                   in
                   mkNushellScript {
                     name = "nixos-flake-activate";
