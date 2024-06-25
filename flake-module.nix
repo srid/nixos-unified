@@ -85,7 +85,6 @@ in
                   {
                     name = "activate";
                     text =
-                      # TODO: Replace with deploy-rs or (new) nixinate
                       if system == "aarch64-darwin" || system == "x86_64-darwin" then
                         let
                           # This is used just to pull out the `darwin-rebuild` script.
