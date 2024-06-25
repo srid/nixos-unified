@@ -143,16 +143,13 @@ in
             # New-style activate app that can also activately remotely over SSH.
             activate-v2 =
               let
-                mkDeployApp = { flake }:
+                mkActivateApp = { flake }:
                   let
                     # Workaround https://github.com/NixOS/nix/issues/8752
                     cleanFlake = lib.cleanSourceWith {
                       name = "nixos-flake-activate-flake";
                       src = flake;
                     };
-                    # Gather `config.nixos-flake.sshTarget` from all nixosConfigurations and darwinConfigurations
-                    # 
-                    # Should output, { "hostname1" = "nix-infra@whatever"; ... } for every nixosConfiguration.hostname1 and such
                     nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
                   in
                   mkNushellScript {
@@ -169,9 +166,8 @@ in
                     '';
                   };
               in
-              mkDeployApp {
+              mkActivateApp {
                 flake = self;
-                # inherit (config.nixos-flake.deploy) sshTarget;
               };
 
             activate =
@@ -182,15 +178,10 @@ in
                     name = "activate";
                     text =
                       if system == "aarch64-darwin" || system == "x86_64-darwin" then
-                        let
-                          # This is used just to pull out the `darwin-rebuild` script.
-                          # See also: https://github.com/LnL7/nix-darwin/issues/613
-                          emptyConfiguration = self.nixos-flake.lib.mkMacosSystem { nixpkgs.hostPlatform = system; };
-                        in
                         ''
                           HOSTNAME=$(hostname -s)
                           set -x
-                          ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
+                          ${inputs'.nix-darwin.packages.default}/bin/darwin-rebuild \
                             switch \
                             --flake "path:${self}#''${HOSTNAME}" \
                             ${config.nixos-flake.outputs.nixArgs} \
