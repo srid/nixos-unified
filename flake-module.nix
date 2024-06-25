@@ -15,11 +15,62 @@ let
   };
   hasNonEmptyAttr = attrPath: self:
     lib.attrByPath attrPath { } self != { };
+
+  nixosFlakeModule = { config, lib, ... }: {
+    options = {
+      nixos-flake.sshTarget = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = ''
+          SSH target for this system configuration.
+        '';
+      };
+      nixos-flake.overrideInputs = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = ''
+          List of flake inputs to override when deploying or activating.
+        '';
+      };
+      nixos-flake.outputs = {
+        nixArgs = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);
+          description = ''
+            Arguments to pass to `nix`
+          '';
+        };
+      };
+    };
+  };
 in
 {
   options = {
-    perSystem = mkPerSystemOption
-      ({ config, self', inputs', pkgs, system, ... }: {
+    perSystem = mkPerSystemOption ({ config, self', inputs', pkgs, system, ... }:
+      let
+        # An analogue to writeScriptBin but for Nushell rather than Bash scripts.
+        # Taken from https://github.com/DeterminateSystems/nuenv/blob/970bfd5321a5ff55135993f956aa7ad445778151/lib/nuenv.nix#L63
+        mkNushellScript =
+          { name
+          , script
+          , bin ? name
+          }:
+
+          let
+            nu = "${pkgs.nushell}/bin/nu";
+          in
+          pkgs.writeTextFile {
+            inherit name;
+            destination = "/bin/${bin}";
+            text = ''
+              #!${nu} 
+
+              ${script}
+            '';
+            executable = true;
+          };
+      in
+      {
         options.nixos-flake = lib.mkOption {
           default = { };
           type = types.submodule {
@@ -54,6 +105,10 @@ in
                 };
               };
               outputs = {
+                overrideInputs = lib.mkOption {
+                  type = types.attrsOf types.path;
+                  default = lib.foldl' (acc: x: acc // { "${x}" = inputs.${x}; }) { } config.nixos-flake.overrideInputs;
+                };
                 nixArgs = lib.mkOption {
                   type = types.str;
                   default = lib.concatStringsSep " " (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);
@@ -76,6 +131,46 @@ in
                 text = ''
                   nix flake lock ${lib.foldl' (acc: x: acc + " --update-input " + x) "" inputs}
                 '';
+              };
+
+            # New-style activate app that can also activately remotely over SSH.
+            activate-v2 =
+              let
+                mkDeployApp = { flake }:
+                  let
+                    # Workaround https://github.com/NixOS/nix/issues/8752
+                    cleanFlake = lib.cleanSourceWith {
+                      name = "nixos-flake-activate-flake";
+                      src = flake;
+                    };
+                    # Gather `config.nixos-flake.sshTarget` from all nixosConfigurations and darwinConfigurations
+                    # 
+                    # Should output, { "hostname1" = "nix-infra@whatever"; ... } for every nixosConfiguration.hostname1 and such
+                    nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations // self.darwinConfigurations);
+                  in
+                  mkNushellScript {
+                    name = "nixos-flake-activate";
+                    script = ''
+                      use std log
+                      let data = '${builtins.toJSON nixos-flake-configs}' | from json
+
+                      version
+
+                      def main [host: string] {
+                        let CURRENT_HOSTNAME = (hostname | str trim)
+                        let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
+
+                        log info $"Working with host ($HOSTNAME)"
+
+                        let hostData = ($data | get $HOSTNAME)
+                        ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${cleanFlake} ($hostData | to json -r)
+                      }
+                    '';
+                  };
+              in
+              mkDeployApp {
+                flake = self;
+                # inherit (config.nixos-flake.deploy) sshTarget;
               };
 
             activate =
@@ -170,6 +265,7 @@ in
 
   config = {
     flake = {
+      nixosModules.nixosFlake = nixosFlakeModule;
       # Linux home-manager module
       nixosModules.home-manager = {
         imports = [
@@ -181,6 +277,8 @@ in
           })
         ];
       };
+
+      darwinModules_.nixosFlake = nixosFlakeModule;
       # macOS home-manager module
       # This is named with an underscope, because flake-parts segfaults otherwise!
       # See https://github.com/srid/nixos-config/issues/31
@@ -200,18 +298,26 @@ in
         mkLinuxSystem = mod: inputs.nixpkgs.lib.nixosSystem {
           # Arguments to pass to all modules.
           specialArgs = specialArgsFor.nixos;
-          modules = [ mod ];
+          modules = [
+            self.nixosModules.nixosFlake
+            mod
+          ];
         };
 
         mkMacosSystem = mod: inputs.nix-darwin.lib.darwinSystem {
           specialArgs = specialArgsFor.darwin;
-          modules = [ mod ];
+          modules = [
+            self.darwinModules_.nixosFlake
+            mod
+          ];
         };
 
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = specialArgsFor.common;
-          modules = [ mod ];
+          modules = [
+            mod
+          ];
         };
       };
     };
