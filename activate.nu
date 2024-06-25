@@ -4,14 +4,13 @@ def main [host: string, cleanFlake: string, hostData: string] {
     let hostData = $hostData | from json
     let sshTarget = ($hostData | get "sshTarget"  )
     let overrideInputs = ($hostData | get "overrideInputs" )
-    let nixArgs = ($hostData | get "outputs" | get "nixArgs" | inspect )
+    let nixArgs = ($hostData | get "outputs" | get "nixArgs") 
     log info ($hostData | to json)
 
-   let CURRENT_HOSTNAME = (hostname | str trim)
-    # Check if the current hostname matches
-    if $CURRENT_HOSTNAME == $host {
+    if (hostname | str trim) == $host {
         log info $"Activating locally"
         # TODO: don't delegate, just do it here.
+        log info $"(ansi blue_bold)>>>(ansi reset) nix run ...$nixArgs ($"($cleanFlake)#activate")"
         nix run ...$nixArgs ($"($cleanFlake)#activate")
     } else {
         log warning $"Activating remotely on ($sshTarget)"
@@ -22,11 +21,9 @@ def main [host: string, cleanFlake: string, hostData: string] {
             nix copy $input --to ($"ssh-ng://($sshTarget)")
         }
 
-        log info $"(ansi red_bold) ssh'ing (ansi reset) to ($sshTarget)"
-
         # TODO: don't delegate, just do it here.
-        ssh -t $sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$nixArgs $"($cleanFlake)#activate" 
-        p
+        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($nixArgs) $"($cleanFlake)#activate" '
+        ssh -t $sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$nixArgs $"($cleanFlake)#activate"
     }
 
 }
