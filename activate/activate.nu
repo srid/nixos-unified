@@ -9,27 +9,24 @@ let CURRENT_HOSTNAME = (hostname | str trim)
 #
 # localhost hosts are ignored (null'ified)
 def parseFlakeOutputRef [ spec: string ] {
-    if spec == "" {
-        { user: null host: null }
+    let parts = $spec | split row "@"
+    let handleLocalhost = {|h| if $h == "localhost" { null } else { $h } }
+    if ($parts | length) == 1 {
+        { user: null host: (do $handleLocalhost $parts.0) }
     } else {
-        let parts = $spec | split row "@"
-        let handleLocalhost = {|h| if $h == "localhost" { null } else { $h } }
-        if ($parts | length) == 1 {
-            { user: null host: (do $handleLocalhost $parts.0) }
-        } else {
-            { user: $parts.0 host: (do $handleLocalhost $parts.1) }
-        }
+        { user: $parts.0 host: (do $handleLocalhost $parts.1) }
     }
 }
 
-# Activate system configuration of the given host
-# 
-# To activate a remote machine, use run with subcommands: `host <hostname>`
+# Activate system configuration of the given host 
+#
+# The hostname should match the name of the corresponding nixosConfigurations or
+# darwinConfigurations attrkey. "localhost" is an exception, which will use the
+# current host. 
 def main [
-  ref: string = "" # Hostname to activate (must match flake.nix name)
+  ref: string = "localhost" # Hostname to activate 
 ] {
     let spec = parseFlakeOutputRef $ref
-    print $"Spec: ($spec)"
     if $spec.user != null {
         log error $"Cannot activate home environments yet; use .#activate-home instead"
         exit 1
