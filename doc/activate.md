@@ -35,7 +35,7 @@ Add the following to your configuration -- `nixosConfigurations.myhost` or `darw
 Then, you will be able to run the following to deploy to `myhost` from any machine:
 
 ```sh
-nix run .#activate host myhost
+nix run .#activate myhost
 ```
 
 ### Non-goals

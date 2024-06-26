@@ -1,19 +1,40 @@
 use std log
+use std assert
+
 use nixos-flake.nu getData  # This module is generated in Nix
 
 let CURRENT_HOSTNAME = (hostname | str trim)
 
-# Activate system configuration of local machine
+# Parse "[srid@]example" into { user: "srid", host: "example" }
 #
-# To activate a remote machine, use run with subcommands: `host <hostname>`
-def main [] {
-    main host ($CURRENT_HOSTNAME)
+# localhost hosts are ignored (null'ified)
+def parseFlakeOutputRef [ spec: string ] {
+    if spec == "" {
+        { user: null host: null }
+    } else {
+        let parts = $spec | split row "@"
+        let handleLocalhost = {|h| if $h == "localhost" { null } else { $h } }
+        if ($parts | length) == 1 {
+            { user: null host: (do $handleLocalhost $parts.0) }
+        } else {
+            { user: $parts.0 host: (do $handleLocalhost $parts.1) }
+        }
+    }
 }
 
 # Activate system configuration of the given host
-def 'main host' [
-  host: string # Hostname to activate (must match flake.nix name)
+# 
+# To activate a remote machine, use run with subcommands: `host <hostname>`
+def main [
+  ref: string = "" # Hostname to activate (must match flake.nix name)
 ] {
+    let spec = parseFlakeOutputRef $ref
+    print $"Spec: ($spec)"
+    if $spec.user != null {
+        log error $"Cannot activate home environments yet; use .#activate-home instead"
+        exit 1
+    }
+    let host = if ($spec.host | is-empty) { $CURRENT_HOSTNAME } else { $spec.host }
     let data = getData
     if $host not-in $data.nixos-flake-configs {
         log error $"Host '($host)' not found in flake. Available hosts=($data.nixos-flake-configs | columns)"
@@ -57,14 +78,7 @@ def 'main host' [
         }
 
         # We re-run this script, but on the remote host.
-        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate" host ($host)'
-        ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate host ($host)"
+        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate" ($host)'
+        ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate ($host)"
     }
 }
-
-# TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
-def 'main home' [] {
-    log error "Home activation not yet supported; use .#activate-home instead"
-    exit 1
-}
-
