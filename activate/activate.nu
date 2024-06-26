@@ -14,12 +14,14 @@ def 'main host' [
 ] {
     log info $"Activating (ansi green_bold)($host)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
     let data = getData
-    let hostData = ($data.nixos-flake-configs | get $host)
+    let hostData = $data.nixos-flake-configs 
+        | get $host
+        | insert "flake" $"($data.cleanFlake)#($host)"
 
     log info $"(ansi grey)currentSystem=($data.system) currentHost=($CURRENT_HOSTNAME) host=($host) hostData=($hostData)(ansi reset)"
 
+
     let runtime = {
-        hostFlake: $"($data.cleanFlake)#($host)"
         local: ($CURRENT_HOSTNAME == $host)
         darwin: ($hostData.outputs.system in ["aarch64-darwin" "x86_64-darwin"])
     }
@@ -27,11 +29,11 @@ def 'main host' [
     if $runtime.local {
         log info $"Activating locally"
         if $runtime.darwin {
-            log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($runtime.hostFlake) ($hostData.outputs.nixArgs | str join)"
-            darwin-rebuild switch --flake $runtime.hostFlake ...$hostData.outputs.nixArgs 
+            log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
+            darwin-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs 
         } else {
-            log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($runtime.hostFlake) ($hostData.outputs.nixArgs | str join) --use-remote-sudo "
-            nixos-rebuild switch --flake $runtime.hostFlake ...$hostData.outputs.nixArgs  --use-remote-sudo
+            log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join) --use-remote-sudo "
+            nixos-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs  --use-remote-sudo
         }
     } else {
         log warning $"Activating *remotely* on ($hostData.sshTarget)"
