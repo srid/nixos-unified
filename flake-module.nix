@@ -132,6 +132,12 @@ in
                       src = flake;
                     };
                     nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
+                    data = pkgs.writeTextFile {
+                      name = "nixos-flake-activate-data";
+                      text = ''
+                        ${builtins.toJSON nixos-flake-configs}
+                      '';
+                    };
                   in
                   mkNushellScript {
                     name = "nixos-flake-activate";
@@ -145,7 +151,9 @@ in
                     script = ''
                       use std log
                       let CURRENT_HOSTNAME = (hostname | str trim)
-                      let data = '${builtins.toJSON nixos-flake-configs}' | from json
+                      # TODO: Pass data as env var, and move bulk of this script to activate.nu
+                      # Or this? https://www.nushell.sh/book/modules.html#environment-variables
+                      let data = open ${data} | from json
                       # Activate system configuration of the given host
                       def 'main host' [
                         host: string # Hostname to activate (must match flake.nix name)

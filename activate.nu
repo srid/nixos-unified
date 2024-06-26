@@ -1,4 +1,3 @@
-
 # TODO: put host & cleanFlake in hostData
 def main [host: string, currentSystem: string, cleanFlake: string, hostData: string] {
     use std log
