@@ -37,7 +37,7 @@ def 'main host' [
             nixos-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs --use-remote-sudo
         }
     } else {
-        log warning $"Activating (ansi purple_reverse)remotely(ansi) on ($hostData.sshTarget)"
+        log warning $"Activating (ansi purple_reverse)remotely(ansi reset) on ($hostData.sshTarget)"
         nix copy ($data.cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
 
         $hostData.outputs.overrideInputs | transpose key value | each { |input|
