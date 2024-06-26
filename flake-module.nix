@@ -60,6 +60,7 @@ in
         mkNushellScript =
           { name
           , script
+          , runtimeInputs ? [ ]
           , bin ? name
           }:
 
@@ -71,6 +72,12 @@ in
             destination = "/bin/${bin}";
             text = ''
               #!${nu} 
+              use std *
+              let runtimeInputs = '${builtins.toJSON runtimeInputs}' | from json
+              let bins = $runtimeInputs | each {|x| $"($x)/bin"}  
+              if $bins != [] {
+                path add ...$bins
+              }
 
               ${script}
             '';
@@ -154,6 +161,12 @@ in
                   in
                   mkNushellScript {
                     name = "nixos-flake-activate";
+                    runtimeInputs =
+                      if pkgs.stdenv.isDarwin then [
+                        inputs'.nix-darwin.packages.default # Provides darwin-rebuild
+                      ] else [
+                        pkgs.nixos-rebuild
+                      ];
                     script = ''
                       use std log
                       let data = '${builtins.toJSON nixos-flake-configs}' | from json
@@ -176,12 +189,18 @@ in
                 pkgs.writeShellApplication
                   {
                     name = "activate";
+                    runtimeInputs =
+                      if pkgs.stdenv.isDarwin then [
+                        inputs'.nix-darwin.packages.default # Provides darwin-rebuild
+                      ] else [
+                        pkgs.nixos-rebuild
+                      ];
                     text =
                       if system == "aarch64-darwin" || system == "x86_64-darwin" then
                         ''
                           HOSTNAME=$(hostname -s)
                           set -x
-                          ${inputs'.nix-darwin.packages.default}/bin/darwin-rebuild \
+                          darwin-rebuild \
                             switch \
                             --flake "path:${self}#''${HOSTNAME}" \
                             ${config.nixos-flake.outputs.nixArgs} \
@@ -191,7 +210,7 @@ in
                         ''
                           HOSTNAME=$(hostname -s)
                           set -x
-                          ${lib.getExe pkgs.nixos-rebuild} \
+                          nixos-rebuild \
                             switch \
                             --flake "path:${self}#''${HOSTNAME}" \
                             ${config.nixos-flake.outputs.nixArgs} \
