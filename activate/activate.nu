@@ -4,6 +4,8 @@ use nixos-flake.nu getData  # This module is generated in Nix
 let CURRENT_HOSTNAME = (hostname | str trim)
 
 # Activate system configuration of local machine
+#
+# To activate a remote machine, use run with subcommands: `host <hostname>`
 def main [] {
     main host ($CURRENT_HOSTNAME)
 }
@@ -12,13 +14,12 @@ def main [] {
 def 'main host' [
   host: string # Hostname to activate (must match flake.nix name)
 ] {
-    log info $"Activating (ansi green_bold)($host)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
     let data = getData
     let hostData = $data.nixos-flake-configs 
         | get $host
         | insert "flake" $"($data.cleanFlake)#($host)"
 
-    log info $"(ansi grey)currentSystem=($data.system) currentHost=($CURRENT_HOSTNAME) host=($host) hostData=($hostData)(ansi reset)"
+    log info $"(ansi grey)currentSystem=($data.system) currentHost=(ansi blue_bold)($CURRENT_HOSTNAME)(ansi reset) targetHost=(ansi green_bold)($host)(ansi reset) hostData=($hostData)(ansi reset)"
 
 
     let runtime = {
