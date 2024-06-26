@@ -40,6 +40,10 @@ let
             System to activate.
           '';
         };
+        overrideInputs = lib.mkOption {
+          type = lib.types.attrsOf lib.types.path;
+          default = lib.foldl' (acc: x: acc // { "${x}" = inputs.${x}; }) { } config.nixos-flake.overrideInputs;
+        };
         nixArgs = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = (builtins.map (name: "--override-input ${name} ${inputs.${name}}") config.nixos-flake.overrideInputs);

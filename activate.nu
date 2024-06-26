@@ -5,7 +5,7 @@ def main [host: string, currentSystem: string, cleanFlake: string, hostData: str
     log info $"host=($host) data=($hostData)"
     let hostData = $hostData | from json
     let sshTarget = ($hostData | get "sshTarget"  )
-    let overrideInputs = ($hostData | get "overrideInputs" )
+    let overrideInputs = ($hostData | get "outputs" | get "overrideInputs" )
     let nixArgs = ($hostData | get "outputs" | get "nixArgs") 
     let system = ($hostData | get "outputs" | get "system") 
     let currentHost = (hostname | str trim)
@@ -35,9 +35,10 @@ def main [host: string, currentSystem: string, cleanFlake: string, hostData: str
         log warning $"Activating *remotely* on ($sshTarget)"
         nix copy ($cleanFlake) --to ($"ssh-ng://($sshTarget)")
 
-        $overrideInputs | each { |input|
-            log info $"Copying input ($input) to ($sshTarget)"
-            nix copy $input --to ($"ssh-ng://($sshTarget)")
+        $overrideInputs | transpose key value | each { |input|
+            log info $"Copying input ($input.key) to ($sshTarget)"
+            # FIXME: need flake inputs.
+            nix copy ($input.value) --to ($"ssh-ng://($sshTarget)")
         }
 
         # TODO: don't delegate, just do it here.
