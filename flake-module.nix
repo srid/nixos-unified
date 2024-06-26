@@ -170,11 +170,6 @@ in
                     script = ''
                       use std log
                       let data = '${builtins.toJSON nixos-flake-configs}' | from json
-                      # Activate system configuration of local machine
-                      def main [] {
-                        let CURRENT_HOSTNAME = (hostname | str trim)
-                        main host ($CURRENT_HOSTNAME)
-                      }
                       # Activate system configuration of the given host
                       def 'main host' [
                         host: string # Hostname to activate (must match flake.nix name)
@@ -185,6 +180,11 @@ in
                         log info $"top: Activating ($HOSTNAME)"
                         let hostData = ($data | get $HOSTNAME)
                         ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${system} ${cleanFlake} ($hostData | to json -r)
+                      }
+                      # Activate system configuration of local machine
+                      def main [] {
+                        let CURRENT_HOSTNAME = (hostname | str trim)
+                        main host ($CURRENT_HOSTNAME)
                       }
                       # TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
                       def 'main home' [] {
