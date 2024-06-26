@@ -26,6 +26,11 @@ let
       }
     '';
   };
+  nu = import ../nix/nu.nix { inherit pkgs; };
+in
+nu.writeNushellApplication {
+  scriptDir = ./.;
+  mainScript = "activate.nu";
   runtimeInputs =
     # TODO: better way to check for nix-darwin availability
     if pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs' then [
@@ -33,29 +38,7 @@ let
     ] else [
       pkgs.nixos-rebuild
     ];
-  nixNuModule = pkgs.writeTextFile {
-    name = "nix.nu";
-    text = ''
-      use std *
-      let bins = '${builtins.toJSON (builtins.map (p: "${p}/bin") runtimeInputs)}' | from json
-      if $bins != [] {
-        log debug $"Adding runtime inputs to PATH: ($bins)"
-        path add ...$bins
-      }
-    '';
-  };
-  nuPackage = pkgs.runCommandNoCC "nushell"
-    {
-      meta.mainProgram = "activate.nu";
-    } ''
-    mkdir -p $out/bin
-    cd $out/bin
-    echo "#!${pkgs.nushell}/bin/nu" >> activate.nu
-    cat ${nixNuModule} >> activate.nu
-    # echo 'print $"PATH = ($env.PATH)"' >> activate.nu
-    cat ${./activate.nu} >> activate.nu
-    chmod a+x activate.nu
+  extraBuildCommand = ''
     cp ${nixosFlakeNuModule} nixos-flake.nu
   '';
-in
-nuPackage
+}
