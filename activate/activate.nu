@@ -16,24 +16,13 @@ def main [] {
 def 'main host' [
   host: string # Hostname to activate (must match flake.nix name)
 ] {
-    let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
-    log info $"Activating (ansi green_bold)($HOSTNAME)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
-    let hostData = ($data | get "nixos-flake-configs" | get $HOSTNAME)
-    let system = ($data | get "system")
+    let host = ($host | default $CURRENT_HOSTNAME)
+    log info $"Activating (ansi green_bold)($host)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
+    let hostData = ($data | get "nixos-flake-configs" | get $host)
+    let currentSystem = ($data | get "system")
     let cleanFlake = ($data | get "cleanFlake")
-    activate $HOSTNAME $system $cleanFlake ($hostData | to json -r)
-}
 
-# TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
-def 'main home' [] {
-    log error "Home activation not yet supported; use .#activate-home instead"
-    exit 1
-}
-
-# TODO: put host & cleanFlake in hostData
-def activate [host: string, currentSystem: string, cleanFlake: string, hostData: string] {
     log info $"host=($host) data=($hostData)"
-    let hostData = $hostData | from json
     let sshTarget = ($hostData | get "sshTarget"  )
     let overrideInputs = ($hostData | get "outputs" | get "overrideInputs" )
     let nixArgs = ($hostData | get "outputs" | get "nixArgs") 
@@ -76,3 +65,10 @@ def activate [host: string, currentSystem: string, cleanFlake: string, hostData:
         ssh -t $sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$nixArgs $"($cleanFlake)#activate host ($runtime.host)"
     }
 }
+
+# TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
+def 'main home' [] {
+    log error "Home activation not yet supported; use .#activate-home instead"
+    exit 1
+}
+
