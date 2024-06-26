@@ -15,51 +15,6 @@ let
   };
   hasNonEmptyAttr = attrPath: self:
     lib.attrByPath attrPath { } self != { };
-
-  nixosFlakeModule = { config, lib, ... }: {
-    options = {
-      nixos-flake.sshTarget = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = ''
-          SSH target for this system configuration.
-        '';
-      };
-      nixos-flake.overrideInputs = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        description = ''
-          List of flake inputs to override when deploying or activating.
-        '';
-      };
-      nixos-flake.outputs = {
-        system = lib.mkOption {
-          type = lib.types.str;
-          default = config.nixpkgs.hostPlatform.system;
-          description = ''
-            System to activate.
-          '';
-        };
-        overrideInputs = lib.mkOption {
-          type = lib.types.attrsOf lib.types.path;
-          default = lib.foldl' (acc: x: acc // { "${x}" = inputs.${x}; }) { } config.nixos-flake.overrideInputs;
-        };
-        nixArgs = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = (builtins.concatMap
-            (name: [
-              "--override-input"
-              "${name}"
-              "${inputs.${name}}"
-            ])
-            config.nixos-flake.overrideInputs);
-          description = ''
-            Arguments to pass to `nix`
-          '';
-        };
-      };
-    };
-  };
 in
 {
   options = {
@@ -184,7 +139,7 @@ in
 
   config = {
     flake = {
-      nixosModules.nixosFlake = nixosFlakeModule;
+      nixosModules.nixosFlake = ./nix/nixos-module.nix;
       # Linux home-manager module
       nixosModules.home-manager = {
         imports = [
@@ -197,7 +152,7 @@ in
         ];
       };
 
-      darwinModules_.nixosFlake = nixosFlakeModule;
+      darwinModules_.nixosFlake = ./nix/nixos-module.nix;
       # macOS home-manager module
       # This is named with an underscope, because flake-parts segfaults otherwise!
       # See https://github.com/srid/nixos-config/issues/31
