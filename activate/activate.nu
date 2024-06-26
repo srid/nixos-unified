@@ -5,6 +5,13 @@ let CURRENT_HOSTNAME = (hostname | str trim)
 # Use this? https://www.nushell.sh/book/modules.html#environment-variables
 let data = getData
 
+
+
+# Activate system configuration of local machine
+def main [] {
+    main host ($CURRENT_HOSTNAME)
+}
+
 # Activate system configuration of the given host
 def 'main host' [
   host: string # Hostname to activate (must match flake.nix name)
@@ -15,11 +22,6 @@ def 'main host' [
     let system = ($data | get "system")
     let cleanFlake = ($data | get "cleanFlake")
     activate $HOSTNAME $system $cleanFlake ($hostData | to json -r)
-}
-
-# Activate system configuration of local machine
-def main [] {
-    main host ($CURRENT_HOSTNAME)
 }
 
 # TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
