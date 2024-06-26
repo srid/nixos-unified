@@ -48,7 +48,7 @@ in
               };
 
             # New-style activate app that can also activately remotely over SSH.
-            activate = import ./activate { inherit self inputs' pkgs lib system; };
+            activate = import ../activate { inherit self inputs' pkgs lib system; };
 
             activate-home =
               if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
@@ -72,7 +72,7 @@ in
 
   config = {
     flake = {
-      nixosModules.nixosFlake = ./nix/nixos-module.nix;
+      nixosModules.nixosFlake = ./nixos-module.nix;
       # Linux home-manager module
       nixosModules.home-manager = {
         imports = [
@@ -85,7 +85,7 @@ in
         ];
       };
 
-      darwinModules_.nixosFlake = ./nix/nixos-module.nix;
+      darwinModules_.nixosFlake = ./nixos-module.nix;
       # macOS home-manager module
       # This is named with an underscope, because flake-parts segfaults otherwise!
       # See https://github.com/srid/nixos-config/issues/31

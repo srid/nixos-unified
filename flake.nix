@@ -1,6 +1,6 @@
 {
   outputs = inputs: {
-    flakeModule = ./flake-module.nix;
+    flakeModule = ./nix/flake-module.nix;
 
     templates =
       let
