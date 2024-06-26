@@ -39,7 +39,7 @@ let
       use std *
       let bins = '${builtins.toJSON (builtins.map (p: "${p}/bin") runtimeInputs)}' | from json
       if $bins != [] {
-        log info $"Adding runtime inputs to PATH: ($bins)"
+        log debug $"Adding runtime inputs to PATH: ($bins)"
         path add ...$bins
       }
     '';

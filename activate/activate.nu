@@ -14,18 +14,14 @@ def 'main host' [
 ] {
     log info $"Activating (ansi green_bold)($host)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
     let data = getData
-    let hostData = ($data | get "nixos-flake-configs" | get $host)
-    let cleanFlake = ($data | get "cleanFlake")
+    let hostData = ($data.nixos-flake-configs | get $host)
 
-    log info $"host=($host) data=($hostData)"
-    let currentHost = (hostname | str trim)
-
-    log info $"currentSystem=($data.system) system=($hostData.outputs.system); currentHost=($currentHost) host=($host)"
+    log info $"(ansi grey)currentSystem=($data.system) currentHost=($CURRENT_HOSTNAME) host=($host) hostData=($hostData)(ansi reset)"
 
     let runtime = {
         host: $host
-        hostFlake: $"($cleanFlake)#($host)"
-        local: ($currentHost == $host)
+        hostFlake: $"($data.cleanFlake)#($host)"
+        local: ($CURRENT_HOSTNAME == $host)
         darwin: ($hostData.outputs.system in ["aarch64-darwin" "x86_64-darwin"])
     }
 
@@ -40,7 +36,7 @@ def 'main host' [
         }
     } else {
         log warning $"Activating *remotely* on ($hostData.sshTarget)"
-        nix copy ($cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
+        nix copy ($data.cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
 
         $hostData.outputs.overrideInputs | transpose key value | each { |input|
             log info $"Copying input ($input.key) to ($hostData.sshTarget)"
@@ -49,8 +45,8 @@ def 'main host' [
         }
 
         # TODO: don't delegate, just do it here.
-        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($cleanFlake)#activate" host ($runtime.host)'
-        ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($cleanFlake)#activate host ($runtime.host)"
+        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate" host ($runtime.host)'
+        ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate host ($runtime.host)"
     }
 }
 
