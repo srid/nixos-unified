@@ -48,7 +48,7 @@ in
               };
 
             # New-style activate app that can also activately remotely over SSH.
-            activate = import ./nix/activate.nix { inherit self inputs' pkgs lib system; };
+            activate = import ./activate { inherit self inputs' pkgs lib system; };
 
             activate-home =
               if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
