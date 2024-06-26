@@ -21,13 +21,13 @@ def 'main host' [
 
     log info $"(ansi grey)currentSystem=($data.system) currentHost=(ansi green_bold)($CURRENT_HOSTNAME)(ansi grey) targetHost=(ansi green_reverse)($host)(ansi reset)(ansi grey) hostData=($hostData)(ansi reset)"
 
-
     let runtime = {
         local: ($CURRENT_HOSTNAME == $host)
         darwin: ($hostData.outputs.system in ["aarch64-darwin" "x86_64-darwin"])
     }
 
     if $runtime.local {
+        # Since the user asked to activate current host, do so.
         log info $"Activating (ansi purple)locally(ansi reset)"
         if $runtime.darwin {
             log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
@@ -37,7 +37,10 @@ def 'main host' [
             nixos-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs --use-remote-sudo
         }
     } else {
-        log info $"Activating (ansi purple_reverse)remotely(ansi reset) on ($hostData.sshTarget)"
+        # Remote activation request, so copy the flake and the necessary inputs
+        # and then activate over SSH.
+        log info $"Activating (ansi purple_reverse)remotely(ansi reset) on
+        ($hostData.sshTarget)"
         nix copy ($data.cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
 
         $hostData.outputs.overrideInputs | transpose key value | each { |input|
@@ -46,7 +49,7 @@ def 'main host' [
             nix copy ($input.value) --to ($"ssh-ng://($hostData.sshTarget)")
         }
 
-        # TODO: don't delegate, just do it here.
+        # We re-run this script, but on the remote host.
         log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate" host ($host)'
         ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate host ($host)"
     }
