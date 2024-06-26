@@ -19,7 +19,6 @@ def 'main host' [
     log info $"(ansi grey)currentSystem=($data.system) currentHost=($CURRENT_HOSTNAME) host=($host) hostData=($hostData)(ansi reset)"
 
     let runtime = {
-        host: $host
         hostFlake: $"($data.cleanFlake)#($host)"
         local: ($CURRENT_HOSTNAME == $host)
         darwin: ($hostData.outputs.system in ["aarch64-darwin" "x86_64-darwin"])
@@ -45,8 +44,8 @@ def 'main host' [
         }
 
         # TODO: don't delegate, just do it here.
-        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate" host ($runtime.host)'
-        ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate host ($runtime.host)"
+        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate" host ($host)'
+        ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate host ($host)"
     }
 }
 
