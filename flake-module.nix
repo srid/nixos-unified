@@ -182,7 +182,6 @@ in
                       ''
                         set -x
                         nix run \
-                          ${config.nixos-flake.outputs.nixArgs} \
                           .#homeConfigurations."\"''${USER}\"".activationPackage \
                           "$@"
                       '';
