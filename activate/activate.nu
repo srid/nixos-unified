@@ -1,11 +1,7 @@
 use std log
-use nixos-flake.nu getData
+use nixos-flake.nu getData  # This module is generated in Nix
 
 let CURRENT_HOSTNAME = (hostname | str trim)
-# Use this? https://www.nushell.sh/book/modules.html#environment-variables
-let data = getData
-
-
 
 # Activate system configuration of local machine
 def main [] {
@@ -16,8 +12,8 @@ def main [] {
 def 'main host' [
   host: string # Hostname to activate (must match flake.nix name)
 ] {
-    let host = ($host | default $CURRENT_HOSTNAME)
     log info $"Activating (ansi green_bold)($host)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
+    let data = getData
     let hostData = ($data | get "nixos-flake-configs" | get $host)
     let currentSystem = ($data | get "system")
     let cleanFlake = ($data | get "cleanFlake")
