@@ -15,6 +15,10 @@ def 'main host' [
   host: string # Hostname to activate (must match flake.nix name)
 ] {
     let data = getData
+    if $host not-in $data.nixos-flake-configs {
+        log error $"Host '($host)' not found in flake. Available hosts=($data.nixos-flake-configs | columns)"
+        exit 1
+    }
     let hostData = $data.nixos-flake-configs 
         | get $host
         | insert "flake" $"($data.cleanFlake)#($host)"
@@ -39,8 +43,11 @@ def 'main host' [
     } else {
         # Remote activation request, so copy the flake and the necessary inputs
         # and then activate over SSH.
-        log info $"Activating (ansi purple_reverse)remotely(ansi reset) on
-        ($hostData.sshTarget)"
+        if $hostData.sshTarget == null {
+            log error $"sshTarget not found in host data for ($host). Add `nixos-flake.sshTarget = \"user@hostname\";` to your configuration."
+            exit 1
+        }
+        log info $"Activating (ansi purple_reverse)remotely(ansi reset) on ($hostData.sshTarget)"
         nix copy ($data.cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
 
         $hostData.outputs.overrideInputs | transpose key value | each { |input|
