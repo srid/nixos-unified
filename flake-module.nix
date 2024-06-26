@@ -73,8 +73,7 @@ in
             text = ''
               #!${nu} 
               use std *
-              let runtimeInputs = '${builtins.toJSON runtimeInputs}' | from json
-              let bins = $runtimeInputs | each {|x| $"($x)/bin"}  
+              let bins = '${builtins.toJSON (builtins.map (p: lib.getBin p) runtimeInputs)}' | from json
               if $bins != [] {
                 path add ...$bins
               }
@@ -171,13 +170,26 @@ in
                     script = ''
                       use std log
                       let data = '${builtins.toJSON nixos-flake-configs}' | from json
-                      def main [host: string] {
+                      # Activate system configuration of local machine
+                      def main [] {
+                        let CURRENT_HOSTNAME = (hostname | str trim)
+                        main host ($CURRENT_HOSTNAME)
+                      }
+                      # Activate system configuration of the given host
+                      def 'main host' [
+                        host: string # Hostname to activate (must match flake.nix name)
+                      ] {
                         let CURRENT_HOSTNAME = (hostname | str trim)
                         log info $"cur ($CURRENT_HOSTNAME)"
                         let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
                         log info $"top: Activating ($HOSTNAME)"
                         let hostData = ($data | get $HOSTNAME)
                         ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${system} ${cleanFlake} ($hostData | to json -r)
+                      }
+                      # TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
+                      def 'main home' [] {
+                        log error "Home activation not yet supported; use .#activate-home instead"
+                        exit 1
                       }
                     '';
                   };
