@@ -132,10 +132,15 @@ in
                       src = flake;
                     };
                     nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
-                    data = pkgs.writeTextFile {
+                    data = {
+                      nixos-flake-configs = nixos-flake-configs;
+                      system = system;
+                      cleanFlake = cleanFlake;
+                    };
+                    dataFile = pkgs.writeTextFile {
                       name = "nixos-flake-activate-data";
                       text = ''
-                        ${builtins.toJSON nixos-flake-configs}
+                        ${builtins.toJSON data}
                       '';
                     };
                   in
@@ -153,15 +158,17 @@ in
                       let CURRENT_HOSTNAME = (hostname | str trim)
                       # TODO: Pass data as env var, and move bulk of this script to activate.nu
                       # Or this? https://www.nushell.sh/book/modules.html#environment-variables
-                      let data = open ${data} | from json
+                      let data = open ${dataFile} | from json
                       # Activate system configuration of the given host
                       def 'main host' [
                         host: string # Hostname to activate (must match flake.nix name)
                       ] {
                         let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
                         log info $"Activating (ansi green_bold)($HOSTNAME)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
-                        let hostData = ($data | get $HOSTNAME)
-                        ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${system} ${cleanFlake} ($hostData | to json -r)
+                        let hostData = ($data | get "nixos-flake-configs" | get $HOSTNAME)
+                        let system = ($data | get "system")
+                        let cleanFlake = ($data | get "cleanFlake")
+                        ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME $system $cleanFlake ($hostData | to json -r)
                       }
                       # Activate system configuration of local machine
                       def main [] {
