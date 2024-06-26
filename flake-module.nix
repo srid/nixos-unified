@@ -64,35 +64,6 @@ in
 {
   options = {
     perSystem = mkPerSystemOption ({ config, self', inputs', pkgs, system, ... }:
-      let
-        # An analogue to writeScriptBin but for Nushell rather than Bash scripts.
-        # Taken from https://github.com/DeterminateSystems/nuenv/blob/970bfd5321a5ff55135993f956aa7ad445778151/lib/nuenv.nix#L63
-        mkNushellScript =
-          { name
-          , script
-          , runtimeInputs ? [ ]
-          , bin ? name
-          }:
-
-          let
-            nu = "${pkgs.nushell}/bin/nu";
-          in
-          pkgs.writeTextFile {
-            inherit name;
-            destination = "/bin/${bin}";
-            text = ''
-              #!${nu} 
-              use std *
-              let bins = '${builtins.toJSON (builtins.map (p: lib.getBin p) runtimeInputs)}' | from json
-              if $bins != [] {
-                path add ...$bins
-              }
-
-              ${script}
-            '';
-            executable = true;
-          };
-      in
       {
         options.nixos-flake = lib.mkOption {
           default = { };
@@ -143,9 +114,14 @@ in
                         ${builtins.toJSON data}
                       '';
                     };
-                  in
-                  mkNushellScript {
-                    name = "nixos-flake-activate";
+                    nixosFlakeNuModule = pkgs.writeTextFile {
+                      name = "nixos-flake.nu";
+                      text = ''
+                        export def getData [] {
+                          open ${dataFile} | from json
+                        }
+                      '';
+                    };
                     runtimeInputs =
                       # TODO: better way to check for nix-darwin availability
                       if pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs' then [
@@ -153,34 +129,34 @@ in
                       ] else [
                         pkgs.nixos-rebuild
                       ];
-                    script = ''
-                      use std log
-                      let CURRENT_HOSTNAME = (hostname | str trim)
-                      # TODO: Pass data as env var, and move bulk of this script to activate.nu
-                      # Or this? https://www.nushell.sh/book/modules.html#environment-variables
-                      let data = open ${dataFile} | from json
-                      # Activate system configuration of the given host
-                      def 'main host' [
-                        host: string # Hostname to activate (must match flake.nix name)
-                      ] {
-                        let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
-                        log info $"Activating (ansi green_bold)($HOSTNAME)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
-                        let hostData = ($data | get "nixos-flake-configs" | get $HOSTNAME)
-                        let system = ($data | get "system")
-                        let cleanFlake = ($data | get "cleanFlake")
-                        ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME $system $cleanFlake ($hostData | to json -r)
-                      }
-                      # Activate system configuration of local machine
-                      def main [] {
-                        main host ($CURRENT_HOSTNAME)
-                      }
-                      # TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
-                      def 'main home' [] {
-                        log error "Home activation not yet supported; use .#activate-home instead"
-                        exit 1
-                      }
+                    nixNuModule = pkgs.writeTextFile {
+                      name = "nix.nu";
+                      text = ''
+                        export def useRuntimeInputs [] {
+                          use std *
+                          let bins = '${builtins.toJSON (builtins.map (p: lib.getBin p) runtimeInputs)}' | from json
+                          if $bins != [] {
+                            path add ...$bins
+                          }
+                        }
+                      '';
+                    };
+                    nuPackage = pkgs.runCommandNoCC "nushell"
+                      {
+                        meta.mainProgram = "activate.nu";
+                      } ''
+                      mkdir -p $out/bin
+                      cd $out/bin
+                      echo "#!${pkgs.nushell}/bin/nu" >> activate.nu
+                      echo "use nix.nu useRuntimeInputs" >> activate.nu
+                      echo "useRuntimeInputs" >> activate.nu
+                      cat ${./activate/activate.nu} >> activate.nu
+                      chmod a+x activate.nu
+                      cp ${nixosFlakeNuModule} nixos-flake.nu
+                      cp ${nixNuModule} nix.nu
                     '';
-                  };
+                  in
+                  nuPackage;
               in
               mkActivateApp {
                 flake = self;

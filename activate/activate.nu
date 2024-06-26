@@ -1,6 +1,35 @@
+use std log
+use nixos-flake.nu getData
+
+let CURRENT_HOSTNAME = (hostname | str trim)
+# Use this? https://www.nushell.sh/book/modules.html#environment-variables
+let data = getData
+
+# Activate system configuration of the given host
+def 'main host' [
+  host: string # Hostname to activate (must match flake.nix name)
+] {
+    let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
+    log info $"Activating (ansi green_bold)($HOSTNAME)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
+    let hostData = ($data | get "nixos-flake-configs" | get $HOSTNAME)
+    let system = ($data | get "system")
+    let cleanFlake = ($data | get "cleanFlake")
+    activate $HOSTNAME $system $cleanFlake ($hostData | to json -r)
+}
+
+# Activate system configuration of local machine
+def main [] {
+    main host ($CURRENT_HOSTNAME)
+}
+
+# TODO: Implement this, resolving https://github.com/srid/nixos-flake/issues/18
+def 'main home' [] {
+    log error "Home activation not yet supported; use .#activate-home instead"
+    exit 1
+}
+
 # TODO: put host & cleanFlake in hostData
-def main [host: string, currentSystem: string, cleanFlake: string, hostData: string] {
-    use std log
+def activate [host: string, currentSystem: string, cleanFlake: string, hostData: string] {
     log info $"host=($host) data=($hostData)"
     let hostData = $hostData | from json
     let sshTarget = ($hostData | get "sshTarget"  )
