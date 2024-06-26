@@ -122,7 +122,7 @@ in
               };
 
             # New-style activate app that can also activately remotely over SSH.
-            activate-v2 =
+            activate =
               let
                 mkActivateApp = { flake }:
                   let
@@ -171,43 +171,6 @@ in
               mkActivateApp {
                 flake = self;
               };
-
-            activate =
-              if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
-              then
-                pkgs.writeShellApplication
-                  {
-                    name = "activate";
-                    runtimeInputs =
-                      if pkgs.stdenv.isDarwin then [
-                        inputs'.nix-darwin.packages.default # Provides darwin-rebuild
-                      ] else [
-                        pkgs.nixos-rebuild
-                      ];
-                    text =
-                      if system == "aarch64-darwin" || system == "x86_64-darwin" then
-                        ''
-                          HOSTNAME=$(hostname -s)
-                          set -x
-                          darwin-rebuild \
-                            switch \
-                            --flake "path:${self}#''${HOSTNAME}" \
-                            ${config.nixos-flake.outputs.nixArgs} \
-                            "$@"
-                        ''
-                      else
-                        ''
-                          HOSTNAME=$(hostname -s)
-                          set -x
-                          nixos-rebuild \
-                            switch \
-                            --flake "path:${self}#''${HOSTNAME}" \
-                            ${config.nixos-flake.outputs.nixArgs} \
-                            --use-remote-sudo \
-                            "$@"
-                        '';
-                  }
-              else null;
 
             activate-home =
               if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
