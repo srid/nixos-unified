@@ -162,7 +162,8 @@ in
                   mkNushellScript {
                     name = "nixos-flake-activate";
                     runtimeInputs =
-                      if pkgs.stdenv.isDarwin then [
+                      # TODO: better way to check for nix-darwin availability
+                      if pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs' then [
                         inputs'.nix-darwin.packages.default # Provides darwin-rebuild
                       ] else [
                         pkgs.nixos-rebuild
