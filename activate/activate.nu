@@ -19,10 +19,10 @@ def 'main host' [
     let cleanFlake = ($data | get "cleanFlake")
 
     log info $"host=($host) data=($hostData)"
-    let sshTarget = ($hostData | get "sshTarget"  )
-    let overrideInputs = ($hostData | get "outputs" | get "overrideInputs" )
-    let nixArgs = ($hostData | get "outputs" | get "nixArgs") 
-    let system = ($hostData | get "outputs" | get "system") 
+    let sshTarget = $hostData.sshTarget
+    let overrideInputs = $hostData.outputs.overrideInputs
+    let nixArgs = $hostData.outputs.nixArgs
+    let system = $hostData.outputs.system
     let currentHost = (hostname | str trim)
 
     log info $"currentSystem=($currentSystem) system=($system); currentHost=($currentHost) host=($host)"
