@@ -41,7 +41,7 @@ def main [host: string, currentSystem: string, cleanFlake: string, hostData: str
         }
 
         # TODO: don't delegate, just do it here.
-        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($nixArgs | str join) $"($cleanFlake)#activate" '
+        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($nixArgs | str join) $"($cleanFlake)#activate-v2" ($runtime.host)'
         ssh -t $sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$nixArgs $"($cleanFlake)#activate-v2 $runtime.host"
     }
 }

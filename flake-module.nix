@@ -174,6 +174,7 @@ in
                       def main [host: string] {
                         let CURRENT_HOSTNAME = (hostname | str trim)
                         let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
+                        log info "top: Activating ($HOSTNAME)"
                         let hostData = ($data | get $HOSTNAME)
                         ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${system} ${cleanFlake} ($hostData | to json -r)
                       }
