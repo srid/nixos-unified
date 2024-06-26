@@ -28,7 +28,7 @@ def 'main host' [
     }
 
     if $runtime.local {
-        log info $"Activating locally"
+        log info $"Activating (ansi purple)locally(ansi reset)"
         if $runtime.darwin {
             log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
             darwin-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs 
@@ -37,7 +37,7 @@ def 'main host' [
             nixos-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs --use-remote-sudo
         }
     } else {
-        log warning $"Activating (ansi italic)remotely(ansi reset) on ($hostData.sshTarget)"
+        log warning $"Activating (ansi purple_reverse)remotely(ansi) on ($hostData.sshTarget)"
         nix copy ($data.cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
 
         $hostData.outputs.overrideInputs | transpose key value | each { |input|
