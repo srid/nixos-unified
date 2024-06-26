@@ -46,7 +46,13 @@ let
         };
         nixArgs = lib.mkOption {
           type = lib.types.listOf lib.types.str;
-          default = (builtins.concatMap (name: [ "--override-input" name inputs.${name} ]) config.nixos-flake.overrideInputs);
+          default = (builtins.concatMap
+            (name: [
+              "--override-input"
+              "${name}"
+              "${inputs.${name}}"
+            ])
+            config.nixos-flake.overrideInputs);
           description = ''
             Arguments to pass to `nix`
           '';
