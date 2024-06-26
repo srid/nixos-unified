@@ -36,12 +36,11 @@ let
   nixNuModule = pkgs.writeTextFile {
     name = "nix.nu";
     text = ''
-      export def useRuntimeInputs [] {
-        use std *
-        let bins = '${builtins.toJSON (builtins.map (p: lib.getBin p) runtimeInputs)}' | from json
-        if $bins != [] {
-          path add ...$bins
-        }
+      use std *
+      let bins = '${builtins.toJSON (builtins.map (p: "${p}/bin") runtimeInputs)}' | from json
+      if $bins != [] {
+        log info $"Adding runtime inputs to PATH: ($bins)"
+        path add ...$bins
       }
     '';
   };
@@ -52,12 +51,11 @@ let
     mkdir -p $out/bin
     cd $out/bin
     echo "#!${pkgs.nushell}/bin/nu" >> activate.nu
-    echo "use nix.nu useRuntimeInputs" >> activate.nu
-    echo "useRuntimeInputs" >> activate.nu
+    cat ${nixNuModule} >> activate.nu
+    # echo 'print $"PATH = ($env.PATH)"' >> activate.nu
     cat ${./activate.nu} >> activate.nu
     chmod a+x activate.nu
     cp ${nixosFlakeNuModule} nixos-flake.nu
-    cp ${nixNuModule} nix.nu
   '';
 in
 nuPackage
