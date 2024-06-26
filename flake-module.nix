@@ -18,8 +18,8 @@ let
 in
 {
   options = {
-    perSystem = mkPerSystemOption ({ config, self', inputs', pkgs, system, ... }:
-      {
+    perSystem =
+      mkPerSystemOption ({ config, self', inputs', pkgs, system, ... }: {
         options.nixos-flake = lib.mkOption {
           default = { };
           type = types.submodule {
@@ -122,9 +122,7 @@ in
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = specialArgsFor.common;
-          modules = [
-            mod
-          ];
+          modules = [ mod ];
         };
       };
     };
