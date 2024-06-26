@@ -19,7 +19,7 @@ def 'main host' [
         | get $host
         | insert "flake" $"($data.cleanFlake)#($host)"
 
-    log info $"(ansi grey)currentSystem=($data.system) currentHost=(ansi blue_bold)($CURRENT_HOSTNAME)(ansi reset) targetHost=(ansi green_bold)($host)(ansi reset) hostData=($hostData)(ansi reset)"
+    log info $"(ansi grey)currentSystem=($data.system) currentHost=(ansi green_bold)($CURRENT_HOSTNAME)(ansi grey) targetHost=(ansi green_reverse)($host)(ansi reset)(ansi grey) hostData=($hostData)(ansi reset)"
 
 
     let runtime = {
@@ -34,10 +34,10 @@ def 'main host' [
             darwin-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs 
         } else {
             log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join) --use-remote-sudo "
-            nixos-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs  --use-remote-sudo
+            nixos-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs --use-remote-sudo
         }
     } else {
-        log warning $"Activating *remotely* on ($hostData.sshTarget)"
+        log warning $"Activating (ansi italic)remotely(ansi reset) on ($hostData.sshTarget)"
         nix copy ($data.cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
 
         $hostData.outputs.overrideInputs | transpose key value | each { |input|
