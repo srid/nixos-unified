@@ -175,9 +175,8 @@ in
                         host: string # Hostname to activate (must match flake.nix name)
                       ] {
                         let CURRENT_HOSTNAME = (hostname | str trim)
-                        log info $"cur ($CURRENT_HOSTNAME)"
                         let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
-                        log info $"top: Activating ($HOSTNAME)"
+                        log info $"Activating ($HOSTNAME) from ($CURRENT_HOSTNAME)"
                         let hostData = ($data | get $HOSTNAME)
                         ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${system} ${cleanFlake} ($hostData | to json -r)
                       }
