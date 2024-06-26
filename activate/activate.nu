@@ -15,50 +15,42 @@ def 'main host' [
     log info $"Activating (ansi green_bold)($host)(ansi reset) from (ansi green_bold)($CURRENT_HOSTNAME)(ansi reset)"
     let data = getData
     let hostData = ($data | get "nixos-flake-configs" | get $host)
-    let currentSystem = ($data | get "system")
     let cleanFlake = ($data | get "cleanFlake")
 
     log info $"host=($host) data=($hostData)"
-    let sshTarget = $hostData.sshTarget
-    let overrideInputs = $hostData.outputs.overrideInputs
-    let nixArgs = $hostData.outputs.nixArgs
-    let system = $hostData.outputs.system
     let currentHost = (hostname | str trim)
 
-    log info $"currentSystem=($currentSystem) system=($system); currentHost=($currentHost) host=($host)"
+    log info $"currentSystem=($data.system) system=($hostData.outputs.system); currentHost=($currentHost) host=($host)"
 
     let runtime = {
-        system: $system
         host: $host
         hostFlake: $"($cleanFlake)#($host)"
-        # currentSystem: $currentSystem
-        # currentHost: $currentHost
         local: ($currentHost == $host)
-        darwin: ($system == "aarch64-darwin" or $system == "x86_64-darwin")
+        darwin: ($hostData.outputs.system in ["aarch64-darwin" "x86_64-darwin"])
     }
 
     if $runtime.local {
         log info $"Activating locally"
         if $runtime.darwin {
-            log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($runtime.hostFlake) ($nixArgs | str join)"
-            darwin-rebuild switch --flake $runtime.hostFlake ...$nixArgs 
+            log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($runtime.hostFlake) ($hostData.outputs.nixArgs | str join)"
+            darwin-rebuild switch --flake $runtime.hostFlake ...$hostData.outputs.nixArgs 
         } else {
-            log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($runtime.hostFlake) ($nixArgs | str join) --use-remote-sudo "
-            nixos-rebuild switch --flake $runtime.hostFlake ...$nixArgs  --use-remote-sudo
+            log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($runtime.hostFlake) ($hostData.outputs.nixArgs | str join) --use-remote-sudo "
+            nixos-rebuild switch --flake $runtime.hostFlake ...$hostData.outputs.nixArgs  --use-remote-sudo
         }
     } else {
-        log warning $"Activating *remotely* on ($sshTarget)"
-        nix copy ($cleanFlake) --to ($"ssh-ng://($sshTarget)")
+        log warning $"Activating *remotely* on ($hostData.sshTarget)"
+        nix copy ($cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
 
-        $overrideInputs | transpose key value | each { |input|
-            log info $"Copying input ($input.key) to ($sshTarget)"
-            log info $"(ansi blue_bold)>>>(ansi reset) nix copy ($input.value) --to ($"ssh-ng://($sshTarget)")"
-            nix copy ($input.value) --to ($"ssh-ng://($sshTarget)")
+        $hostData.outputs.overrideInputs | transpose key value | each { |input|
+            log info $"Copying input ($input.key) to ($hostData.sshTarget)"
+            log info $"(ansi blue_bold)>>>(ansi reset) nix copy ($input.value) --to ($"ssh-ng://($hostData.sshTarget)")"
+            nix copy ($input.value) --to ($"ssh-ng://($hostData.sshTarget)")
         }
 
         # TODO: don't delegate, just do it here.
-        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($nixArgs | str join) $"($cleanFlake)#activate" host ($runtime.host)'
-        ssh -t $sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$nixArgs $"($cleanFlake)#activate host ($runtime.host)"
+        log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($cleanFlake)#activate" host ($runtime.host)'
+        ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($cleanFlake)#activate host ($runtime.host)"
     }
 }
 
