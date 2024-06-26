@@ -173,8 +173,9 @@ in
                       let data = '${builtins.toJSON nixos-flake-configs}' | from json
                       def main [host: string] {
                         let CURRENT_HOSTNAME = (hostname | str trim)
+                        log info $"cur ($CURRENT_HOSTNAME)"
                         let HOSTNAME = ($host | default $CURRENT_HOSTNAME)
-                        log info "top: Activating ($HOSTNAME)"
+                        log info $"top: Activating ($HOSTNAME)"
                         let hostData = ($data | get $HOSTNAME)
                         ${lib.getExe pkgs.nushell} ${./activate.nu} $HOSTNAME ${system} ${cleanFlake} ($hostData | to json -r)
                       }
