@@ -28,7 +28,7 @@ def main [host: string, currentSystem: string, cleanFlake: string, hostData: str
             log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($runtime.hostFlake) ($nixArgs | str join)"
             darwin-rebuild switch --flake $runtime.hostFlake ...$nixArgs 
         } else {
-            log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($runtime.hostFlake) --use-remote-sudo ($nixArgs | str join)"
+            log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($runtime.hostFlake) ($nixArgs | str join) --use-remote-sudo "
             nixos-rebuild switch --flake $runtime.hostFlake ...$nixArgs  --use-remote-sudo
         }
     } else {
@@ -37,7 +37,7 @@ def main [host: string, currentSystem: string, cleanFlake: string, hostData: str
 
         $overrideInputs | transpose key value | each { |input|
             log info $"Copying input ($input.key) to ($sshTarget)"
-            # FIXME: need flake inputs.
+            log info $"(ansi blue_bold)>>>(ansi reset) nix copy ($input.value) --to ($"ssh-ng://($sshTarget)")"
             nix copy ($input.value) --to ($"ssh-ng://($sshTarget)")
         }
 
