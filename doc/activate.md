@@ -37,3 +37,10 @@ Then, you will be able to run the following to deploy to `myhost` from any machi
 ```sh
 nix run .#activate host myhost
 ```
+
+### Non-goals
+
+Remote activation doesn't seek to replace other deployment tools, and as such doesn't provide features like rollbacks. It is meant for simple deployment use cases. 
+
+>[!NOTE] Future
+> It is possible however that `nixos-flake` can grow to support more sophisticated deployment capabilities
