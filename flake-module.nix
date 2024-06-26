@@ -18,8 +18,8 @@ let
 in
 {
   options = {
-    perSystem = mkPerSystemOption
-      ({ config, self', inputs', pkgs, system, ... }: {
+    perSystem =
+      mkPerSystemOption ({ config, self', inputs', pkgs, system, ... }: {
         options.nixos-flake = lib.mkOption {
           default = { };
           type = types.submodule {
@@ -47,40 +47,8 @@ in
                 '';
               };
 
-            activate =
-              if hasNonEmptyAttr [ "darwinConfigurations" ] self || hasNonEmptyAttr [ "nixosConfigurations" ] self
-              then
-                pkgs.writeShellApplication
-                  {
-                    name = "activate";
-                    text =
-                      # TODO: Replace with deploy-rs or (new) nixinate
-                      if system == "aarch64-darwin" || system == "x86_64-darwin" then
-                        let
-                          # This is used just to pull out the `darwin-rebuild` script.
-                          # See also: https://github.com/LnL7/nix-darwin/issues/613
-                          emptyConfiguration = self.nixos-flake.lib.mkMacosSystem { nixpkgs.hostPlatform = system; };
-                        in
-                        ''
-                          HOSTNAME=$(hostname -s)
-                          set -x
-                          ${emptyConfiguration.system}/sw/bin/darwin-rebuild \
-                            switch \
-                            --flake "path:${self}#''${HOSTNAME}" \
-                            "$@"
-                        ''
-                      else
-                        ''
-                          HOSTNAME=$(hostname -s)
-                          set -x
-                          ${lib.getExe pkgs.nixos-rebuild} \
-                            switch \
-                            --flake "path:${self}#''${HOSTNAME}" \
-                            --use-remote-sudo \
-                            "$@"
-                        '';
-                  }
-              else null;
+            # New-style activate app that can also activately remotely over SSH.
+            activate = import ./activate { inherit self inputs' pkgs lib system; };
 
             activate-home =
               if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
@@ -104,6 +72,7 @@ in
 
   config = {
     flake = {
+      nixosModules.nixosFlake = ./nix/nixos-module.nix;
       # Linux home-manager module
       nixosModules.home-manager = {
         imports = [
@@ -115,6 +84,8 @@ in
           })
         ];
       };
+
+      darwinModules_.nixosFlake = ./nix/nixos-module.nix;
       # macOS home-manager module
       # This is named with an underscope, because flake-parts segfaults otherwise!
       # See https://github.com/srid/nixos-config/issues/31
@@ -134,12 +105,18 @@ in
         mkLinuxSystem = mod: inputs.nixpkgs.lib.nixosSystem {
           # Arguments to pass to all modules.
           specialArgs = specialArgsFor.nixos;
-          modules = [ mod ];
+          modules = [
+            self.nixosModules.nixosFlake
+            mod
+          ];
         };
 
         mkMacosSystem = mod: inputs.nix-darwin.lib.darwinSystem {
           specialArgs = specialArgsFor.darwin;
-          modules = [ mod ];
+          modules = [
+            self.darwinModules_.nixosFlake
+            mod
+          ];
         };
 
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
