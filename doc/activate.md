@@ -5,6 +5,20 @@
 
 In addition, it can also activate the system over SSH -- see next section.
 
+```sh
+nix run .#activate
+```
+
+Usually, you'd make this your default package, so as to be able to use `nix run`. In `flake.nix`:
+
+```nix
+# In perSystem
+{
+    packages.default = self'.packages.activate
+}
+```
+
+
 {#remote}
 ## Remote Activation
 
