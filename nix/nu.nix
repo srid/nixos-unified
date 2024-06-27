@@ -16,8 +16,8 @@
         text = ''
           use std *
           let bins = '${builtins.toJSON (builtins.map (p: "${p}/bin") runtimeInputs)}' | from json
+          log debug $"Adding runtime inputs to PATH: ($bins)"
           if $bins != [] {
-            log debug $"Adding runtime inputs to PATH: ($bins)"
             path add ...$bins
           }
         '';
@@ -33,6 +33,7 @@
       cd $out/bin
       rm -f ${mainScript}
       echo "#!${pkgs.nushell}/bin/nu" >> ${mainScript}
+      cat ${nixNuModule} >> ${mainScript}
       cat ${scriptDir}/${mainScript} >> ${mainScript}
       chmod a+x ${mainScript}
       ${extraBuildCommand}
