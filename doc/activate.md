@@ -1,23 +1,49 @@
 
 # Activation
 
-`nixos-flake` provides the `.#activate` flake app that can be used in place of `nixos-rebuild` (if using NixOS) and `darwin-rebuild` (if using `nix-darwin`).
+`nixos-flake` provides an `.#activate` flake app that can be used in place of `nixos-rebuild switch` (if using NixOS),`darwin-rebuild switch` (if using `nix-darwin`) or `home-manager switch` (if using home-manager)
 
-In addition, it can also activate the system over SSH -- see next section.
+In addition, it can also activate the system over SSH (see further below).
+
+{#system}
+## Activating NixOS or nix-darwin configurations
+
+
+In order to activate a system configuration for the current host (`$HOSTNAME`), run:
 
 ```sh
 nix run .#activate
 ```
 
-Usually, you'd make this your default package, so as to be able to use `nix run`. In `flake.nix`:
+>[!TIP] `nix run`
+> Usually, you'd make this your default package, so as to be able to use `nix run`. In `flake.nix`:
+> 
+> ```nix
+> # In perSystem
+> {
+>     packages.default = self'.packages.activate
+> }
+> ```
 
-```nix
-# In perSystem
-{
-    packages.default = self'.packages.activate
-}
+{#home}
+## Activating home configuration
+
+If you are on a non-NixOS Linux (or on macOS but you do not use nix-darwin), you will have a home-manager configuration. Suppose, you have it stored in `legacyPackages.homeConfigurations."myuser"` (where `myuser` matches `$USER`), you can activate that by running:
+
+```sh
+nix run .#activate $USER@
 ```
 
+>[!NOTE] `user@host`
+> The activate app will activate the home-manager configuration if the argument contains a `@` (separating user and the optional hostname). The above command has no hostname, indicating that we are activating for the local host.
+
+### Per-host home configurations
+
+You have host-specific home configurations, such as `legacyPackages.homeConfigurations."myuser@myhost"`, which can be activated using:
+
+```sh
+nix run .#activate $USER@$HOSTNAME
+```
 
 {#remote}
 ## Remote Activation
