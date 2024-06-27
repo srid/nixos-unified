@@ -8,7 +8,7 @@ let
         name = "nixos-flake-activate-flake";
         src = self;
       };
-      nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake or { }) (self.nixosConfigurations or { } // self.darwinConfigurations or { } // self.legacyPackages.${system}.homeConfigurations);
+      nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake or { }) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
       data = {
         nixos-flake-configs = nixos-flake-configs;
         system = system;

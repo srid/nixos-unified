@@ -53,14 +53,11 @@ def main [
 }
 
 def activate_home [ user: string, host: string ] {
-    if ($host | is-empty) {
+    if (($host | is-empty) or ($host == $CURRENT_HOSTNAME)) {
         activate_home_local $user $host
     } else {
-        # TODO: allow if host == CURRENT_HOSTNAME
         log error $"Remote activation not yet supported for homeConfigurations"
         exit 1
-        # let hostData = get_host_data $host
-        # activate_home_remote_ssh $user $hostData
     }
 }
 
