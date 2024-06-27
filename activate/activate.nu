@@ -3,6 +3,8 @@ use std assert
 
 use nixos-flake.nu getData  # This module is generated in Nix
 
+print "OKAY"
+
 let CURRENT_HOSTNAME = (hostname | str trim)
 let data = getData
 
@@ -44,7 +46,7 @@ def main [
 ] {
     let spec = parseFlakeOutputRef $ref
     if $spec.user != null {
-        activate_home $spec.user
+        activate_home $spec.user $spec.host
     } else {
         let host = if ($spec.host | is-empty) { $CURRENT_HOSTNAME } else { $spec.host }
         let hostData = get_host_data $host
@@ -53,10 +55,28 @@ def main [
 }
 
 # TODO: https://github.com/srid/nixos-flake/issues/18
-def activate_home [ user: string ] {
-    log error $"Cannot activate home environments yet; use .#activate-home instead"
-    exit 1
+def activate_home [ user: string, host: string ] {
+    # log error $"Cannot activate home environments yet; use .#activate-home instead"
+    # exit 1
+    if ($host | is-empty) {
+        activate_home_local $user
+    } else {
+        let hostData = get_host_data $host
+        activate_home_remote_ssh $user $hostData
+    }
 }
+
+def activate_home_local [ user: string ] {
+    log info $"Activating home configuration (ansi purple)locally(ansi reset)"
+    log info $"(ansi blue_bold)>>>(ansi reset) home-manager switch --dry-run --flake ($data.cleanFlake)#($user)"
+    home-manager switch --dry-run --flake $"($data.cleanFlake)#($user)"
+}
+
+#def activate_home_remote_ssh [ user: string, host: string ] {
+#    log info $"Activating home configuration (ansi purple_reverse)remotely(ansi reset) on ($hostData.sshTarget)"
+#    log info $"(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate-home ($user)"
+#    ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate ($user)"
+#}
 
 def activate_system [ hostData: record ] {
     log info $"(ansi grey)currentSystem=($data.system) currentHost=(ansi green_bold)($CURRENT_HOSTNAME)(ansi grey) targetHost=(ansi green_reverse)($hostData.host)(ansi reset)(ansi grey) hostData=($hostData)(ansi reset)"
@@ -71,7 +91,7 @@ def activate_system [ hostData: record ] {
             log error $"sshTarget not found in host data for ($hostData.host). Add `nixos-flake.sshTarget = \"user@hostname\";` to your configuration."
             exit 1
         }
-        activate_system_remote_ssh $hostData    
+        activate_system_remote_ssh $hostData
     }
 }
 

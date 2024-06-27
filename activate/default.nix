@@ -8,7 +8,7 @@ let
         name = "nixos-flake-activate-flake";
         src = self;
       };
-      nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
+      nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake or { }) (self.nixosConfigurations or { } // self.darwinConfigurations or { } // self.legacyPackages.${system}.homeConfigurations);
       data = {
         nixos-flake-configs = nixos-flake-configs;
         system = system;
@@ -36,9 +36,11 @@ nu.writeNushellApplication {
   mainScript = "activate.nu";
   runtimeInputs =
     # TODO: better way to check for nix-darwin availability
-    if pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs' then [
+    lib.optionals (pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs') [
       inputs'.nix-darwin.packages.default # Provides darwin-rebuild
-    ] else [
+    ] ++ lib.optionals (lib.hasAttr "home-manager" inputs') [
+      inputs'.home-manager.packages.default # Provides home-manager
+    ] ++ [
       pkgs.nixos-rebuild
     ];
   extraBuildCommand = ''
