@@ -37,6 +37,7 @@ nix run .#activate $USER@
 >[!NOTE] `user@host`
 > The activate app will activate the home-manager configuration if the argument contains a `@` (separating user and the optional hostname). The above command has no hostname, indicating that we are activating for the local host.
 
+{#home-perhost}
 ### Per-host home configurations
 
 You have host-specific home configurations, such as `legacyPackages.homeConfigurations."myuser@myhost"`, which can be activated using:
