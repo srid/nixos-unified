@@ -47,7 +47,7 @@ in
                 '';
               };
 
-            # New-style activate app that can also activately remotely over SSH.
+            # New-style activate app that can also activate remotely over SSH.
             activate = import ../activate { inherit self inputs' pkgs lib system; };
 
             activate-home =

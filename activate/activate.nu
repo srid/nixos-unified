@@ -4,6 +4,17 @@ use std assert
 use nixos-flake.nu getData  # This module is generated in Nix
 
 let CURRENT_HOSTNAME = (hostname | str trim)
+let data = getData
+
+def get_host_data [ host: string ] {
+    if $host not-in $data.nixos-flake-configs {
+        log error $"Host '($host)' not found in flake. Available hosts=($data.nixos-flake-configs | columns)"
+        exit 1
+    }
+    $data.nixos-flake-configs 
+        | get $host
+        | insert "flake" $"($data.cleanFlake)#($host)"
+}
 
 # Parse "[srid@]example" into { user: "srid", host: "example" }
 #
@@ -28,19 +39,20 @@ def main [
 ] {
     let spec = parseFlakeOutputRef $ref
     if $spec.user != null {
-        log error $"Cannot activate home environments yet; use .#activate-home instead"
-        exit 1
+        activate_home $spec.user
+    } else {
+        let host = if ($spec.host | is-empty) { $CURRENT_HOSTNAME } else { $spec.host }
+        let hostData = get_host_data $host
+        activate_system $host $hostData
     }
-    let host = if ($spec.host | is-empty) { $CURRENT_HOSTNAME } else { $spec.host }
-    let data = getData
-    if $host not-in $data.nixos-flake-configs {
-        log error $"Host '($host)' not found in flake. Available hosts=($data.nixos-flake-configs | columns)"
-        exit 1
-    }
-    let hostData = $data.nixos-flake-configs 
-        | get $host
-        | insert "flake" $"($data.cleanFlake)#($host)"
+}
 
+def activate_home [ user: string ] {
+    log error $"Cannot activate home environments yet; use .#activate-home instead"
+    exit 1
+}
+
+def activate_system [ host: string hostData: record ] {
     log info $"(ansi grey)currentSystem=($data.system) currentHost=(ansi green_bold)($CURRENT_HOSTNAME)(ansi grey) targetHost=(ansi green_reverse)($host)(ansi reset)(ansi grey) hostData=($hostData)(ansi reset)"
 
     let runtime = {
@@ -66,16 +78,19 @@ def main [
             exit 1
         }
         log info $"Activating (ansi purple_reverse)remotely(ansi reset) on ($hostData.sshTarget)"
-        nix copy ($data.cleanFlake) --to ($"ssh-ng://($hostData.sshTarget)")
+        nix_copy $data.cleanFlake $"ssh-ng://($hostData.sshTarget)"
 
         $hostData.outputs.overrideInputs | transpose key value | each { |input|
-            log info $"Copying input ($input.key) to ($hostData.sshTarget)"
-            log info $"(ansi blue_bold)>>>(ansi reset) nix copy ($input.value) --to ($"ssh-ng://($hostData.sshTarget)")"
-            nix copy ($input.value) --to ($"ssh-ng://($hostData.sshTarget)")
+            nix_copy $input.value $"ssh-ng://($hostData.sshTarget)"
         }
 
         # We re-run this script, but on the remote host.
         log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($hostData.sshTarget) nix --extra-experimental-features '"nix-command flakes"' run ($hostData.outputs.nixArgs | str join) $"($data.cleanFlake)#activate" ($host)'
         ssh -t $hostData.sshTarget nix --extra-experimental-features '"nix-command flakes"' run ...$hostData.outputs.nixArgs $"($data.cleanFlake)#activate ($host)"
     }
+}
+
+def nix_copy [ src: string dst: string ] {
+    log info $"(ansi blue_bold)>>>(ansi reset) nix copy ($src) --to ($dst)"
+    nix copy $src --to $dst
 }
