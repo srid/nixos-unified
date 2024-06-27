@@ -54,7 +54,7 @@ def main [
 
 def activate_home [ user: string, host: string ] {
     if ($host | is-empty) {
-        activate_home_local $user $home
+        activate_home_local $user $host
     } else {
         # TODO: allow if host == CURRENT_HOSTNAME
         log error $"Remote activation not yet supported for homeConfigurations"
