@@ -62,10 +62,10 @@ def activate_home [ user: string, host: string ] {
 }
 
 def activate_home_local [ user: string, host: string ] {
-    let name = $"#($user)" + (if ($host | is-empty) { "" } else { "@" + $host })
+    let name = $"($user)" + (if ($host | is-empty) { "" } else { "@" + $host })
     log info $"Activating home configuration ($name) (ansi purple)locally(ansi reset)"
-    log info $"(ansi blue_bold)>>>(ansi reset) home-manager switch --flake ($data.cleanFlake)($name)"
-    home-manager switch --flake $"($data.cleanFlake)($name)"
+    log info $"(ansi blue_bold)>>>(ansi reset) home-manager switch --flake ($data.cleanFlake)#($name)"
+    home-manager switch --flake $"($data.cleanFlake)#($name)"
 }
 
 def activate_system [ hostData: record ] {
