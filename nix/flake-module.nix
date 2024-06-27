@@ -100,8 +100,6 @@ in
         ];
       };
 
-      homeModules.nixosFlake = ./nixos-module.nix;
-
       nixos-flake.lib = rec {
         inherit specialArgsFor;
 
@@ -125,11 +123,7 @@ in
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = specialArgsFor.common;
-          modules = [
-            # FIXME: Getting `error: infinite recursion encountered` on `id = x: x`
-            # self.homeModules.nixosFlake
-            mod
-          ];
+          modules = [ mod ];
         };
       };
     };

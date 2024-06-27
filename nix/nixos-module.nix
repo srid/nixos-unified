@@ -1,3 +1,5 @@
+# FIXME: Using this module in home-manager leads to `error: infinite recursion
+# encountered` on `id = x: x`
 { flake, config, lib, ... }: {
   options = {
     nixos-flake.sshTarget = lib.mkOption {
