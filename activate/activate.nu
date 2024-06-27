@@ -44,7 +44,7 @@ def main [
 ] {
     let spec = parseFlakeOutputRef $ref
     if $spec.user != null {
-        activate_home $spec.user
+        activate_home $spec.user $spec.host
     } else {
         let host = if ($spec.host | is-empty) { $CURRENT_HOSTNAME } else { $spec.host }
         let hostData = get_host_data $host
@@ -52,10 +52,20 @@ def main [
     }
 }
 
-# TODO: https://github.com/srid/nixos-flake/issues/18
-def activate_home [ user: string ] {
-    log error $"Cannot activate home environments yet; use .#activate-home instead"
-    exit 1
+def activate_home [ user: string, host: string ] {
+    if (($host | is-empty) or ($host == $CURRENT_HOSTNAME)) {
+        activate_home_local $user $host
+    } else {
+        log error $"Remote activation not yet supported for homeConfigurations"
+        exit 1
+    }
+}
+
+def activate_home_local [ user: string, host: string ] {
+    let name = $"($user)" + (if ($host | is-empty) { "" } else { "@" + $host })
+    log info $"Activating home configuration ($name) (ansi purple)locally(ansi reset)"
+    log info $"(ansi blue_bold)>>>(ansi reset) home-manager switch --flake ($data.cleanFlake)#($name)"
+    home-manager switch --flake $"($data.cleanFlake)#($name)"
 }
 
 def activate_system [ hostData: record ] {
@@ -71,7 +81,7 @@ def activate_system [ hostData: record ] {
             log error $"sshTarget not found in host data for ($hostData.host). Add `nixos-flake.sshTarget = \"user@hostname\";` to your configuration."
             exit 1
         }
-        activate_system_remote_ssh $hostData    
+        activate_system_remote_ssh $hostData
     }
 }
 

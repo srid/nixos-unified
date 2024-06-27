@@ -36,9 +36,11 @@ nu.writeNushellApplication {
   mainScript = "activate.nu";
   runtimeInputs =
     # TODO: better way to check for nix-darwin availability
-    if pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs' then [
+    lib.optionals (pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs') [
       inputs'.nix-darwin.packages.default # Provides darwin-rebuild
-    ] else [
+    ] ++ lib.optionals (lib.hasAttr "home-manager" inputs') [
+      inputs'.home-manager.packages.default # Provides home-manager
+    ] ++ [
       pkgs.nixos-rebuild
     ];
   extraBuildCommand = ''

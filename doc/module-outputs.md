@@ -8,8 +8,7 @@ Importing the `nixos-flake` flake-parts module will autowire the following flake
 | **nixosModules.home-manager**  | Home-manager setup module for NixOS            |
 | **darwinModules_.home-manager**[^und] | Home-manager setup module for Darwin           |
 | **packages.update**            | Flake app to update key flake inputs            |
-| [[activate\|packages.activate]]          | Flake app to build & activate the system (locally or remotely over SSH)       |
-| **packages.activate-home**[^home]          | Flake app to build & activate the `homeConfigurations` for current user       |
+| [[activate\|packages.activate]]          | Flake app to build & activate the system (locally or remotely over SSH) or home configuration       |
 
 In addition, all of your NixOS/nix-darwin/home-manager modules implicitly receive the following `specialArgs`:
 

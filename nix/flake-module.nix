@@ -47,24 +47,8 @@ in
                 '';
               };
 
-            # New-style activate app that can also activate remotely over SSH.
+            # Activate the given (system or home) configuration
             activate = import ../activate { inherit self inputs' pkgs lib system; };
-
-            activate-home =
-              if hasNonEmptyAttr [ "homeConfigurations" ] self || hasNonEmptyAttr [ "legacyPackages" system "homeConfigurations" ] self
-              then
-                pkgs.writeShellApplication
-                  {
-                    name = "activate-home";
-                    text =
-                      ''
-                        set -x
-                        nix run \
-                          .#homeConfigurations."\"''${USER}\"".activationPackage \
-                          "$@"
-                      '';
-                  }
-              else null;
           };
         };
       });

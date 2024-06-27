@@ -43,7 +43,7 @@ nix flake init -t github:srid/nixos-flake#home
 ## After initializing the template
 
 1. open the generated `flake.nix` and change the user (from "john") as well as hostname (from "example1") to match that of your environment (Run `echo $USER` and `hostname -s` to determine the new values).[^intel] 
-2. Then run `nix run .#activate` (`nix run .#activate-home` if you are using the 4th template) to activate the configuration.
+2. Then run `nix run .#activate` (`nix run .#activate $USER` if you are using the 4th template, "Home only") to activate the configuration.
 
 [^intel]: If you are on an Intel Mac, change `mkARMMacosSystem` to `mkIntelMacosSystem`.
 
