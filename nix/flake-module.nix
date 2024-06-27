@@ -99,7 +99,6 @@ in
           })
         ];
       };
-
       nixos-flake.lib = rec {
         inherit specialArgsFor;
 
