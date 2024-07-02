@@ -23,9 +23,10 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - run: |
+      - name: nixci build
+        run: |
           nixci \
             --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" \
             build \
-            --systems "github:nix-systems/${{ matrix.system }}" \
+            --systems "${{ matrix.system }}" \
             .#default.${{ matrix.subflake}}
