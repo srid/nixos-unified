@@ -5,10 +5,11 @@
   #
   # This function likely should be improved for general use.
   writeNushellApplication =
-    { runtimeInputs ? [ ]
-    , mainScript
+    { name
+    , runtimeInputs ? [ ]
     , scriptDir
     , extraBuildCommand ? ""
+    , meta
     }:
     let
       nixNuModule = pkgs.writeTextFile {
@@ -23,19 +24,19 @@
         '';
       };
     in
-    pkgs.runCommandNoCC mainScript
+    pkgs.runCommandNoCC name
       {
-        meta.mainProgram = mainScript;
+        inherit meta;
       } ''
       mkdir -p $out/bin
       cp ${scriptDir}/*.nu $out/bin/
       chmod -R a+w $out/bin
       cd $out/bin
-      rm -f ${mainScript}
-      echo "#!${pkgs.nushell}/bin/nu" >> ${mainScript}
-      cat ${nixNuModule} >> ${mainScript}
-      cat ${scriptDir}/${mainScript} >> ${mainScript}
-      chmod a+x ${mainScript}
+      rm -f ${meta.mainProgram}
+      echo "#!${pkgs.nushell}/bin/nu" >> ${meta.mainProgram}
+      cat ${nixNuModule} >> ${meta.mainProgram}
+      cat ${scriptDir}/${meta.mainProgram} >> ${meta.mainProgram}
+      chmod a+x ${meta.mainProgram}
       ${extraBuildCommand}
     '';
 

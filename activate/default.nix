@@ -32,8 +32,12 @@ let
   nu = import ../nix/nu.nix { inherit pkgs; };
 in
 nu.writeNushellApplication {
+  name = "activate";
   scriptDir = ./.;
-  mainScript = "activate.nu";
+  meta = {
+    mainProgram = "activate.nu";
+    description = "Activate NixOS/nix-darwin/home-manager configurations";
+  };
   runtimeInputs =
     # TODO: better way to check for nix-darwin availability
     lib.optionals (pkgs.stdenv.isDarwin && lib.hasAttr "nix-darwin" inputs') [
