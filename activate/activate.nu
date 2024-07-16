@@ -3,7 +3,7 @@ use std assert
 
 use nixos-flake.nu getData  # This module is generated in Nix
 
-let CURRENT_HOSTNAME = (hostname | str trim)
+let CURRENT_HOSTNAME = (hostname -s | str trim)
 let data = getData
 
 # Get all the data associated with a host
