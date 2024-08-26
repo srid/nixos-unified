@@ -26,7 +26,7 @@
         };
       };
 
-    nixci.default = let overrideInputs = { nixos-flake = ./.; }; in {
+    om.ci.default = let overrideInputs = { nixos-flake = ./.; }; in {
       docs.dir = "doc";
       macos = {
         inherit overrideInputs;
