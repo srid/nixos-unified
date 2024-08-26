@@ -12,7 +12,7 @@ jobs:
     steps:
      - uses: actions/checkout@v4
      - id: set-matrix
-       run: echo "matrix=$(nixci gh-matrix --systems=x86_64-linux,x86_64-darwin,aarch64-darwin | jq -c .)" >> $GITHUB_OUTPUT
+       run: echo "matrix=$(om ci gh-matrix --systems=x86_64-linux,x86_64-darwin,aarch64-darwin | jq -c .)" >> $GITHUB_OUTPUT
   nix:
     runs-on: ${{ matrix.system }}
     permissions:
@@ -23,10 +23,10 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - name: nixci build
+      - name: om ci
         run: |
-          nixci \
+          om ci \
             --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" \
-            build \
+            run \
             --systems "${{ matrix.system }}" \
             .#default.${{ matrix.subflake}}
