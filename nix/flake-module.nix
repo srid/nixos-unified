@@ -42,6 +42,7 @@ in
               in
               pkgs.writeShellApplication {
                 name = "update-main-flake-inputs";
+                meta.description = "Update the primary flake inputs";
                 text = ''
                   nix flake lock ${lib.foldl' (acc: x: acc + " --update-input " + x) "" inputs}
                 '';
