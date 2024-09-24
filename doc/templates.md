@@ -50,6 +50,10 @@ nix flake init -t github:srid/nixos-flake#home
       sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
       nix --extra-experimental-features "nix-command flakes" run .#activate
       ```
+    - on macOS, if you had used Determinate Systems nix-installer, you may want to [uninstall that Nix](https://github.com/LnL7/nix-darwin/issues/931#issuecomment-2075596824), such that we use the one provided by nix-darwin,
+      ```sh
+      sudo -i nix-env --uninstall nix
+      ```
 
 [^intel]: If you are on an Intel Mac, also change `nixpkgs.hostPlatform` accordingly.
 
