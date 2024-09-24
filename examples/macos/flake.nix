@@ -8,7 +8,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixos-flake.url = "github:srid/nixos-flake/darwin";
+    nixos-flake.url = "github:srid/nixos-flake";
   };
 
   outputs = inputs@{ self, ... }:
