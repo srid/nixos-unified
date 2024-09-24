@@ -65,8 +65,12 @@
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
                 self.nixosModules.darwin
+                self.darwinModules_.nix-darwin
                 # Your machine's configuration.nix goes here
                 ({ pkgs, ... }: {
+                  # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
+                  users.users.${myUserName}.home = "/Users/${myUserName}";
+
                   # Used for backwards compatibility, please read the changelog before changing.
                   # $ darwin-rebuild changelog
                   system.stateVersion = 4;

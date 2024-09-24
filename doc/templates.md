@@ -42,9 +42,15 @@ nix flake init -t github:srid/nixos-flake#home
 
 ## After initializing the template
 
-1. open the generated `flake.nix` and change the user (from "john") as well as hostname (from "example1") to match that of your environment (Run `echo $USER` and `hostname -s` to determine the new values).[^intel] 
-2. Then run `nix run .#activate` (`nix run .#activate $USER` if you are using the 4th template, "Home only") to activate the configuration.
+1. Open `flake.nix` and change the user (from `john`) and hostname (from `example1`)[^intel]
+    - Run `echo $USER` and `hostname -s` to determine the new values.
+1. Then run `nix run .#activate` (`nix run .#activate $USER` if you are using the 4th template, "Home only") to activate the configuration.
+    - on macOS, if you get an error about `/etc/nix/nix.conf`, run:
+      ```sh
+      sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+      nix --extra-experimental-features "nix-command flakes" run .#activate
+      ```
 
-[^intel]: If you are on an Intel Mac, change `mkARMMacosSystem` to `mkIntelMacosSystem`.
+[^intel]: If you are on an Intel Mac, also change `nixpkgs.hostPlatform` accordingly.
 
 [home-manager]: https://github.com/nix-community/home-manager
