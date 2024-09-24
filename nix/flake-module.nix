@@ -57,33 +57,38 @@ in
 
   config = {
     flake = {
-      nixosModules.nixosFlake = ./nixos-module.nix;
-      # Linux home-manager module
-      nixosModules.home-manager = {
-        imports = [
-          inputs.home-manager.nixosModules.home-manager
-          ({
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = specialArgsFor.nixos;
-          })
-        ];
+      nixosModules = {
+        nixosFlake = ./nixos-module.nix;
+        # Linux home-manager module
+        home-manager = {
+          imports = [
+            inputs.home-manager.nixosModules.home-manager
+            ({
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = specialArgsFor.nixos;
+            })
+          ];
+        };
       };
 
-      darwinModules_.nixosFlake = ./nixos-module.nix;
-      # macOS home-manager module
-      # This is named with an underscope, because flake-parts segfaults otherwise!
-      # See https://github.com/srid/nixos-config/issues/31
-      darwinModules_.home-manager = {
-        imports = [
-          inputs.home-manager.darwinModules.home-manager
-          ({
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = specialArgsFor.darwin;
-          })
-        ];
+      darwinModules_ = {
+        nixosFlake = ./nixos-module.nix;
+        # macOS home-manager module
+        # This is named with an underscope, because flake-parts segfaults otherwise!
+        # See https://github.com/srid/nixos-config/issues/31
+        home-manager = {
+          imports = [
+            inputs.home-manager.darwinModules.home-manager
+            ({
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = specialArgsFor.darwin;
+            })
+          ];
+        };
       };
+
       nixos-flake.lib = rec {
         inherit specialArgsFor;
 
