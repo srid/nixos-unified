@@ -26,25 +26,27 @@
         };
       };
 
-    om.ci.default = let overrideInputs = { nixos-flake = ./.; }; in {
-      docs.dir = "doc";
-      macos = {
-        inherit overrideInputs;
-        dir = "examples/macos";
-        systems = [ "x86_64-darwin" "aarch64-darwin" ];
-      };
-      home = {
-        inherit overrideInputs;
-        dir = "examples/home";
-      };
-      linux = {
-        inherit overrideInputs;
-        dir = "examples/linux";
-        systems = [ "x86_64-linux" "aarch64-linux" ];
-      };
-      both = {
-        inherit overrideInputs;
-        dir = "examples/both";
+    om = {
+      ci.default = let overrideInputs = { nixos-flake = ./.; }; in {
+        docs.dir = "doc";
+        macos = {
+          inherit overrideInputs;
+          dir = "examples/macos";
+          systems = [ "x86_64-darwin" "aarch64-darwin" ];
+        };
+        home = {
+          inherit overrideInputs;
+          dir = "examples/home";
+        };
+        linux = {
+          inherit overrideInputs;
+          dir = "examples/linux";
+          systems = [ "x86_64-linux" "aarch64-linux" ];
+        };
+        both = {
+          inherit overrideInputs;
+          dir = "examples/both";
+        };
       };
     };
   };
