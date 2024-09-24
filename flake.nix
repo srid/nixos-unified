@@ -1,5 +1,5 @@
 {
-  outputs = inputs: {
+  outputs = inputs: rec {
     flakeModule = ./nix/flake-module.nix;
 
     templates =
@@ -27,6 +27,23 @@
       };
 
     om = {
+      templates = {
+        macos = {
+          template = templates.macos;
+          params = [
+            {
+              name = "username";
+              description = "$USER";
+              placeholder = "john";
+            }
+            {
+              name = "hostname";
+              description = "Hostname of the machine";
+              placeholder = "example1";
+            }
+          ];
+        };
+      };
       ci.default = let overrideInputs = { nixos-flake = ./.; }; in {
         docs.dir = "doc";
         macos = {
