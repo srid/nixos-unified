@@ -87,6 +87,23 @@ in
             })
           ];
         };
+        # nix-darwin module containing necessary configuration
+        nix-darwin = {
+          # Required when using the DetSys installer
+          # cf.  https://github.com/srid/nixos-flake/issues/52
+          nix = {
+            useDaemon = true;
+            settings = {
+              experimental-features = "nix-command flakes";
+            };
+            users.users.${myUserName}.home = "/Users/${myUserName}";
+            home.sessionPath = [
+              "/etc/profiles/per-user/$USER/bin"
+              "/nix/var/nix/profiles/system/sw/bin"
+              "/usr/local/bin"
+            ];
+          };
+        };
       };
 
       nixos-flake.lib = rec {

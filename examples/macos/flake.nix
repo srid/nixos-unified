@@ -27,10 +27,9 @@
           darwinConfigurations.example1 = self.nixos-flake.lib.mkMacosSystem {
             nixpkgs.hostPlatform = "aarch64-darwin";
             imports = [
+              self.darwinModules_.nix-darwin
               # Your nix-darwin configuration goes here
               ({ pkgs, ... }: {
-                nix.useDaemon = true;
-                users.users.${myUserName}.home = "/Users/${myUserName}";
                 security.pam.enableSudoTouchIdAuth = true;
 
                 # Used for backwards compatibility, please read the changelog before changing.
