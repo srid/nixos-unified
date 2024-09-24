@@ -67,6 +67,10 @@
                 self.nixosModules.darwin
                 # Your machine's configuration.nix goes here
                 ({ pkgs, ... }: {
+                  nix.useDaemon = true;
+                  users.users.${myUserName}.home = "/Users/${myUserName}";
+                  security.pam.enableSudoTouchIdAuth = true;
+
                   # Used for backwards compatibility, please read the changelog before changing.
                   # $ darwin-rebuild changelog
                   system.stateVersion = 4;
