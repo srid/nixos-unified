@@ -27,7 +27,7 @@
       };
 
     om = {
-      templates = {
+      templates = rec {
         macos = {
           template = templates.macos;
           params = [
@@ -42,6 +42,11 @@
               placeholder = "example1";
             }
           ];
+        };
+
+        both = {
+          template = templates.both;
+          inherit (macos) params;
         };
       };
       ci.default = let overrideInputs = { nixos-flake = ./.; }; in {

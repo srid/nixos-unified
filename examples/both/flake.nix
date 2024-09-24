@@ -20,14 +20,12 @@
 
       flake =
         let
-          # TODO: Change username
           myUserName = "john";
         in
         {
           # Configurations for Linux (NixOS) machines
           nixosConfigurations = {
-            # TODO: Change hostname from "example1" to something else.
-            example1 = self.nixos-flake.lib.mkLinuxSystem {
+            "example1" = self.nixos-flake.lib.mkLinuxSystem {
               nixpkgs.hostPlatform = "x86_64-linux";
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
@@ -59,8 +57,7 @@
 
           # Configurations for macOS machines
           darwinConfigurations = {
-            # TODO: Change hostname from "example1" to something else.
-            example1 = self.nixos-flake.lib.mkMacosSystem {
+            "example1" = self.nixos-flake.lib.mkMacosSystem {
               nixpkgs.hostPlatform = "aarch64-darwin";
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!

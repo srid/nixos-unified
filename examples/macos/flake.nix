@@ -18,13 +18,11 @@
 
       flake =
         let
-          # TODO: Change username
           myUserName = "john";
         in
         {
           # Configurations for macOS machines
-          # TODO: Change hostname from "example1" to something else.
-          darwinConfigurations.example1 = self.nixos-flake.lib.mkMacosSystem {
+          darwinConfigurations."example1"" = self.nixos-flake.lib.mkMacosSystem {
             nixpkgs.hostPlatform = "aarch64-darwin";
             imports = [
               self.darwinModules_.nix-darwin
