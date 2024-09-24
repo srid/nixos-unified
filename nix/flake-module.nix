@@ -88,20 +88,19 @@ in
           ];
         };
         # nix-darwin module containing necessary configuration
+        # Required when using the DetSys installer
+        # cf.  https://github.com/srid/nixos-flake/issues/52
         nix-darwin = {
-          # Required when using the DetSys installer
-          # cf.  https://github.com/srid/nixos-flake/issues/52
+          home.sessionPath = [
+            "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
+            "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
+            "/usr/local/bin" # Some macOS GUI programs install here
+          ];
           nix = {
             useDaemon = true; # Required on multi-user Nix install
             settings = {
               experimental-features = "nix-command flakes"; # Enable flak3es
             };
-
-            home.sessionPath = [
-              "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
-              "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
-              "/usr/local/bin" # Some macOS GUI programs install here
-            ];
           };
         };
       };
