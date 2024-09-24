@@ -84,6 +84,13 @@ in
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = specialArgsFor.darwin;
+              home-manager.sharedModules = [{
+                home.sessionPath = [
+                  "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
+                  "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
+                  "/usr/local/bin" # Some macOS GUI programs install here
+                ];
+              }];
             })
           ];
         };
@@ -91,11 +98,6 @@ in
         # Required when using the DetSys installer
         # cf.  https://github.com/srid/nixos-flake/issues/52
         nix-darwin = {
-          home.sessionPath = [
-            "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
-            "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
-            "/usr/local/bin" # Some macOS GUI programs install here
-          ];
           nix = {
             useDaemon = true; # Required on multi-user Nix install
             settings = {
