@@ -28,32 +28,6 @@
 
     om = {
       templates = rec {
-        both = {
-          template = templates.both;
-          params = [
-            {
-              name = "username";
-              description = "$USER";
-              placeholder = "john";
-            }
-            {
-              name = "hostname";
-              description = "Hostname of the machine";
-              placeholder = "example1";
-            }
-          ];
-        };
-
-        macos = {
-          template = templates.macos;
-          inherit (both) params;
-        };
-
-        linux = {
-          template = templates.linux;
-          inherit (both) params;
-        };
-
         home = {
           template = templates.home;
           params = [
@@ -64,7 +38,29 @@
             }
           ];
         };
+
+        both = {
+          template = templates.both;
+          inherit (home) params;
+        };
+
+        macos = {
+          template = templates.macos;
+          params = home.params ++ [
+            {
+              name = "hostname";
+              description = "Hostname of the machine";
+              placeholder = "example1";
+            }
+          ];
+        };
+
+        linux = {
+          template = templates.linux;
+          inherit (macos) params;
+        };
       };
+
       ci.default = let overrideInputs = { nixos-flake = ./.; }; in {
         docs.dir = "doc";
         macos = {

@@ -10,7 +10,8 @@ We provide four templates, depending on your needs:
 NixOS, nix-darwin, [home-manager] configuration combined, with common modules.
 
 ```bash
-nix flake init -t github:srid/nixos-flake
+nix --accept-flake-config run github:juspay/omnix --
+  init -o ~/nix-config github:srid/nixos-flake#both
 ```
 
 {#nixos}
@@ -19,7 +20,8 @@ nix flake init -t github:srid/nixos-flake
 NixOS configuration only, with [home-manager]
 
 ```sh
-nix flake init -t github:srid/nixos-flake#linux
+nix --accept-flake-config run github:juspay/omnix --
+  init -o ~/nix-config github:srid/nixos-flake#linux
 ```
 
 {#macos}
@@ -28,7 +30,8 @@ nix flake init -t github:srid/nixos-flake#linux
 nix-darwin configuration only, with [home-manager]
 
 ```sh
-nix flake init -t github:srid/nixos-flake#macos
+nix --accept-flake-config run github:juspay/omnix --
+  init -o ~/nix-config github:srid/nixos-flake#macos
 ```
 
 {#home}
@@ -37,7 +40,8 @@ nix flake init -t github:srid/nixos-flake#macos
 [home-manager] configuration only (useful if you use other Linux distros or do not have admin access to the machine)
 
 ```bash
-nix flake init -t github:srid/nixos-flake#home
+nix --accept-flake-config run github:juspay/omnix --
+  init -o ~/nix-config github:srid/nixos-flake#home
 ```
 
 ## After initializing the template

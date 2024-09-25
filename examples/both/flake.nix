@@ -25,7 +25,8 @@
         {
           # Configurations for Linux (NixOS) machines
           nixosConfigurations = {
-            "example1" = self.nixos-flake.lib.mkLinuxSystem {
+            # TODO: Replace this hostname!
+            "linux-host" = self.nixos-flake.lib.mkLinuxSystem {
               nixpkgs.hostPlatform = "x86_64-linux";
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
@@ -57,7 +58,8 @@
 
           # Configurations for macOS machines
           darwinConfigurations = {
-            "example1" = self.nixos-flake.lib.mkMacosSystem {
+            # TODO: Replace this hostname!
+            "macos-host" = self.nixos-flake.lib.mkMacosSystem {
               nixpkgs.hostPlatform = "aarch64-darwin";
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
