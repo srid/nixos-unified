@@ -16,13 +16,11 @@
 
       flake =
         let
-          # TODO: Change username
           myUserName = "john";
         in
         {
           # Configurations for Linux (NixOS) machines
-          # TODO: Change hostname from "example1" to something else.
-          nixosConfigurations.example1 = self.nixos-flake.lib.mkLinuxSystem {
+          nixosConfigurations."example1" = self.nixos-flake.lib.mkLinuxSystem {
             nixpkgs.hostPlatform = "x86_64-linux";
             imports = [
               # Your machine's configuration.nix goes here

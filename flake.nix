@@ -1,5 +1,5 @@
 {
-  outputs = inputs: {
+  outputs = inputs: rec {
     flakeModule = ./nix/flake-module.nix;
 
     templates =
@@ -27,6 +27,40 @@
       };
 
     om = {
+      templates = rec {
+        home = {
+          template = templates.home;
+          params = [
+            {
+              name = "username";
+              description = "The $USER to apply home-manager configuration on";
+              placeholder = "john";
+            }
+          ];
+        };
+
+        both = {
+          template = templates.both;
+          inherit (home) params;
+        };
+
+        macos = {
+          template = templates.macos;
+          params = home.params ++ [
+            {
+              name = "hostname";
+              description = "Hostname of the machine";
+              placeholder = "example1";
+            }
+          ];
+        };
+
+        linux = {
+          template = templates.linux;
+          inherit (macos) params;
+        };
+      };
+
       ci.default = let overrideInputs = { nixos-flake = ./.; }; in {
         docs.dir = "doc";
         macos = {
