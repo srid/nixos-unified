@@ -14,7 +14,7 @@ You can easily initialize one of our templates using [Omnix](https://omnix.page/
 NixOS, nix-darwin, [home-manager] configuration combined, with common modules.
 
 ```bash
-nix --accept-flake-config run github:juspay/omnix --
+nix --accept-flake-config run github:juspay/omnix -- \
   init -o ~/nix-config github:srid/nixos-flake#both
 ```
 
@@ -24,7 +24,7 @@ nix --accept-flake-config run github:juspay/omnix --
 NixOS configuration only, with [home-manager]
 
 ```sh
-nix --accept-flake-config run github:juspay/omnix --
+nix --accept-flake-config run github:juspay/omnix -- \
   init -o ~/nix-config github:srid/nixos-flake#linux
 ```
 
@@ -34,7 +34,7 @@ nix --accept-flake-config run github:juspay/omnix --
 nix-darwin configuration only, with [home-manager]
 
 ```sh
-nix --accept-flake-config run github:juspay/omnix --
+nix --accept-flake-config run github:juspay/omnix -- \
   init -o ~/nix-config github:srid/nixos-flake#macos
 ```
 
@@ -44,7 +44,7 @@ nix --accept-flake-config run github:juspay/omnix --
 [home-manager] configuration only (useful if you use other Linux distros or do not have admin access to the machine)
 
 ```bash
-nix --accept-flake-config run github:juspay/omnix --
+nix --accept-flake-config run github:juspay/omnix -- \
   init -o ~/nix-config github:srid/nixos-flake#home
 ```
 
