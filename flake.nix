@@ -28,8 +28,8 @@
 
     om = {
       templates = rec {
-        macos = {
-          template = templates.macos;
+        both = {
+          template = templates.both;
           params = [
             {
               name = "username";
@@ -44,9 +44,25 @@
           ];
         };
 
-        both = {
-          template = templates.both;
-          inherit (macos) params;
+        macos = {
+          template = templates.macos;
+          inherit (both) params;
+        };
+
+        linux = {
+          template = templates.linux;
+          inherit (both) params;
+        };
+
+        home = {
+          template = templates.home;
+          params = [
+            {
+              name = "username";
+              description = "$USER";
+              placeholder = "john";
+            }
+          ];
         };
       };
       ci.default = let overrideInputs = { nixos-flake = ./.; }; in {

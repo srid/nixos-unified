@@ -18,7 +18,6 @@
 
       perSystem = { pkgs, ... }:
         let
-          # TODO: Change username
           myUserName = "john";
         in
         {
