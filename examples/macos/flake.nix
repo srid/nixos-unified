@@ -22,7 +22,7 @@
         in
         {
           # Configurations for macOS machines
-          darwinConfigurations."example1"" = self.nixos-flake.lib.mkMacosSystem {
+          darwinConfigurations."example1" = self.nixos-flake.lib.mkMacosSystem {
             nixpkgs.hostPlatform = "aarch64-darwin";
             imports = [
               self.darwinModules_.nix-darwin
@@ -58,4 +58,3 @@
         };
     };
 }
-

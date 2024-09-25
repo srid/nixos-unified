@@ -4,6 +4,10 @@ We provide four templates, depending on your needs:
 
 ## Available templates
 
+You can easily initialize one of our templates using [Omnix](https://omnix.page/om/init.html)[^no-omnix]:
+
+[^no-omnix]: If you do not use Omnix, you must use `nix flake init`, and manually change the template values such as username and hostname.
+
 {#both}
 ### Both platforms
 

@@ -33,7 +33,7 @@
           params = [
             {
               name = "username";
-              description = "$USER";
+              description = "The $USER to apply home-manager configuration on";
               placeholder = "john";
             }
           ];
