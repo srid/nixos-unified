@@ -20,27 +20,29 @@
         in
         {
           # Configurations for Linux (NixOS) machines
-          nixosConfigurations."example1" = self.nixos-flake.lib.mkLinuxSystem {
-            nixpkgs.hostPlatform = "x86_64-linux";
-            imports = [
-              # Your machine's configuration.nix goes here
-              ({ pkgs, ... }: {
-                # TODO: Put your /etc/nixos/hardware-configuration.nix here
-                boot.loader.grub.device = "nodev";
-                fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "btrfs"; };
-                users.users.${myUserName}.isNormalUser = true;
-                system.stateVersion = "23.05";
-              })
-              # Setup home-manager in NixOS config
-              self.nixosModules.home-manager
+          nixosConfigurations."example1" =
+            self.nixos-flake.lib.mkLinuxSystem
+              { home-manager = true; }
               {
-                home-manager.users.${myUserName} = {
-                  imports = [ self.homeModules.default ];
-                  home.stateVersion = "22.11";
-                };
-              }
-            ];
-          };
+                nixpkgs.hostPlatform = "x86_64-linux";
+                imports = [
+                  # Your machine's configuration.nix goes here
+                  ({ pkgs, ... }: {
+                    # TODO: Put your /etc/nixos/hardware-configuration.nix here
+                    boot.loader.grub.device = "nodev";
+                    fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "btrfs"; };
+                    users.users.${myUserName}.isNormalUser = true;
+                    system.stateVersion = "23.05";
+                  })
+                  # Setup home-manager in NixOS config
+                  {
+                    home-manager.users.${myUserName} = {
+                      imports = [ self.homeModules.default ];
+                      home.stateVersion = "22.11";
+                    };
+                  }
+                ];
+              };
 
           # home-manager configuration goes here.
           homeModules.default = { pkgs, ... }: {
