@@ -25,7 +25,6 @@
           darwinConfigurations."example1" = self.nixos-flake.lib.mkMacosSystem {
             nixpkgs.hostPlatform = "aarch64-darwin";
             imports = [
-              self.darwinModules_.nix-darwin
               # Your nix-darwin configuration goes here
               ({ pkgs, ... }: {
                 # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
