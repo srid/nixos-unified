@@ -7,11 +7,6 @@
         tmplPath = path: builtins.path { inherit path; filter = path: _: baseNameOf path != "test.sh"; };
       in
       rec {
-        default = both;
-        both = {
-          description = "nixos-flake template for both Linux and macOS in same flake";
-          path = tmplPath ./examples/both;
-        };
         linux = {
           description = "nixos-flake template for NixOS configuration.nix";
           path = tmplPath ./examples/linux;
@@ -37,11 +32,6 @@
               placeholder = "john";
             }
           ];
-        };
-
-        both = {
-          template = templates.both;
-          inherit (home) params;
         };
 
         macos = {
@@ -76,10 +66,6 @@
           inherit overrideInputs;
           dir = "examples/linux";
           systems = [ "x86_64-linux" "aarch64-linux" ];
-        };
-        both = {
-          inherit overrideInputs;
-          dir = "examples/both";
         };
       };
     };

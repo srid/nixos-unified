@@ -23,6 +23,4 @@ For a more automated way to install NixOS, see [nixos-anywhere](https://github.c
 ## macOS
 
 1. [Install Nix](https://nixos.asia/en/install)
-1. Use the [[templates|macOS only template]][^both]
-
-[^both]: Alternatively, use the "Both platforms" [[templates|template]] if you are sharing your configuration with the other platform as well.
+1. Use the [[templates|macOS only template]]
