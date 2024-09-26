@@ -15,5 +15,3 @@ In addition, all of your NixOS/nix-darwin/home-manager modules implicitly receiv
 
 
 [^home]: This will soon be removed in favour of the [[activate|activate app]]. See https://github.com/srid/nixos-flake/issues/18
-
-[^und]: Why the underscore in `darwinModules_`? This is to workaround a segfault with flake-parts. See https://github.com/srid/nixos-config/issues/31
