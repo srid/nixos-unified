@@ -1,5 +1,5 @@
 {
-  outputs = inputs: rec {
+  outputs = _: rec {
     flakeModule = ./nix/flake-module.nix;
 
     templates =

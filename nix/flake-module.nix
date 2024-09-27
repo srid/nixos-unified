@@ -103,7 +103,7 @@ in
 
   config = {
     flake = {
-      nixos-flake.lib = rec {
+      nixos-flake.lib = {
         inherit specialArgsFor;
 
         mkLinuxSystem = { home-manager ? false }: mod: inputs.nixpkgs.lib.nixosSystem {
