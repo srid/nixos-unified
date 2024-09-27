@@ -26,6 +26,7 @@
           ];
           packages = with pkgs; [
             just
+            nixd
           ];
           shellHook = ''
             echo
