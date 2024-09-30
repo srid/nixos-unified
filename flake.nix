@@ -1,12 +1,12 @@
 {
   outputs = _: rec {
-    flakeModule = ./nix/flake-module.nix;
+    flakeModule = ./nix/modules/flake-parts;
 
     templates =
       let
         tmplPath = path: builtins.path { inherit path; filter = path: _: baseNameOf path != "test.sh"; };
       in
-      rec {
+      {
         linux = {
           description = "nixos-flake template for NixOS configuration.nix";
           path = tmplPath ./examples/linux;
