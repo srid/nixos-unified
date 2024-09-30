@@ -46,6 +46,7 @@ nu.writeNushellApplication {
       inputs'.home-manager.packages.default # Provides home-manager
     ] ++ [
       pkgs.nixos-rebuild
+      pkgs.hostname
     ];
   extraBuildCommand = ''
     cp ${nixosFlakeNuModule} nixos-flake.nu
