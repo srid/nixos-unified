@@ -66,7 +66,7 @@ in
           # Arguments to pass to all modules.
           specialArgs = specialArgsFor.nixos;
           modules = [
-            ../nixos
+            ../configurations
             mod
           ] ++ lib.optional home-manager nixosModules.home-manager;
         };
@@ -74,7 +74,7 @@ in
         mkMacosSystem = { home-manager ? false }: mod: inputs.nix-darwin.lib.darwinSystem {
           specialArgs = specialArgsFor.darwin;
           modules = [
-            ../nixos
+            ../configurations
             darwinModules.nix-darwin
             mod
           ] ++ lib.optional home-manager darwinModules.home-manager;
