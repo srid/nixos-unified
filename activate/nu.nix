@@ -1,4 +1,7 @@
 # Nix support for working Nushell scripts
+#
+# TODO: Migrate to this once merged,
+# https://github.com/DeterminateSystems/nuenv/pull/27
 { pkgs, ... }:
 {
   # Like writeShellApplication but for Nushell scripts

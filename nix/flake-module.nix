@@ -13,19 +13,17 @@ let
       rosettaPkgs = import inputs.nixpkgs { system = "x86_64-darwin"; };
     };
   };
-  hasNonEmptyAttr = attrPath: self:
-    lib.attrByPath attrPath { } self != { };
 
   nixosModules = {
     # Linux home-manager module
     home-manager = {
       imports = [
         inputs.home-manager.nixosModules.home-manager
-        ({
+        {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = specialArgsFor.nixos;
-        })
+        }
       ];
     };
   };
@@ -35,7 +33,7 @@ let
     home-manager = {
       imports = [
         inputs.home-manager.darwinModules.home-manager
-        ({
+        {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = specialArgsFor.darwin;
@@ -46,7 +44,7 @@ let
               "/usr/local/bin" # Some macOS GUI programs install here
             ];
           }];
-        })
+        }
       ];
     };
     # nix-darwin module containing necessary configuration
@@ -63,43 +61,38 @@ let
   };
 in
 {
-  options = {
-    perSystem =
-      mkPerSystemOption ({ config, self', inputs', pkgs, system, ... }: {
-        options.nixos-flake = lib.mkOption {
-          default = { };
-          type = types.submodule {
-            options = {
-              primary-inputs = lib.mkOption {
-                type = types.listOf types.str;
-                default = [ "nixpkgs" "home-manager" "nix-darwin" ];
-                description = ''
-                  List of flake inputs to update when running `nix run .#update`.
-                '';
-              };
-            };
+  options.perSystem = mkPerSystemOption ({ config, inputs', pkgs, system, ... }: {
+    options.nixos-flake = lib.mkOption {
+      default = { };
+      type = types.submodule {
+        options = {
+          primary-inputs = lib.mkOption {
+            type = types.listOf types.str;
+            default = [ "nixpkgs" "home-manager" "nix-darwin" ];
+            description = ''
+              List of flake inputs to update when running `nix run .#update`.
+            '';
           };
         };
-        config = {
-          packages = lib.filterAttrs (_: v: v != null) {
-            update =
-              let
-                inputs = config.nixos-flake.primary-inputs;
-              in
-              pkgs.writeShellApplication {
-                name = "update-main-flake-inputs";
-                meta.description = "Update the primary flake inputs";
-                text = ''
-                  nix flake lock ${lib.foldl' (acc: x: acc + " --update-input " + x) "" inputs}
-                '';
-              };
+      };
+    };
+    config.packages = lib.filterAttrs (_: v: v != null) {
+      update =
+        let
+          inputs = config.nixos-flake.primary-inputs;
+        in
+        pkgs.writeShellApplication {
+          name = "update-main-flake-inputs";
+          meta.description = "Update the primary flake inputs";
+          text = ''
+            nix flake lock ${lib.foldl' (acc: x: acc + " --update-input " + x) "" inputs}
+          '';
+        };
 
-            # Activate the given (system or home) configuration
-            activate = import ../activate { inherit self inputs' pkgs lib system; };
-          };
-        };
-      });
-  };
+      # Activate the given (system or home) configuration
+      activate = import ../activate { inherit self inputs' pkgs lib system; };
+    };
+  });
 
   config = {
     flake = {

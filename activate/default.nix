@@ -29,7 +29,7 @@ let
         }
       '';
     };
-  nu = import ../nix/nu.nix { inherit pkgs; };
+  nu = import ./nu.nix { inherit pkgs; };
 in
 nu.writeNushellApplication {
   name = "activate";
