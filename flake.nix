@@ -1,6 +1,11 @@
 {
   outputs = _: rec {
-    flakeModule = ./nix/modules/flake-parts;
+    flakeModules = {
+     default =  ./nix/modules/flake-parts;
+     autoWire = ./nix/modules/flake-parts/autowire.nix;
+    };
+    # For backwards compat only
+    flakeModule = flakeModules.default;
 
     templates =
       let
