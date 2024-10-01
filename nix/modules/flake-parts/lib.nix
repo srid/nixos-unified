@@ -24,20 +24,13 @@ let
     };
 
     # Common and useful setting across all platforms
-    common = { flake, lib, ... }: {
+    common = { lib, ... }: {
       nix = {
-        # Enables use of `nix-shell -p ...` etc
-        nixPath = [ "nixpkgs=${flake.inputs.nixpkgs}" ];
-        # Make `nix shell` etc use pinned nixpkgs
-        registry.nixpkgs.flake = flake.inputs.nixpkgs;
-
         settings = {
           # Use all CPU cores
           max-jobs = lib.mkDefault "auto";
           # Duh
           experimental-features = lib.mkDefault "nix-command flakes";
-          # Nullify the registry for purity.
-          flake-registry = builtins.toFile "empty-flake-registry.json" ''{"flakes":[],"version":2}'';
         };
       };
     };
