@@ -59,12 +59,7 @@ let
     # Required when using the DetSys installer
     # cf. https://github.com/srid/nixos-flake/issues/52
     nix-darwin = {
-      nix = {
-        useDaemon = true; # Required on multi-user Nix install
-        settings = {
-          experimental-features = "nix-command flakes"; # Enable flakes
-        };
-      };
+      nix.useDaemon = true; # Required on multi-user Nix install
     };
   };
 in
