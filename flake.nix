@@ -1,8 +1,8 @@
 {
   outputs = _: rec {
     flakeModules = {
-     default =  ./nix/modules/flake-parts;
-     autoWire = ./nix/modules/flake-parts/autowire.nix;
+      default = ./nix/modules/flake-parts;
+      autoWire = ./nix/modules/flake-parts/autowire.nix;
     };
     # For backwards compat only
     flakeModule = flakeModules.default;
