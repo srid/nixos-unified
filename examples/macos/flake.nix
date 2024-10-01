@@ -14,7 +14,7 @@
   outputs = inputs@{ self, ... }:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "aarch64-darwin" "x86_64-darwin" ];
-      imports = [ inputs.nixos-flake.flakeModule ];
+      imports = [ inputs.nixos-flake.flakeModules.default ];
 
       flake =
         let
