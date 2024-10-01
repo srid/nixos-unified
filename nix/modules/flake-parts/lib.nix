@@ -73,6 +73,8 @@ in
       nixos-flake.lib = {
         inherit specialArgsFor;
 
+        inherit nixosModules darwinModules homeModules;
+
         mkLinuxSystem = { home-manager ? false }: mod: inputs.nixpkgs.lib.nixosSystem {
           # Arguments to pass to all modules.
           specialArgs = specialArgsFor.nixos;
