@@ -22,6 +22,28 @@ let
         }
       ];
     };
+
+    # Common and useful setting across all platforms
+    common = { lib, ... }: {
+      nix = {
+        settings = {
+          # Use all CPU cores
+          max-jobs = lib.mkDefault "auto";
+          # Duh
+          experimental-features = lib.mkDefault "nix-command flakes";
+        };
+      };
+    };
+  };
+
+  homeModules = {
+    common = { pkgs, ... }: {
+      home.sessionPath = lib.mkIf pkgs.stdenv.isDarwin [
+        "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
+        "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
+        "/usr/local/bin" # Some macOS GUI programs install here
+      ];
+    };
   };
 
   darwinModules = {
@@ -33,13 +55,7 @@ let
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = specialArgsFor.darwin;
-          home-manager.sharedModules = [{
-            home.sessionPath = [
-              "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
-              "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
-              "/usr/local/bin" # Some macOS GUI programs install here
-            ];
-          }];
+          home-manager.sharedModules = [ homeModules.common ];
         }
       ];
     };
@@ -47,12 +63,7 @@ let
     # Required when using the DetSys installer
     # cf. https://github.com/srid/nixos-flake/issues/52
     nix-darwin = {
-      nix = {
-        useDaemon = true; # Required on multi-user Nix install
-        settings = {
-          experimental-features = "nix-command flakes"; # Enable flakes
-        };
-      };
+      nix.useDaemon = true; # Required on multi-user Nix install
     };
   };
 in
@@ -67,6 +78,7 @@ in
           specialArgs = specialArgsFor.nixos;
           modules = [
             ../configurations
+            nixosModules.common
             mod
           ] ++ lib.optional home-manager nixosModules.home-manager;
         };
@@ -75,6 +87,7 @@ in
           specialArgs = specialArgsFor.darwin;
           modules = [
             ../configurations
+            nixosModules.common
             darwinModules.nix-darwin
             mod
           ] ++ lib.optional home-manager darwinModules.home-manager;
@@ -83,7 +96,10 @@ in
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = specialArgsFor.common;
-          modules = [ mod ];
+          modules = [
+            homeModules.common
+            mod
+          ];
         };
       };
     };
