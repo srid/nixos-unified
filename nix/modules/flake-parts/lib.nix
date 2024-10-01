@@ -36,6 +36,16 @@ let
     };
   };
 
+  homeModules = {
+    common = { pkgs, ... }: {
+      home.sessionPath = lib.mkIf pkgs.stdenv.isDarwin [
+        "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
+        "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
+        "/usr/local/bin" # Some macOS GUI programs install here
+      ];
+    };
+  };
+
   darwinModules = {
     # macOS home-manager module
     home-manager = {
@@ -45,13 +55,7 @@ let
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = specialArgsFor.darwin;
-          home-manager.sharedModules = [{
-            home.sessionPath = [
-              "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
-              "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
-              "/usr/local/bin" # Some macOS GUI programs install here
-            ];
-          }];
+          home-manager.sharedModules = [ homeModules.common ];
         }
       ];
     };
