@@ -36,7 +36,7 @@ nix run .#activate $USER@
 
 ### Per-host home configurations {#home-perhost}
 
-You may host-specific home configurations, such as `legacyPackages.homeConfigurations."myuser@myhost"`. These can be activated using:
+You may also have separate home configurations for each machine, such as `legacyPackages.homeConfigurations."myuser@myhost"`. These can be activated using:
 
 ```sh
 nix run .#activate $USER@$HOSTNAME
@@ -44,7 +44,7 @@ nix run .#activate $USER@$HOSTNAME
 
 ## Remote Activation {#remote}
 
-You can use `nixos-unified` as a lightweight alternative to the various deployment tools such as `deploy-rs` and `colmena`. The `.#activate` app takes the hostname as an argument. If you set the `nixos-unified.sshTarget` option in your NixOS or nix-darwin configuration, it will run activation over the SSH connection.
+`nixos-unified` acts as a lightweight alternative to the various deployment tools such as `deploy-rs` and `colmena`. The `.#activate` app takes the hostname as an argument. If you set the `nixos-unified.sshTarget` option in your NixOS or nix-darwin configuration, it will run activation over the SSH connection.
 
 Add the following to your configuration -- `nixosConfigurations.myhost` or `darwinConfigurations.myhost` (depending on the platform):
 
