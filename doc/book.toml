@@ -1,0 +1,15 @@
+[book]
+authors = ["Sridhar Ratnakumar"]
+language = "en"
+multilingual = false
+src = "src"
+title = "nixos-unified"
+
+[output.html]
+smart-punctuation = true
+mathjax-support = false
+git-repository-url = "https://github.com/srid/nixos-unified"
+edit-url-template = "https://github.com/srid/nixos-unified/edit/master/doc/{path}"
+cname = "nixos-unified.org"
+
+[preprocessor.alerts]

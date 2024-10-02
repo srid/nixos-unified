@@ -1,3 +1,6 @@
+# Documentation targets
+mod doc
+
 default:
     @just --list
 
@@ -8,7 +11,3 @@ ci:
 # Auto-format the Nix files in project tree
 fmt:
     treefmt
-
-# Open haskell-flake docs live preview
-docs:
-    cd ./doc && nix run

@@ -1,4 +1,4 @@
-# A NixOS/nix-darwin module to specify nixos-flake metadata for configurations.
+# A NixOS/nix-darwin module to specify nixos-unified metadata for configurations.
 #
 # FIXME: Using this module in home-manager leads to `error: infinite recursion
 # encountered` on `id = x: x`
@@ -8,7 +8,7 @@ let
 in
 {
   options = {
-    nixos-flake = {
+    nixos-unified = {
       sshTarget = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -35,7 +35,7 @@ in
         overrideInputs = lib.mkOption {
           type = lib.types.attrsOf lib.types.path;
           readOnly = true;
-          default = lib.foldl' (acc: x: acc // { "${x}" = inputs.${x}; }) { } config.nixos-flake.overrideInputs;
+          default = lib.foldl' (acc: x: acc // { "${x}" = inputs.${x}; }) { } config.nixos-unified.overrideInputs;
         };
         nixArgs = lib.mkOption {
           type = lib.types.listOf lib.types.str;
@@ -47,7 +47,7 @@ in
               "${inputs.${name}}"
             ])
             # TODO: Use `outputs.overrideInputs` instead.
-            config.nixos-flake.overrideInputs);
+            config.nixos-unified.overrideInputs);
           description = ''
             Arguments to pass to `nix`
           '';

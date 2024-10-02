@@ -1,7 +1,7 @@
 use std log
 use std assert
 
-use nixos-flake.nu getData  # This module is generated in Nix
+use nixos-unified.nu getData  # This module is generated in Nix
 
 let CURRENT_HOSTNAME = (hostname -s | str trim)
 let data = getData
@@ -11,11 +11,11 @@ let data = getData
 # Presently, this only deals with nixosConfigurations and darwinConfigurations.
 # But we should also incorporate home-manager configurations.
 def get_host_data [ host: string ] {
-    if $host not-in $data.nixos-flake-configs {
-        log error $"Host '($host)' not found in flake. Available hosts=($data.nixos-flake-configs | columns)"
+    if $host not-in $data.nixos-unified-configs {
+        log error $"Host '($host)' not found in flake. Available hosts=($data.nixos-unified-configs | columns)"
         exit 1
     }
-    $data.nixos-flake-configs 
+    $data.nixos-unified-configs
         | get $host
         | insert "host" $host
         | insert "flake" $"($data.cleanFlake)#($host)"
@@ -34,13 +34,13 @@ def parseFlakeOutputRef [ spec: string ] {
     }
 }
 
-# Activate system configuration of the given host 
+# Activate system configuration of the given host
 #
 # The hostname should match the name of the corresponding nixosConfigurations or
 # darwinConfigurations attrkey. "localhost" is an exception, which will use the
-# current host. 
+# current host.
 def main [
-  ref: string = "localhost" # Hostname to activate 
+  ref: string = "localhost" # Hostname to activate
 ] {
     let spec = parseFlakeOutputRef $ref
     if $spec.user != null {
@@ -78,7 +78,7 @@ def activate_system [ hostData: record ] {
         # Remote activation request, so copy the flake and the necessary inputs
         # and then activate over SSH.
         if $hostData.sshTarget == null {
-            log error $"sshTarget not found in host data for ($hostData.host). Add `nixos-flake.sshTarget = \"user@hostname\";` to your configuration."
+            log error $"sshTarget not found in host data for ($hostData.host). Add `nixos-unified.sshTarget = \"user@hostname\";` to your configuration."
             exit 1
         }
         activate_system_remote_ssh $hostData
@@ -90,7 +90,7 @@ def activate_system_local [ hostData: record ] {
     let darwin = $hostData.outputs.system in ["aarch64-darwin" "x86_64-darwin"]
     if $darwin {
         log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
-        darwin-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs 
+        darwin-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs
     } else {
         log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild switch --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join) --use-remote-sudo "
         nixos-rebuild switch --flake $hostData.flake ...$hostData.outputs.nixArgs --use-remote-sudo

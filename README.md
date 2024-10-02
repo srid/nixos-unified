@@ -1,19 +1,28 @@
 [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://nixos.zulipchat.com/#narrow/stream/413948-nixos)
 
-# nixos-flake
+# nixos-unified
 
-A [flake-parts](https://flake.parts/) module to unify [NixOS](https://nixos.org/manual/nixos/stable/) + [nix-darwin](https://github.com/LnL7/nix-darwin) + [home-manager] configuration in a single flake, while providing a consistent interface (and enabling common modules) for both Linux and macOS. For motivation, see https://community.flake.parts/nixos-flake
+[**nixos-unified**](https://github.com/srid/nixos-unified) is a
+[flake-parts](https://flake.parts/) module to unify [NixOS] + [nix-darwin] +
+[home-manager] configuration in a single flake, while providing a consistent
+interface at DX and UX level.
+
+[NixOS]: https://nixos.org/
+[nix-darwin]: https://github.com/LnL7/nix-darwin
+[home-manager]: https://github.com/nix-community/home-manager
+
+For motivation, see https://nixos-unified.org/#why
 
 [home-manager]: https://github.com/nix-community/home-manager
 
 ## Getting Started
 
-https://community.flake.parts/nixos-flake/start
+https://nixos-unified.org/start.html
 
 ## Examples
 
-https://community.flake.parts/nixos-flake/examples
+https://nixos-unified.org/examples.html
 
 ## Discussion
 
-To discuss the project, post in [our Zulip](https://nixos.zulipchat.com/#narrow/stream/413948-nixos) (preferred) or in [Github Discussions](https://github.com/srid/nixos-flake/discussions).
+To discuss the project, post in [our Zulip](https://nixos.zulipchat.com/#narrow/stream/413948-nixos) or in [Github Discussions](https://github.com/srid/nixos-unified/discussions).

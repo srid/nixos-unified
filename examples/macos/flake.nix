@@ -8,13 +8,13 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixos-flake.url = "github:srid/nixos-flake";
+    nixos-unified.url = "github:srid/nixos-unified";
   };
 
   outputs = inputs@{ self, ... }:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "aarch64-darwin" "x86_64-darwin" ];
-      imports = [ inputs.nixos-flake.flakeModules.default ];
+      imports = [ inputs.nixos-unified.flakeModules.default ];
 
       flake =
         let
@@ -23,7 +23,7 @@
         {
           # Configurations for macOS machines
           darwinConfigurations."example1" =
-            self.nixos-flake.lib.mkMacosSystem
+            self.nixos-unified.lib.mkMacosSystem
               { home-manager = true; }
               {
                 nixpkgs.hostPlatform = "aarch64-darwin";

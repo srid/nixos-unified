@@ -6,14 +6,14 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixos-flake.url = "github:srid/nixos-flake";
+    nixos-unified.url = "github:srid/nixos-unified";
   };
 
   outputs = inputs@{ self, ... }:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       imports = [
-        inputs.nixos-flake.flakeModules.default
+        inputs.nixos-unified.flakeModules.default
       ];
 
       perSystem = { pkgs, ... }:
@@ -22,7 +22,7 @@
         in
         {
           legacyPackages.homeConfigurations.${myUserName} =
-            self.nixos-flake.lib.mkHomeConfiguration
+            self.nixos-unified.lib.mkHomeConfiguration
               pkgs
               ({ pkgs, ... }: {
                 imports = [ self.homeModules.default ];

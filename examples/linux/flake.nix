@@ -6,13 +6,13 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixos-flake.url = "github:srid/nixos-flake";
+    nixos-unified.url = "github:srid/nixos-unified";
   };
 
   outputs = inputs@{ self, ... }:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" "aarch64-linux" ];
-      imports = [ inputs.nixos-flake.flakeModules.default ];
+      imports = [ inputs.nixos-unified.flakeModules.default ];
 
       flake =
         let
@@ -21,7 +21,7 @@
         {
           # Configurations for Linux (NixOS) machines
           nixosConfigurations."example1" =
-            self.nixos-flake.lib.mkLinuxSystem
+            self.nixos-unified.lib.mkLinuxSystem
               { home-manager = true; }
               {
                 nixpkgs.hostPlatform = "x86_64-linux";
