@@ -2,11 +2,11 @@
 # https://github.com/srid/emanote/blob/master/emanote/default/index.yaml
 
 page:
-  siteTitle: nixos-flake
+  siteTitle: nixos-unified
   headHtml: |
     <snippet var="js.highlightjs" />
 
 template:
-  editBaseUrl: https://github.com/srid/nixos-flake/edit/master/doc
+  editBaseUrl: https://github.com/srid/nixos-unified/edit/master/doc
   sidebar:
     collapsed: false

@@ -5,24 +5,24 @@ let
     let
       # Workaround https://github.com/NixOS/nix/issues/8752
       cleanFlake = lib.cleanSourceWith {
-        name = "nixos-flake-activate-flake";
+        name = "nixos-unified-activate-flake";
         src = self;
       };
-      nixos-flake-configs = lib.mapAttrs (name: value: value.config.nixos-flake) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
+      nixos-unified-configs = lib.mapAttrs (name: value: value.config.nixos-unified) (self.nixosConfigurations or { } // self.darwinConfigurations or { });
       data = {
-        nixos-flake-configs = nixos-flake-configs;
+        nixos-unified-configs = nixos-unified-configs;
         system = system;
         cleanFlake = cleanFlake;
       };
       dataFile = pkgs.writeTextFile {
-        name = "nixos-flake-activate-data";
+        name = "nixos-unified-activate-data";
         text = ''
           ${builtins.toJSON data}
         '';
       };
     in
     pkgs.writeTextFile {
-      name = "nixos-flake.nu";
+      name = "nixos-unified.nu";
       text = ''
         export def getData [] {
           open ${dataFile} | from json
@@ -49,6 +49,6 @@ nu.writeNushellApplication {
       pkgs.hostname
     ];
   extraBuildCommand = ''
-    cp ${nixosFlakeNuModule} nixos-flake.nu
+    cp ${nixosFlakeNuModule} nixos-unified.nu
   '';
 }

@@ -19,11 +19,11 @@ in
       flake = {
         darwinConfigurations =
           forAllNixFiles "${self}/configurations/darwin"
-            (fn: self.nixos-flake.lib.mkMacosSystem { home-manager = true; } fn);
+            (fn: self.nixos-unified.lib.mkMacosSystem { home-manager = true; } fn);
 
         nixosConfigurations =
           forAllNixFiles "${self}/configurations/nixos"
-            (fn: self.nixos-flake.lib.mkLinuxSystem { home-manager = true; } fn);
+            (fn: self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } fn);
 
         darwinModules =
           forAllNixFiles "${self}/modules/darwin"
@@ -39,13 +39,13 @@ in
 
         overlays =
           forAllNixFiles "${self}/overlays"
-            (fn: import fn self.nixos-flake.lib.specialArgsFor.common);
+            (fn: import fn self.nixos-unified.lib.specialArgsFor.common);
       };
 
       perSystem = { pkgs, ... }: {
         legacyPackages.homeConfigurations =
           forAllNixFiles "${self}/configurations/home"
-            (fn: self.nixos-flake.lib.mkHomeConfiguration pkgs fn);
+            (fn: self.nixos-unified.lib.mkHomeConfiguration pkgs fn);
       };
     };
 }

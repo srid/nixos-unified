@@ -61,7 +61,7 @@ let
     };
     # nix-darwin module containing necessary configuration
     # Required when using the DetSys installer
-    # cf. https://github.com/srid/nixos-flake/issues/52
+    # cf. https://github.com/srid/nixos-unified/issues/52
     nix-darwin = {
       nix.useDaemon = true; # Required on multi-user Nix install
     };
@@ -70,7 +70,7 @@ in
 {
   config = {
     flake = {
-      nixos-flake.lib = {
+      nixos-unified.lib = {
         inherit specialArgsFor;
 
         mkLinuxSystem = { home-manager ? false }: mod: inputs.nixpkgs.lib.nixosSystem {

@@ -10,9 +10,9 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-     - uses: actions/checkout@v4
-     - id: set-matrix
-       run: echo "matrix=$(om ci gh-matrix --systems=x86_64-linux,x86_64-darwin,aarch64-darwin | jq -c .)" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        run: echo "matrix=$(om ci gh-matrix --systems=x86_64-linux,x86_64-darwin,aarch64-darwin | jq -c .)" >> $GITHUB_OUTPUT
   nix:
     runs-on: ${{ matrix.system }}
     permissions:
@@ -30,3 +30,38 @@ jobs:
             run \
             --systems "${{ matrix.system }}" \
             .#default.${{ matrix.subflake}}
+
+  website-upload:
+    runs-on: x86_64-linux
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build docs
+        run: |
+          cd doc && nix build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc/result
+
+  website-deploy:
+    runs-on: x86_64-linux
+    if: github.ref == 'refs/heads/master'
+    needs: website-upload
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+    # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

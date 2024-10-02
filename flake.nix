@@ -13,15 +13,15 @@
       in
       {
         linux = {
-          description = "nixos-flake template for NixOS configuration.nix";
+          description = "nixos-unified template for NixOS configuration.nix";
           path = tmplPath ./examples/linux;
         };
         macos = {
-          description = "nixos-flake template for nix-darwin configuration";
+          description = "nixos-unified template for nix-darwin configuration";
           path = tmplPath ./examples/macos;
         };
         home = {
-          description = "nixos-flake template for home-manager configuration";
+          description = "nixos-unified template for home-manager configuration";
           path = tmplPath ./examples/home;
         };
       };
@@ -56,7 +56,7 @@
         };
       };
 
-      ci.default = let overrideInputs = { nixos-flake = ./.; }; in {
+      ci.default = let overrideInputs = { nixos-unified = ./.; }; in {
         docs.dir = "doc";
         macos = {
           inherit overrideInputs;
