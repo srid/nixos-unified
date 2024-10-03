@@ -2,6 +2,9 @@
 
 Pick your desired operating system and follow the below instructions.
 
+> [!TIP]
+> Checkout [nixos-unified-template](https://github.com/juspay/nixos-unified-template) for the quickest way to get started.
+
 ## NixOS
 
 1. [Install NixOS w/ Flakes enabled](https://nixos.asia/en/nixos-tutorial)
