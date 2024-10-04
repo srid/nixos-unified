@@ -1,1 +1,1 @@
-ETHIC
+../ETHIC
