@@ -8,10 +8,14 @@ in
         if builtins.pathExists dir then
           lib.pipe dir [
             builtins.readDir
-            (lib.filterAttrs (_: type: type == "regular"))
-            (lib.mapAttrs' (fn: _:
-              let name = lib.removeSuffix ".nix" fn; in
-              lib.nameValuePair name (f "${dir}/${fn}")
+            (lib.mapAttrs' (fn: type:
+              if type == "regular" then
+                let name = lib.removeSuffix ".nix" fn; in
+                lib.nameValuePair name (f "${dir}/${fn}")
+              else if type == "directory" then
+                lib.nameValuePair fn (f "${dir}/${fn}")
+              else
+                null
             ))
           ] else { };
     in
