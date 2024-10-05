@@ -16,32 +16,28 @@
         inputs.nixos-unified.flakeModules.default
       ];
 
-      perSystem = { pkgs, ... }:
+      flake =
         let
           myUserName = "john";
         in
         {
-          legacyPackages.homeConfigurations.${myUserName} =
+          homeConfigurations.${myUserName} =
             self.nixos-unified.lib.mkHomeConfiguration
-              pkgs
               ({ pkgs, ... }: {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;
                 home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
                 home.stateVersion = "22.11";
               });
-        };
-
-      flake = {
-        # All home-manager configurations are kept here.
-        homeModules.default = { pkgs, ... }: {
-          imports = [ ];
-          programs = {
-            git.enable = true;
-            starship.enable = true;
-            bash.enable = true;
+          # All home-manager configurations are kept here.
+          homeModules.default = { pkgs, ... }: {
+            imports = [ ];
+            programs = {
+              git.enable = true;
+              starship.enable = true;
+              bash.enable = true;
+            };
           };
         };
-      };
     };
 }

@@ -93,8 +93,7 @@ in
           ] ++ lib.optional home-manager darwinModules.home-manager;
         };
 
-        mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+        mkHomeConfiguration = mod: inputs.home-manager.lib.homeManagerConfiguration {
           extraSpecialArgs = specialArgsFor.common;
           modules = [
             homeModules.common
