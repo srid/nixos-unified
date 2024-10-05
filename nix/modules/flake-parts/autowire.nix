@@ -29,6 +29,10 @@ in
           forAllNixFiles "${self}/configurations/nixos"
             (fn: self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } fn);
 
+        homeConfigurations =
+          forAllNixFiles "${self}/configurations/home"
+            (fn: self.nixos-unified.lib.mkHomeConfiguration fn);
+
         darwinModules =
           forAllNixFiles "${self}/modules/darwin"
             (fn: fn);
@@ -44,12 +48,6 @@ in
         overlays =
           forAllNixFiles "${self}/overlays"
             (fn: import fn self.nixos-unified.lib.specialArgsFor.common);
-      };
-
-      perSystem = { pkgs, ... }: {
-        legacyPackages.homeConfigurations =
-          forAllNixFiles "${self}/configurations/home"
-            (fn: self.nixos-unified.lib.mkHomeConfiguration pkgs fn);
       };
     };
 }
