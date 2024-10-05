@@ -19,6 +19,8 @@ nixos-unified provides the following features:
     - This enables those modules to be aware of the flake inputs, for instance.
 - **Sensible defaults**
   - Sensible defaults for [home-manager]/ [nix-darwin]/ and [NixOS] configurations ([\#75](https://github.com/srid/nixos-unified/pull/75)).
+- **Autowiring** of flake outputs
+  - [Autowiring](autowiring.md): An optional module that will scan the directory structure and wire up the appropriate flake outputs automatically without you having to do it manually.
 
 ## Getting Started
 
