@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- autoWire: Not yet documented.
+- autoWiring of flake outputs
 
 ## 0.2.0 (2024-10-03)
 
