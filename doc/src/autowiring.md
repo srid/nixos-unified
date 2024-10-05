@@ -37,4 +37,4 @@ Each of these are wired to the corresponding flake output, as indicated in the b
 
 [^default]: This path could as well be `configurations/nixos/foo/default.nix`. Likewise for other output types.
 
-[^hm-pkgs]: Why `legacyPackages`? Because, creating a home-manager configuration [requires `pkgs`](https://github.com/srid/nixos-unified/blob/47a26bc9118d17500bbe0c4adb5ebc26f776cc36/nix/modules/flake-parts/lib.nix#L97).
+[^hm-pkgs]: Why `legacyPackages`? Because, creating a home-manager configuration [requires `pkgs`](https://github.com/srid/nixos-unified/blob/47a26bc9118d17500bbe0c4adb5ebc26f776cc36/nix/modules/flake-parts/lib.nix#L97). See <https://github.com/nix-community/home-manager/issues/3075>

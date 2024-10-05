@@ -94,7 +94,7 @@ in
         };
 
         mkHomeConfiguration = pkgs: mod: inputs.home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+          inherit pkgs; # cf. https://github.com/nix-community/home-manager/issues/3075
           extraSpecialArgs = specialArgsFor.common;
           modules = [
             homeModules.common
