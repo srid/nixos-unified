@@ -1,6 +1,4 @@
 { self, lib, ... }:
-let
-in
 {
   config =
     let
@@ -12,7 +10,7 @@ in
               if type == "regular" then
                 let name = lib.removeSuffix ".nix" fn; in
                 lib.nameValuePair name (f "${dir}/${fn}")
-              else if type == "directory" then
+              else if type == "directory" && builtins.pathExists "${dir}/${fn}/default.nix" then
                 lib.nameValuePair fn (f "${dir}/${fn}")
               else
                 null
