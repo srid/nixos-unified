@@ -8,7 +8,7 @@
 
 - [Activation](activate.md)
 - [Flake Templates](templates.md)
-- [Module Outputs](module-outputs.md)
+- [Module Outputs](outputs.md)
 - [Autowiring](autowiring.md)
 
 # Examples
