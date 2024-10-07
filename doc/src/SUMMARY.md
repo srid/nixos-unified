@@ -9,7 +9,7 @@
 - [Activation](activate.md)
 - [Flake Templates](templates.md)
 - [Module Arguments](specialArgs.md)
-- [Module Outputs](outputs.md)
+- [Flake Outputs](outputs.md)
 - [Autowiring](autowiring.md)
 
 # Examples
