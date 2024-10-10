@@ -2,11 +2,20 @@
 {
   config =
     let
+      # Combine mapAttrs' and filterAttrs
+      #
+      # f can return null if the attribute should be filtered out.
+      mapAttrsMaybe = f: attrs:
+        lib.pipe attrs [
+          (lib.mapAttrsToList f)
+          (builtins.filter (x: x != null))
+          builtins.listToAttrs
+        ];
       forAllNixFiles = dir: f:
         if builtins.pathExists dir then
           lib.pipe dir [
             builtins.readDir
-            (lib.mapAttrs' (fn: type:
+            (mapAttrsMaybe (fn: type:
               if type == "regular" then
                 let name = lib.removeSuffix ".nix" fn; in
                 lib.nameValuePair name (f "${dir}/${fn}")
