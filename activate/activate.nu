@@ -34,13 +34,11 @@ def parseFlakeOutputRef [ spec: string ] {
     }
 }
 
-# Activate system configuration of the given host
+# Activate system or home configuration
 #
-# The hostname should match the name of the corresponding nixosConfigurations or
-# darwinConfigurations attrkey. "localhost" is an exception, which will use the
-# current host.
+# The ref should match the name of the corresponding nixosConfigurations, darwinConfigurations or homeConfigurations attrkey. "localhost" is an exception, which will use the current host.
 def main [
-  ref: string = "localhost" # Hostname to activate
+  ref: string = "localhost" # Hostname or username (if containing `@`) to activate
 ] {
     let spec = parseFlakeOutputRef $ref
     if $spec.user != null {
