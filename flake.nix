@@ -9,23 +9,24 @@
 
     # Like flake-parts mkFlake, but auto-imports modules/flake-parts, consistent with autowiring feature.
     #
-    # Looks under either nix/modules/flake-parts or modules/flake-parts for modules to import. `systems` is set to a default value.
+    # Looks under either nix/modules/flake-parts or modules/flake-parts for modules to import. `systems` is set to a default value. `root` is passed as top-level module args (as distinct from `inputs.self` the use of which can lead to infinite recursion).
     lib.mkFlake =
       { inputs
-      , src
+      , root
       , systems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ]
       }:
       inputs.flake-parts.lib.mkFlake { inherit inputs; } {
         inherit systems;
+        _module.args = { inherit root; };
         imports = with builtins;
-          if pathExists "${src}/nix/modules/flake-parts" then
+          if pathExists "${root}/nix/modules/flake-parts" then
             map
-              (fn: "${src}/nix/modules/flake-parts/${fn}")
-              (attrNames (readDir (src + /nix/modules/flake-parts)))
-          else if pathExists "${src}/modules/flake-parts.nix" then
+              (fn: "${root}/nix/modules/flake-parts/${fn}")
+              (attrNames (readDir (root + /nix/modules/flake-parts)))
+          else if pathExists "${root}/modules/flake-parts.nix" then
             map
-              (fn: "${src}/modules/flake-parts/${fn}")
-              (attrNames (readDir (src + /modules/flake-parts)))
+              (fn: "${root}/modules/flake-parts/${fn}")
+              (attrNames (readDir (root + /modules/flake-parts)))
           else
             throw "Neither modules/flake-parts nor nix/modules/flake-parts exist";
       };
