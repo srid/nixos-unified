@@ -7,6 +7,20 @@
     # For backwards compat only
     flakeModule = flakeModules.default;
 
+    # Like flake-parts mkFlake, but auto-imports modules/flake-parts, consistent with autowiring feature.
+    lib.mkFlake =
+      { inputs
+      , src
+      , systems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ]
+      }:
+      inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+        inherit systems;
+        imports = with builtins;
+          map
+            (fn: "${src}/modules/flake-parts/${fn}")
+            (attrNames (readDir (src + /modules/flake-parts)));
+      };
+
     templates =
       let
         tmplPath = path: builtins.path { inherit path; filter = path: _: baseNameOf path != "test.sh"; };
