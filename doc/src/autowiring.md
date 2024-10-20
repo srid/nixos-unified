@@ -35,6 +35,27 @@ Each of these are wired to the corresponding flake output, as indicated in the b
 | `modules/flake-parts/foo.nix`             | `flakeModules.foo`                                          |
 | `overlays/foo.nix`                        | `overlays.foo`                                              |
 
+## flake-parts
+
+Autowiring is also provided if you use just flake-parts, via the `lib.mkFlake` function. In your top-level flake.nix, you only need to define your `outputs` as follows:
+
+```nix
+{
+  inputs = ...;
+  outputs = inputs:
+    inputs.nixos-unified.lib.mkFlake
+      { inherit inputs; root = ./.; };
+}
+```
+
+This will,
+
+- Auto-import flake-parts modules under either `./nix/modules/flake-parts` or `./modules/flake-parts` (whichever exists)
+- Use a sensible default for `systems` which can be overriden.
+- Pass `root` as top-level module args, as a non-recursive way of referring to the path of the flake (without needing `inputs.self`).
+
+See [srid/haskell-template's flake.nix](https://github.com/srid/haskell-template/blob/master/flake.nix) for a ready example.
+
 [^default]: This path could as well be `configurations/nixos/foo/default.nix`. Likewise for other output types.
 
 [^hm-pkgs]: Why `legacyPackages`? Because, creating a home-manager configuration [requires `pkgs`](https://github.com/srid/nixos-unified/blob/47a26bc9118d17500bbe0c4adb5ebc26f776cc36/nix/modules/flake-parts/lib.nix#L97). See <https://github.com/nix-community/home-manager/issues/3075>

@@ -7,6 +7,30 @@
     # For backwards compat only
     flakeModule = flakeModules.default;
 
+    # Like flake-parts mkFlake, but auto-imports modules/flake-parts, consistent with autowiring feature.
+    #
+    # Looks under either nix/modules/flake-parts or modules/flake-parts for modules to import. `systems` is set to a default value. `root` is passed as top-level module args (as distinct from `inputs.self` the use of which can lead to infinite recursion).
+    lib.mkFlake =
+      { inputs
+      , root
+      , systems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ]
+      }:
+      inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+        inherit systems;
+        _module.args = { inherit root; };
+        imports = with builtins;
+          if pathExists "${root}/nix/modules/flake-parts" then
+            map
+              (fn: "${root}/nix/modules/flake-parts/${fn}")
+              (attrNames (readDir (root + /nix/modules/flake-parts)))
+          else if pathExists "${root}/modules/flake-parts.nix" then
+            map
+              (fn: "${root}/modules/flake-parts/${fn}")
+              (attrNames (readDir (root + /modules/flake-parts)))
+          else
+            throw "Neither modules/flake-parts nor nix/modules/flake-parts exist";
+      };
+
     templates =
       let
         tmplPath = path: builtins.path { inherit path; filter = path: _: baseNameOf path != "test.sh"; };
