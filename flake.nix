@@ -8,6 +8,8 @@
     flakeModule = flakeModules.default;
 
     # Like flake-parts mkFlake, but auto-imports modules/flake-parts, consistent with autowiring feature.
+    #
+    # Looks under either nix/modules/flake-parts or modules/flake-parts for modules to import. `systems` is set to a default value.
     lib.mkFlake =
       { inputs
       , src
@@ -16,9 +18,16 @@
       inputs.flake-parts.lib.mkFlake { inherit inputs; } {
         inherit systems;
         imports = with builtins;
-          map
-            (fn: "${src}/modules/flake-parts/${fn}")
-            (attrNames (readDir (src + /modules/flake-parts)));
+          if pathExists "${src}/nix/modules/flake-parts" then
+            map
+              (fn: "${src}/nix/modules/flake-parts/${fn}")
+              (attrNames (readDir (src + /nix/modules/flake-parts)))
+          else if pathExists "${src}/modules/flake-parts.nix" then
+            map
+              (fn: "${src}/modules/flake-parts/${fn}")
+              (attrNames (readDir (src + /modules/flake-parts)))
+          else
+            throw "Neither modules/flake-parts nor nix/modules/flake-parts exist";
       };
 
     templates =
