@@ -23,7 +23,7 @@
             map
               (fn: "${root}/nix/modules/flake-parts/${fn}")
               (attrNames (readDir (root + /nix/modules/flake-parts)))
-          else if pathExists "${root}/modules/flake-parts.nix" then
+          else if pathExists "${root}/modules/flake-parts" then
             map
               (fn: "${root}/modules/flake-parts/${fn}")
               (attrNames (readDir (root + /modules/flake-parts)))
