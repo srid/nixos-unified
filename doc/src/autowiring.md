@@ -54,7 +54,7 @@ This will,
 - Use a sensible default for `systems` which can be overriden.
 - Pass `root` as top-level module args, as a non-recursive way of referring to the path of the flake (without needing `inputs.self`).
 
-See [srid/haskell-template's flake.nix](https://github.com/srid/haskell-template/blob/master/flake.nix) for a ready example.
+See [srid/haskell-template's flake.nix](https://github.com/srid/haskell-template/blob/master/flake.nix) for a ready example. For another example, see [this emanote PR](https://github.com/srid/emanote/pull/558).
 
 [^default]: This path could as well be `configurations/nixos/foo/default.nix`. Likewise for other output types.
 
