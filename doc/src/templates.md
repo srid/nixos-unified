@@ -37,7 +37,7 @@ nix --accept-flake-config run github:juspay/omnix -- \
 
 ## After initializing the template
 
-Run `nix run .#activate` (`nix run .#activate $USER` if you are using the last template, "Home only") to activate the configuration.
+Run `nix run .#activate` (`nix run .#activate $USER@` if you are using the last template, "Home only") to activate the configuration.
 
 - on macOS, if you get an error about `/etc/nix/nix.conf`, run:
   ```sh
