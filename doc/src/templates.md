@@ -19,7 +19,7 @@ nix --accept-flake-config run github:juspay/omnix -- \
 
 ### macOS only {#macos}
 
-nix-darwin configuration only, with [home-manager]
+[nix-darwin] configuration only, with [home-manager]
 
 ```sh
 nix --accept-flake-config run github:juspay/omnix -- \
@@ -52,3 +52,5 @@ Run `nix run .#activate` (`nix run .#activate $USER@` if you are using the last 
 [^intel]: If you are on an Intel Mac, also change `nixpkgs.hostPlatform` accordingly.
 
 [home-manager]: https://github.com/nix-community/home-manager
+
+[nix-darwin]: https://github.com/LnL7/nix-darwin
