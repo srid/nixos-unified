@@ -34,6 +34,9 @@ nix run .#activate $USER@
 > [!NOTE]
 > The activate app will activate the home-manager configuration if the argument contains a `@` (separating user and the optional hostname). The above command has no hostname, indicating that we are activating for the local host.
 
+> [!NOTE]
+> The activate app will move your existing dotfiles out of the way with a timestamped backup extension. For example, your existing `~/.zshrc` will be backed up in `~/.zshrc.nixos-unified.2025-01-15-22:29:54.bak`.
+
 ### Per-host home configurations {#home-perhost}
 
 You may also have separate home configurations for each machine, such as `legacyPackages.homeConfigurations."myuser@myhost"`. These can be activated using:
