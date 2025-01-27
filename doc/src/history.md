@@ -5,6 +5,7 @@
 - autoWiring of flake outputs
 - home-manager: More unique backup filenames (#97)
 - `mkFlake`: support passing `specialArgs` (#103)
+- activate script: add `--dry-run`
 
 ## 0.2.0 (2024-10-03)
 
