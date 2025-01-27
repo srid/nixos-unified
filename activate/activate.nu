@@ -89,9 +89,9 @@ def activate_system_local [ hostData: record, --dry-run=false ] {
     log info $"Activating (ansi purple)locally(ansi reset)"
     let darwin = $hostData.outputs.system in ["aarch64-darwin" "x86_64-darwin"]
     if $darwin {
-        let extraArgs = if $dry_run { ["--dry-run"] } else { [] }
-        log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild switch ($extraArgs | str join) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
-        darwin-rebuild switch ...$extraArgs --flake $hostData.flake ...$hostData.outputs.nixArgs
+        let subcommand = if $dry_run { "build" } else { "switch" }
+        log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild ($subcommand) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
+        darwin-rebuild $subcommand --flake $hostData.flake ...$hostData.outputs.nixArgs
     } else {
         let subcommand = if $dry_run { "dry-activate" } else { "switch" }
         log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild ($subcommand) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join) --use-remote-sudo "
