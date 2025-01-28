@@ -1,8 +1,8 @@
-{ self, inputs, config, lib, ... }:
+{ self, inputs, config, lib, specialArgs, ... }:
 let
   specialArgsFor = rec {
     common = {
-      flake = { inherit self inputs config; };
+      flake = { inherit self inputs config specialArgs; };
     };
     nixos = common;
     darwin = common // {
