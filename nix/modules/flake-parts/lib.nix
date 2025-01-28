@@ -2,7 +2,7 @@
 let
   specialArgsFor = rec {
     common = {
-      flake = { inherit self inputs config specialArgs; };
+      flake = { inherit self inputs config specialArgs; } // specialArgs;
     };
     nixos = common;
     darwin = common // {
