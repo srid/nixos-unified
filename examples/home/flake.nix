@@ -34,19 +34,19 @@
                       home.stateVersion = "22.11";
                     });
             };
+
+          flake = {
+            # All home-manager configurations are kept here.
+            homeModules.default = { pkgs, ... }: {
+              imports = [ ];
+              programs = {
+                git.enable = true;
+                starship.enable = true;
+                bash.enable = true;
+              };
+            };
+          };
         })
       ];
-
-      flake = {
-        # All home-manager configurations are kept here.
-        homeModules.default = { pkgs, ... }: {
-          imports = [ ];
-          programs = {
-            git.enable = true;
-            starship.enable = true;
-            bash.enable = true;
-          };
-        };
-      };
     };
 }
