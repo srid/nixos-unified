@@ -11,31 +11,31 @@
 
   outputs = inputs@{ self, ... }:
     let
-      myUserName = "john";
-      specialArgs = { inherit myUserName; };
+      specialArgs = { myUserName = "john"; };
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       imports = [
         inputs.nixos-unified.flakeModules.default
+        ({ myUserName, ... }: {
+          perSystem = { pkgs, ... }:
+            {
+              legacyPackages.homeConfigurations.${myUserName} =
+                self.nixos-unified.lib.mkHomeConfiguration
+                  pkgs
+                  ({ pkgs, flake, ... }:
+                    let
+                      inherit (flake) myUserName;
+                    in
+                    {
+                      imports = [ self.homeModules.default ];
+                      home.username = myUserName;
+                      home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
+                      home.stateVersion = "22.11";
+                    });
+            };
+        })
       ];
-
-      perSystem = { pkgs, ... }:
-        {
-          legacyPackages.homeConfigurations.${myUserName} =
-            self.nixos-unified.lib.mkHomeConfiguration
-              pkgs
-              ({ pkgs, flake, ... }:
-                let
-                  inherit (flake) myUserName;
-                in
-                {
-                  imports = [ self.homeModules.default ];
-                  home.username = myUserName;
-                  home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
-                  home.stateVersion = "22.11";
-                });
-        };
 
       flake = {
         # All home-manager configurations are kept here.
