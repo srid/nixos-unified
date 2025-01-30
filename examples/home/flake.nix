@@ -11,7 +11,8 @@
 
   outputs = inputs@{ self, ... }:
     let
-      specialArgs = { myUserName = "john"; };
+      myUserName = "john";
+      specialArgs = { inherit myUserName; };
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
@@ -25,12 +26,15 @@
             self.nixos-unified.lib.mkHomeConfiguration
               pkgs
               ({ pkgs, flake, ... }:
-              {
-                imports = [ self.homeModules.default ];
-                home.username = flake.myUserName;
-                home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${flake.myUserName}";
-                home.stateVersion = "22.11";
-              });
+                let
+                  inherit (flake) myUserName;
+                in
+                {
+                  imports = [ self.homeModules.default ];
+                  home.username = myUserName;
+                  home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
+                  home.stateVersion = "22.11";
+                });
         };
 
       flake = {

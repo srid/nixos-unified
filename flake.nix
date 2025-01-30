@@ -14,7 +14,7 @@
       { inputs
       , root
       , systems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ]
-      , specialArgs ? {}
+      , specialArgs ? { }
       }:
       inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
         inherit systems;

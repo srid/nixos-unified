@@ -26,30 +26,32 @@
             self.nixos-unified.lib.mkMacosSystem
               { home-manager = true; }
               ({ flake, ... }:
-              {
-                nixpkgs.hostPlatform = "aarch64-darwin";
-                imports = [
-                  # Your nix-darwin configuration goes here
-                  ({ pkgs, ... }: {
-                    # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
-                    users.users.${flake.myUserName}.home = "/Users/${flake.myUserName}";
+                let
+                  inherit (flake) myUserName;
+                in
+                {
+                  nixpkgs.hostPlatform = "aarch64-darwin";
+                  imports = [
+                    # Your nix-darwin configuration goes here
+                    ({ pkgs, ... }: {
+                      # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
+                      users.users.${myUserName}.home = "/Users/${myUserName}";
 
-                    security.pam.enableSudoTouchIdAuth = true;
+                      security.pam.enableSudoTouchIdAuth = true;
 
-                    # Used for backwards compatibility, please read the changelog before changing.
-                    # $ darwin-rebuild changelog
-                    system.stateVersion = 4;
-                  })
-                  # Setup home-manager in nix-darwin config
-                  ({ flake, ... }:
-                  {
-                    home-manager.users.${flake.myUserName} = {
-                      imports = [ self.homeModules.default ];
-                      home.stateVersion = "22.11";
-                    };
-                  })
-                ];
-              });
+                      # Used for backwards compatibility, please read the changelog before changing.
+                      # $ darwin-rebuild changelog
+                      system.stateVersion = 4;
+                    })
+                    # Setup home-manager in nix-darwin config
+                    {
+                      home-manager.users.${myUserName} = {
+                        imports = [ self.homeModules.default ];
+                        home.stateVersion = "22.11";
+                      };
+                    }
+                  ];
+                });
 
           # home-manager configuration goes here.
           homeModules.default = { pkgs, ... }: {
