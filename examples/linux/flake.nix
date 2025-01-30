@@ -10,37 +10,38 @@
   };
 
   outputs = inputs@{ self, ... }:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+    let
+      specialArgs = { myUserName = "john"; };
+    in
+    inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
       systems = [ "x86_64-linux" "aarch64-linux" ];
       imports = [ inputs.nixos-unified.flakeModules.default ];
 
       flake =
-        let
-          myUserName = "john";
-        in
         {
           # Configurations for Linux (NixOS) machines
           nixosConfigurations."example1" =
             self.nixos-unified.lib.mkLinuxSystem
-              { home-manager = true; }
-              {
+              { home-manager = true; }{
                 nixpkgs.hostPlatform = "x86_64-linux";
                 imports = [
                   # Your machine's configuration.nix goes here
-                  ({ pkgs, ... }: {
+                  ({ pkgs, flake, ... }:
+                  {
                     # TODO: Put your /etc/nixos/hardware-configuration.nix here
                     boot.loader.grub.device = "nodev";
                     fileSystems."/" = { device = "/dev/disk/by-label/nixos"; fsType = "btrfs"; };
-                    users.users.${myUserName}.isNormalUser = true;
+                    users.users.${flake.myUserName}.isNormalUser = true;
                     system.stateVersion = "23.05";
                   })
                   # Setup home-manager in NixOS config
+                  ({ flake, ... }:
                   {
-                    home-manager.users.${myUserName} = {
+                    home-manager.users.${flake.myUserName} = {
                       imports = [ self.homeModules.default ];
                       home.stateVersion = "22.11";
                     };
-                  }
+                  })
                 ];
               };
 

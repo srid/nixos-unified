@@ -10,24 +10,25 @@
   };
 
   outputs = inputs@{ self, ... }:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+    let
+      specialArgs = { myUserName = "john"; };
+    in
+    inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       imports = [
         inputs.nixos-unified.flakeModules.default
       ];
 
       perSystem = { pkgs, ... }:
-        let
-          myUserName = "john";
-        in
         {
           legacyPackages.homeConfigurations.${myUserName} =
             self.nixos-unified.lib.mkHomeConfiguration
               pkgs
-              ({ pkgs, ... }: {
+              ({ pkgs, flake, ... }:
+              {
                 imports = [ self.homeModules.default ];
-                home.username = myUserName;
-                home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
+                home.username = flake.myUserName;
+                home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${flake.myUserName}";
                 home.stateVersion = "22.11";
               });
         };

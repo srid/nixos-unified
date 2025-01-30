@@ -12,26 +12,27 @@
   };
 
   outputs = inputs@{ self, ... }:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+    let
+      specialArgs = { myUserName = "john"; };
+    in
+    inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
       systems = [ "aarch64-darwin" "x86_64-darwin" ];
       imports = [ inputs.nixos-unified.flakeModules.default ];
 
       flake =
-        let
-          myUserName = "john";
-        in
         {
           # Configurations for macOS machines
           darwinConfigurations."example1" =
             self.nixos-unified.lib.mkMacosSystem
               { home-manager = true; }
+              ({ flake, ... }:
               {
                 nixpkgs.hostPlatform = "aarch64-darwin";
                 imports = [
                   # Your nix-darwin configuration goes here
                   ({ pkgs, ... }: {
                     # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
-                    users.users.${myUserName}.home = "/Users/${myUserName}";
+                    users.users.${flake.myUserName}.home = "/Users/${flake.myUserName}";
 
                     security.pam.enableSudoTouchIdAuth = true;
 
@@ -40,14 +41,15 @@
                     system.stateVersion = 4;
                   })
                   # Setup home-manager in nix-darwin config
+                  ({ flake, ... }:
                   {
-                    home-manager.users.${myUserName} = {
+                    home-manager.users.${flake.myUserName} = {
                       imports = [ self.homeModules.default ];
                       home.stateVersion = "22.11";
                     };
-                  }
+                  })
                 ];
-              };
+              });
 
           # home-manager configuration goes here.
           homeModules.default = { pkgs, ... }: {
