@@ -27,7 +27,9 @@ in
         system = lib.mkOption {
           type = lib.types.str;
           readOnly = true;
-          default = config.nixpkgs.hostPlatform.system;
+          default =
+            let inherit (config.nixpkgs) hostPlatform;
+            in if builtins.typeOf hostPlatform == "string" then hostPlatform else hostPlatform.system;
           description = ''
             System to activate.
           '';
