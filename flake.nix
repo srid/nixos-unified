@@ -14,22 +14,26 @@
       { inputs
       , root
       , systems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ]
-      , specialArgs ? {}
+      , specialArgs ? { }
       }:
       inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
         inherit systems;
         _module.args = { inherit root; };
-        imports = with builtins;
-          if pathExists "${root}/nix/modules/flake-parts" then
-            map
-              (fn: "${root}/nix/modules/flake-parts/${fn}")
-              (attrNames (readDir (root + /nix/modules/flake-parts)))
-          else if pathExists "${root}/modules/flake-parts" then
-            map
-              (fn: "${root}/modules/flake-parts/${fn}")
-              (attrNames (readDir (root + /modules/flake-parts)))
-          else
-            throw "Neither modules/flake-parts nor nix/modules/flake-parts exist";
+        imports =
+          let
+            # Patterns to search in order
+            candidates = [
+              "nix/modules/flake-parts"
+              "modules/flake-parts"
+            ];
+            getModulesUnderFirst = cs: with builtins;
+              if cs == [ ] then throw "None of these paths exist: ${toString candidates}"
+              else if pathExists "${root}/${head cs}"
+              then
+                map (fn: "${root}/${head cs}/${fn}") (attrNames (readDir (root + /${head cs})))
+              else getModulesUnderFirst (tail cs);
+          in
+          getModulesUnderFirst candidates;
       };
 
     templates =
