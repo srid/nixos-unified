@@ -2,9 +2,8 @@
 
 ## Unreleased
 
-- autoWiring of flake outputs
+- autoWiring of flake outputs & `mkFlake`
 - home-manager: More unique backup filenames (#97)
-- `mkFlake`: support passing `specialArgs` (#103)
 - activate script: add `--dry-run` (#104)
 
 ## 0.2.0 (2024-10-03)

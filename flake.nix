@@ -23,6 +23,10 @@
           let
             # Patterns to search in order
             candidates = [
+              # These correspond to `flakeModules.*`
+              "nix/modules/flake"
+              "modules/flake"
+              # Just for backwards compatbility
               "nix/modules/flake-parts"
               "modules/flake-parts"
             ];
