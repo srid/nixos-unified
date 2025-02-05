@@ -12,7 +12,7 @@ A ready demonstration is available in [nixos-unified-template](https://github.co
 └── 📁 nixos
 📁 modules
 ├── 📁 darwin
-├── 📁 flake-parts
+├── 📁 flake
 ├── 📁 home
 └── 📁 nixos
 📁 overlays
@@ -32,7 +32,7 @@ Each of these are wired to the corresponding flake output, as indicated in the b
 | `configurations/home/foo.nix`[^default]   | `legacyPackages.${system}.homeConfigurations.foo`[^hm-pkgs] |
 | `modules/nixos/foo.nix`                   | `nixosModules.foo`                                          |
 | `modules/darwin/foo.nix`                  | `darwinModules.foo`                                         |
-| `modules/flake-parts/foo.nix`             | `flakeModules.foo`                                          |
+| `modules/flake/foo.nix`                   | `flakeModules.foo`                                          |
 | `overlays/foo.nix`                        | `overlays.foo`                                              |
 
 ## flake-parts
@@ -50,7 +50,7 @@ Autowiring is also provided if you use just flake-parts, via the `lib.mkFlake` f
 
 This will,
 
-- Auto-import flake-parts modules under either `./nix/modules/flake-parts` or `./modules/flake-parts` (whichever exists)
+- Auto-import flake-parts modules under either `./nix/modules/flake` or `./modules/flake` (whichever exists)
 - Use a sensible default for `systems` which can be overriden.
 - Pass `root` as top-level module args, as a non-recursive way of referring to the path of the flake (without needing `inputs.self`).
 
