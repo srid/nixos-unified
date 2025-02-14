@@ -25,9 +25,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: om ci
         run: |
-          om ci \
+          om ci run \
             --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" \
-            run \
             --systems "${{ matrix.system }}" \
             .#default.${{ matrix.subflake}}
 
