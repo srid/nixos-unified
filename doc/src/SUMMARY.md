@@ -12,8 +12,9 @@
 - [Flake Outputs](outputs.md)
 - [Autowiring](autowiring.md)
 
-# Examples
+# Resources
 
+- [HOWTO](howto.md)
 - [Examples](examples.md)
 
 # Meta
