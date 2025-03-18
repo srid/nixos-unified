@@ -27,7 +27,6 @@
               ({ pkgs, ... }: {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;
-                home.homeDirectory = "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${myUserName}";
                 home.stateVersion = "22.11";
               });
         };

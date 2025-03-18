@@ -19,6 +19,7 @@ let
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = specialArgsFor.nixos;
+          home-manager.sharedModules = [ homeModules.common ];
         }
       ];
     };
@@ -37,7 +38,11 @@ let
   };
 
   homeModules = {
-    common = { pkgs, ... }: {
+    common = { config, pkgs, ... }: {
+      # Sensible default for `home.homeDirectory`
+      home.homeDirectory = lib.mkDefault "/${if pkgs.stdenv.isDarwin then "Users" else "home"}/${config.home.username}";
+
+      # For macOS, $PATH must contain these.
       home.sessionPath = lib.mkIf pkgs.stdenv.isDarwin [
         "/etc/profiles/per-user/$USER/bin" # To access home-manager binaries
         "/nix/var/nix/profiles/system/sw/bin" # To access nix-darwin binaries
