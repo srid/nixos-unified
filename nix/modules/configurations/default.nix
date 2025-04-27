@@ -23,6 +23,13 @@ in
           List of flake inputs to override when deploying or activating.
         '';
       };
+      extraNixArgs = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = ''
+          Additional arguments to pass to `nix` (appended after overrideInputs).
+        '';
+      };
       outputs = {
         system = lib.mkOption {
           type = lib.types.str;
@@ -40,14 +47,17 @@ in
         nixArgs = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           readOnly = true;
-          default = (builtins.concatMap
-            (name: [
-              "--override-input"
-              "${name}"
-              "${inputs.${name}}"
-            ])
-            # TODO: Use `outputs.overrideInputs` instead.
-            config.nixos-unified.overrideInputs);
+          default = (
+            (builtins.concatMap
+              (name: [
+                "--override-input"
+                "${name}"
+                "${inputs.${name}}"
+              ])
+              # TODO: Use `outputs.overrideInputs` instead.
+              config.nixos-unified.overrideInputs)
+            ++ config.nixos-unified.extraNixArgs
+          );
           description = ''
             Arguments to pass to `nix`
           '';
