@@ -37,13 +37,13 @@
 
                     # Used for backwards compatibility, please read the changelog before changing.
                     # $ darwin-rebuild changelog
-                    system.stateVersion = 4;
+                    system.stateVersion = 6;
                   })
                   # Setup home-manager in nix-darwin config
                   {
                     home-manager.users.${myUserName} = {
                       imports = [ self.homeModules.default ];
-                      home.stateVersion = "22.11";
+                      home.stateVersion = "24.11";
                     };
                   }
                 ];

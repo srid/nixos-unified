@@ -27,7 +27,7 @@
               ({ pkgs, ... }: {
                 imports = [ self.homeModules.default ];
                 home.username = myUserName;
-                home.stateVersion = "22.11";
+                home.stateVersion = "24.11";
               });
         };
 
