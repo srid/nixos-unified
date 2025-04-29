@@ -7,6 +7,7 @@
 - home-manager
   - More unique backup filenames (#97)
   - Add a default `home.homeDirectory` based on the user's username (#117)
+- Remove use of deprecated alias `--update-input` of `nix flake update`
 
 ## 0.2.0 (2024-10-03)
 
