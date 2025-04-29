@@ -30,7 +30,7 @@ in
           name = "update-main-flake-inputs";
           meta.description = "Update the primary flake inputs";
           text = ''
-            nix flake lock ${lib.foldl' (acc: x: acc + " --update-input " + x) "" inputs}
+            nix flake update${lib.foldl' (acc: x: acc + " " + x) "" inputs}
           '';
         };
 
