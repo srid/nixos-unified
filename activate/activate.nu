@@ -91,7 +91,7 @@ def activate_system_local [ hostData: record, --dry-run=false ] {
     if $darwin {
         let subcommand = if $dry_run { "build" } else { "switch" }
         log info $"(ansi blue_bold)>>>(ansi reset) darwin-rebuild ($subcommand) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
-        darwin-rebuild $subcommand --flake $hostData.flake ...$hostData.outputs.nixArgs
+        sudo darwin-rebuild $subcommand --flake $hostData.flake ...$hostData.outputs.nixArgs
     } else {
         let subcommand = if $dry_run { "dry-activate" } else { "switch" }
         log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild ($subcommand) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join) --use-remote-sudo "
