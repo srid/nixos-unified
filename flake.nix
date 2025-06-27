@@ -11,13 +11,14 @@
     #
     # Looks under either nix/modules/flake-parts or modules/flake-parts for modules to import. `systems` is set to a default value. `root` is passed as top-level module args (as distinct from `inputs.self` the use of which can lead to infinite recursion).
     lib.mkFlake =
-      { inputs
+      { debug ? false
+      , inputs
       , root
       , systems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ]
       , specialArgs ? { }
       }:
       inputs.flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
-        inherit systems;
+        inherit debug systems;
         _module.args = { inherit root; };
         imports =
           let
