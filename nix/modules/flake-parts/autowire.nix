@@ -12,18 +12,22 @@
           builtins.listToAttrs
         ];
       forAllNixFiles = dir: f:
-        lib.optionalAttrs (builtins.pathExists dir)
-          (mapAttrsMaybe
-            (fn: type:
-              let
-                name = lib.removeSuffix ".nix" fn;
-                path = "${dir}/${fn}";
-              in
-              if type == "regular" && name != fn then lib.nameValuePair name (f path)
-              else if type == "directory" && builtins.pathExists "${path}/default.nix" then lib.nameValuePair fn (f path)
-              else null
-            )
-            (builtins.readDir dir));
+        if builtins.pathExists dir then
+          lib.pipe dir [
+            builtins.readDir
+            (mapAttrsMaybe (fn: type:
+              if type == "regular" then
+                let name = lib.removeSuffix ".nix" fn; in
+                if name != fn then
+                  lib.nameValuePair name (f "${dir}/${fn}")
+                else
+                  null
+              else if type == "directory" && builtins.pathExists "${dir}/${fn}/default.nix" then
+                lib.nameValuePair fn (f "${dir}/${fn}")
+              else
+                null
+            ))
+          ] else { };
     in
     {
       flake = {
