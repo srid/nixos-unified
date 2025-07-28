@@ -114,6 +114,6 @@ def activate_system_remote_ssh [ hostData: record, --dry-run=false ] {
 }
 
 def nix_copy [ src: string dst: string ] {
-    log info $"(ansi blue_bold)>>>(ansi reset) nix copy ($src) --to ($dst)"
-    nix copy $src --to $dst
+    log info $"(ansi blue_bold)>>>(ansi reset) nix --extra-experimental-features \"nix-command flakes\" copy ($src) --to ($dst)"
+    nix --extra-experimental-features "nix-command flakes" copy $src --to $dst
 }
