@@ -34,6 +34,7 @@ Each of these are wired to the corresponding flake output, as indicated in the b
 | `modules/darwin/foo.nix`                  | `darwinModules.foo`                                         |
 | `modules/flake/foo.nix`                   | `flakeModules.foo`                                          |
 | `overlays/foo.nix`                        | `overlays.foo`                                              |
+| `packages/foo.nix`                        | N/A[^packages]                                              |
 
 ## flake-parts
 
@@ -59,3 +60,5 @@ See [srid/haskell-template's flake.nix](https://github.com/srid/haskell-template
 [^default]: This path could as well be `configurations/nixos/foo/default.nix`. Likewise for other output types.
 
 [^hm-pkgs]: Why `legacyPackages`? Because, creating a home-manager configuration [requires `pkgs`](https://github.com/srid/nixos-unified/blob/47a26bc9118d17500bbe0c4adb5ebc26f776cc36/nix/modules/flake-parts/lib.nix#L97). See <https://github.com/nix-community/home-manager/issues/3075>
+
+[^packages]: Packages are not currently autowired. You need to manually invoke `pkgs.callPackage` from the place where you want to export them, for instance in an overlay in the `overlays` directory and/or in a `perSystem.package.foo` option defined somewhere in `modules/flake`.
