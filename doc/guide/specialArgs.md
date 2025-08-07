@@ -1,3 +1,7 @@
+---
+order: 3
+---
+
 # Module Arguments
 
 Each of your NixOS, nix-darwin and home-manager modules implicitly receive a [`specialArgs`](https://nixos.asia/en/nix-modules) called `flake`.

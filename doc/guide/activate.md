@@ -1,3 +1,8 @@
+---
+order: 2
+---
+
+
 # Activation
 
 `nixos-unified` provides an `.#activate` flake app that can be used in place of `nixos-rebuild switch` (if using NixOS),`darwin-rebuild switch` (if using `nix-darwin`) or `home-manager switch` (if using home-manager)

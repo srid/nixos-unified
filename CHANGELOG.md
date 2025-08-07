@@ -1,1 +1,1 @@
-doc/src/history.md
+./doc/history.md

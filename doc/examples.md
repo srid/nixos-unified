@@ -1,3 +1,7 @@
+---
+order: 10
+---
+
 # Examples
 
 - <https://github.com/juspay/nixos-unified-template>

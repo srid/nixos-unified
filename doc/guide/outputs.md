@@ -1,3 +1,7 @@
+---
+order: 4
+---
+
 # Flake Outputs
 
 Importing the `nixos-unified` flake-parts module will autowire the following flake outputs in your flake:

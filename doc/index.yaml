@@ -1,12 +1,16 @@
-# For documentation and available settings, see
-# https://github.com/srid/emanote/blob/master/emanote/default/index.yaml
-
-page:
-  siteTitle: nixos-unified
-  headHtml: |
-    <snippet var="js.highlightjs" />
+# Emanote configuration for nixos-unified documentation
+# Ref: https://github.com/srid/emanote/blob/master/emanote/default/index.yaml
 
 template:
   editBaseUrl: https://github.com/srid/nixos-unified/edit/master/doc
+  # List of available colors: https://tailwindcss.com/docs/customizing-colors#default-color-palette
+  theme: lime
   sidebar:
     collapsed: false
+  urlStrategy: pretty
+
+page:
+  siteTitle: "nixos-unified"
+  siteUrl: https://nixos-unified.org
+  headHtml: |
+    <snippet var="js.highlightjs" />

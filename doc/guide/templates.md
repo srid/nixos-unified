@@ -1,3 +1,7 @@
+---
+order: 1
+---
+
 # Flake Templates
 
 We provide four templates, depending on your needs:
