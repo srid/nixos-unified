@@ -3,11 +3,7 @@ default:
 
 # Run mdbook live server
 run:
-  nix run .#serve
-
-# Do link checks on docs
-check:
-  nix run .#linkCheck
+  nix run
 
 # Build the static site
 build:

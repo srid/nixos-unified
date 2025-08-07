@@ -1,3 +1,7 @@
+---
+order: 5
+---
+
 # Autowiring
 
 An optional **autowiring** module is provided that will scan the directory structure and wire up the appropriate flake outputs automatically without you having to do it manually.
