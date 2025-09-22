@@ -55,17 +55,29 @@ def activate_home [ user: string, host: string, --dry-run ] {
     if (($host | is-empty) or ($host == $CURRENT_HOSTNAME)) {
         activate_home_local $user $host --dry-run=$dry_run
     } else {
-        log error $"Remote activation not yet supported for homeConfigurations"
-        exit 1
+        activate_home_remote_ssh $user $host --dry-run=$dry_run
     }
 }
 
 def activate_home_local [ user: string, host: string, --dry-run ] {
-    let name = $"($user)" + (if ($host | is-empty) { "" } else { "@" + $host })
+    let name = $"($user)@($host)"
     let extraArgs = if $dry_run { ["--dry-run"] } else { [] }
     log info $"Activating home configuration ($name) (ansi purple)locally(ansi reset)"
     log info $"(ansi blue_bold)>>>(ansi reset) home-manager switch ($extraArgs | str join) --flake ($data.cleanFlake)#($name)"
     home-manager switch ...$extraArgs -b (date now | format date "nixos-unified.%Y-%m-%d-%H:%M:%S.bak") --flake $"($data.cleanFlake)#($name)"
+}
+
+def activate_home_remote_ssh [ user: string, host: string, --dry-run ] {
+    let name = $"($user)@($host)"
+    let sshTarget = $"($user)@($host)"
+    log info $"Activating home configuration ($name) (ansi purple_reverse)remotely(ansi reset) on ($sshTarget)"
+
+    # Copy the flake to the remote host.
+    nix_copy $data.cleanFlake $"ssh-ng://($sshTarget)"
+
+    # We re-run this activation script, but on the remote host (where it will invoke activate_home_local).
+    log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($sshTarget) nix --extra-experimental-features '"nix-command flakes"' run $"($data.cleanFlake)#activate" -- ($name) --dry-run=($dry_run)'
+    ssh -t $sshTarget nix --extra-experimental-features '"nix-command flakes"' run $"($data.cleanFlake)#activate" -- ($name) --dry-run=($dry_run)
 }
 
 def activate_system [ hostData: record, --dry-run=false ] {

@@ -7,7 +7,9 @@ order: 100
 ## Unreleased
 
 - autoWiring of flake outputs & `mkFlake`
-- activate script: add `--dry-run` (#104)
+- activate script
+  - add `--dry-run` (#104)
+  - Remote activation support for home-manager configurations (#143)
 - home-manager
   - More unique backup filenames (#97)
   - Add a default `home.homeDirectory` based on the user's username (#117)
