@@ -72,11 +72,8 @@ def activate_home_remote_ssh [ user: string, host: string, --dry-run ] {
     let sshTarget = $"($user)@($host)"
     log info $"Activating home configuration ($name) (ansi purple_reverse)remotely(ansi reset) on ($sshTarget)"
 
-    # Copy the flake and the necessary inputs to the remote host.
+    # Copy the flake to the remote host.
     nix_copy $data.cleanFlake $"ssh-ng://($sshTarget)"
-    $data.nixos-unified-configs | get $host | get outputs.overrideInputs | transpose key value | each { |input|
-        nix_copy $input.value $"ssh-ng://($sshTarget)"
-    }
 
     # We re-run this activation script, but on the remote host (where it will invoke activate_home_local).
     log info $'(ansi blue_bold)>>>(ansi reset) ssh -t ($sshTarget) nix --extra-experimental-features '"nix-command flakes"' run $"($data.cleanFlake)#activate" -- ($name) --dry-run=($dry_run)'
