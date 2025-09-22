@@ -50,6 +50,8 @@ You may also have separate home configurations for each machine, such as `legacy
 nix run .#activate $USER@$HOSTNAME
 ```
 
+This will activate the home-manager configuration for the specified host over SSH (see below).
+
 ## Remote Activation {#remote}
 
 `nixos-unified` acts as a lightweight alternative to the various deployment tools such as `deploy-rs` and `colmena`. The `.#activate` app takes the hostname as an argument and supports remote activation for both system configurations (NixOS/nix-darwin) and home-manager configurations.
