@@ -60,7 +60,7 @@ def activate_home [ user: string, host: string, --dry-run ] {
 }
 
 def activate_home_local [ user: string, host: string, --dry-run ] {
-    let name = $"($user)" + (if ($host | is-empty) { "" } else { "@" + $host })
+    let name = $"($user)@($host)"
     let extraArgs = if $dry_run { ["--dry-run"] } else { [] }
     log info $"Activating home configuration ($name) (ansi purple)locally(ansi reset)"
     log info $"(ansi blue_bold)>>>(ansi reset) home-manager switch ($extraArgs | str join) --flake ($data.cleanFlake)#($name)"
@@ -68,7 +68,7 @@ def activate_home_local [ user: string, host: string, --dry-run ] {
 }
 
 def activate_home_remote_ssh [ user: string, host: string, --dry-run ] {
-    let name = $"($user)" + (if ($host | is-empty) { "" } else { "@" + $host })
+    let name = $"($user)@($host)"
     let sshTarget = $"($user)@($host)"
     log info $"Activating home configuration ($name) (ansi purple_reverse)remotely(ansi reset) on ($sshTarget)"
 
