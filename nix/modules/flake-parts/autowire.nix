@@ -60,6 +60,10 @@
         legacyPackages.homeConfigurations =
           forAllNixFiles "${self}/configurations/home"
             (fn: self.nixos-unified.lib.mkHomeConfiguration pkgs fn);
+
+        packages =
+          forAllNixFiles "${self}/packages"
+            (fn: pkgs.callPackage fn { });
       };
     };
 }
