@@ -3,24 +3,7 @@ on:
   push:
     branches:
       - master
-  pull_request:
 jobs:
-  nix:
-    runs-on: ${{ matrix.system }}
-    permissions:
-      contents: read
-    strategy:
-      matrix:
-        system: [x86_64-linux, aarch64-darwin]
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - name: om ci
-        run: |
-          om ci run \
-            --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" \
-            --systems "${{ matrix.system }}"
-
   website-upload:
     runs-on: x86_64-linux
     if: github.ref == 'refs/heads/master'
