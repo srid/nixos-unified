@@ -5,10 +5,11 @@ on:
       - master
 jobs:
   website-upload:
-    runs-on: x86_64-linux
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v33
       - name: Build docs
         run: |
           cd doc && nix build
@@ -18,7 +19,7 @@ jobs:
           path: doc/result
 
   website-deploy:
-    runs-on: x86_64-linux
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     needs: website-upload
     environment:
