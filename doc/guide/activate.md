@@ -24,7 +24,7 @@ nix run .#activate
 > ```nix
 > # In perSystem
 > {
->     packages.default = self'.packages.activate
+>     apps.default = self'.packages.activate
 > }
 > ```
 
