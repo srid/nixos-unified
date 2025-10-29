@@ -16,6 +16,7 @@ order: 100
 - Remove use of deprecated alias `--update-input` of `nix flake update`
 - Use `sudo` when activating with nix-darwin (#130)
 - Fix `nix copy` command for legacy NixOS systems by adding experimental features flag (#138)
+- Switch to runCommand since runCommandNoCC is dropped in newer nixpkgs (#147)
 
 ## 0.2.0 (2024-10-03)
 
