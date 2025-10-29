@@ -10,9 +10,9 @@
         ]
      , build.flakes =
          [ "./doc" { overrideInputs = nu }
-         , "./examples/macos" { overrideInputs = nu, systems = ["aarch64-darwin"] }
+         , "./examples/macos" { overrideInputs = nu }
          , "./examples/home" { overrideInputs = nu }
-         , "./examples/linux" { overrideInputs = nu, systems = ["x86_64-linux"] }
+         , "./examples/linux" { overrideInputs = nu }
          ]
      , signoff.enable = True
      , cache.url = if isMaster then Just "https://cache.nixos.asia/oss" else Nothing
