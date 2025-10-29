@@ -1,7 +1,19 @@
 -- CI configuration <https://vira.nixos.asia/>
 \ctx pipeline ->
-  let isMaster = ctx.branch == "master"
+  let
+    isMaster = ctx.branch == "master"
+    nu = [("nixos-unified", ".")]
   in pipeline
-    { signoff.enable = True
-    , cache.url = if isMaster then Just "https://cache.nixos.asia/oss" else Nothing
-    }
+     { build.systems =
+        [ "x86_64-linux"
+        , "aarch64-darwin"
+        ]
+     , build.flakes =
+         [ "./doc" { overrideInputs = nu }
+         , "./examples/macos" { overrideInputs = nu, systems = ["aarch64-darwin"] }
+         , "./examples/home" { overrideInputs = nu }
+         , "./examples/linux" { overrideInputs = nu, systems = ["x86_64-linux"] }
+         ]
+     , signoff.enable = True
+     , cache.url = if isMaster then Just "https://cache.nixos.asia/oss" else Nothing
+     }
