@@ -88,24 +88,6 @@
           inherit (macos) params;
         };
       };
-
-      ci.default = let overrideInputs = { nixos-unified = ./.; }; in {
-        docs.dir = "doc";
-        macos = {
-          inherit overrideInputs;
-          dir = "examples/macos";
-          systems = [ "x86_64-darwin" "aarch64-darwin" ];
-        };
-        home = {
-          inherit overrideInputs;
-          dir = "examples/home";
-        };
-        linux = {
-          inherit overrideInputs;
-          dir = "examples/linux";
-          systems = [ "x86_64-linux" "aarch64-linux" ];
-        };
-      };
     };
   };
 }
