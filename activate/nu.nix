@@ -27,7 +27,7 @@
         '';
       };
     in
-    pkgs.runCommandNoCC name
+    pkgs.runCommand name
       {
         inherit meta;
       } ''
