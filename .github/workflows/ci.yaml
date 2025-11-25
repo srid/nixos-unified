@@ -3,29 +3,13 @@ on:
   push:
     branches:
       - master
-  pull_request:
 jobs:
-  nix:
-    runs-on: ${{ matrix.system }}
-    permissions:
-      contents: read
-    strategy:
-      matrix:
-        system: [x86_64-linux, aarch64-darwin]
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - name: om ci
-        run: |
-          om ci run \
-            --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" \
-            --systems "${{ matrix.system }}"
-
   website-upload:
-    runs-on: x86_64-linux
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v33
       - name: Build docs
         run: |
           cd doc && nix build
@@ -35,7 +19,7 @@ jobs:
           path: doc/result
 
   website-deploy:
-    runs-on: x86_64-linux
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     needs: website-upload
     environment:

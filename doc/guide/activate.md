@@ -50,11 +50,15 @@ You may also have separate home configurations for each machine, such as `legacy
 nix run .#activate $USER@$HOSTNAME
 ```
 
+This will activate the home-manager configuration for the specified host over SSH (see below).
+
 ## Remote Activation {#remote}
 
-`nixos-unified` acts as a lightweight alternative to the various deployment tools such as `deploy-rs` and `colmena`. The `.#activate` app takes the hostname as an argument. If you set the `nixos-unified.sshTarget` option in your NixOS or nix-darwin configuration, it will run activation over the SSH connection.
+`nixos-unified` acts as a lightweight alternative to the various deployment tools such as `deploy-rs` and `colmena`. The `.#activate` app takes the hostname as an argument and supports remote activation for both system configurations (NixOS/nix-darwin) and home-manager configurations.
 
-Add the following to your configuration -- `nixosConfigurations.myhost` or `darwinConfigurations.myhost` (depending on the platform):
+### Remote System Activation {#remote-system}
+
+For NixOS or nix-darwin configurations, set the `nixos-unified.sshTarget` option in your configuration:
 
 ```nix
 {
@@ -67,6 +71,21 @@ Then, you will be able to run the following to deploy to `myhost` from any machi
 ```sh
 nix run .#activate myhost
 ```
+
+### Remote Home-Manager Activation {#remote-home}
+
+For home-manager configurations, remote activation works by specifying the user and hostname:
+
+```sh
+nix run .#activate myuser@myhost
+```
+
+This will:
+1. Copy the flake and necessary inputs to the remote host via SSH
+2. Run the home-manager activation remotely on the target machine
+
+> [!NOTE]
+> Remote home-manager activation uses the `user@host` format for the SSH connection, where the user is extracted from the configuration name and the host is the target machine.
 
 ### Non-goals
 
