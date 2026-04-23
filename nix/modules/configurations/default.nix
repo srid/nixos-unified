@@ -23,6 +23,20 @@ in
           List of flake inputs to override when deploying or activating.
         '';
       };
+      localPrivilegeMode = lib.mkOption {
+        type = lib.types.enum [ "nixos-rebuild-sudo" "sudo-nixos-rebuild" ];
+        default = "nixos-rebuild-sudo";
+        description = ''
+          How local NixOS activation obtains root privileges.
+
+          `nixos-rebuild-sudo` runs `nixos-rebuild` as the calling user with
+          `--sudo`, letting nixos-rebuild invoke sudo for privileged steps.
+
+          `sudo-nixos-rebuild` runs `nixos-rebuild` itself via sudo. This is
+          useful when sudoers should allow passwordless activation by matching a
+          single `nixos-rebuild` command.
+        '';
+      };
       outputs = {
         system = lib.mkOption {
           type = lib.types.str;
