@@ -18,6 +18,40 @@ In order to activate a system configuration for the current host (`$HOSTNAME`), 
 nix run .#activate
 ```
 
+### Passwordless local NixOS activation {#passwordless-local-nixos}
+
+By default, local NixOS activation runs `nixos-rebuild switch --sudo`, so
+`nixos-rebuild` decides when to invoke `sudo` for privileged steps.
+
+If you want sudoers to match a single command, configure the target host to run
+`nixos-rebuild` itself through sudo:
+
+```nix
+{
+  nixos-unified.localPrivilegeMode = "sudo-nixos-rebuild";
+}
+```
+
+This makes the activator run `/run/current-system/sw/bin/nixos-rebuild` via
+sudo. Add a narrowly scoped sudoers rule for the user and command you use for
+activation:
+
+```nix
+{
+  security.sudo.extraRules = [
+    {
+      users = [ "myuser" ];
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/nixos-rebuild switch *";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+}
+```
+
 > [!TIP]
 > Usually, you'd make this your default package, so as to be able to use `nix run`. In `flake.nix`:
 >

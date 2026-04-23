@@ -106,8 +106,14 @@ def activate_system_local [ hostData: record, --dry-run=false ] {
         sudo darwin-rebuild $subcommand --flake $hostData.flake ...$hostData.outputs.nixArgs
     } else {
         let subcommand = if $dry_run { "dry-activate" } else { "switch" }
-        log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild ($subcommand) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join) --sudo "
-        nixos-rebuild $subcommand --flake $hostData.flake ...$hostData.outputs.nixArgs --sudo
+        if $hostData.localPrivilegeMode == "sudo-nixos-rebuild" {
+            let nixosRebuild = "/run/current-system/sw/bin/nixos-rebuild"
+            log info $"(ansi blue_bold)>>>(ansi reset) sudo ($nixosRebuild) ($subcommand) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join)"
+            sudo $nixosRebuild $subcommand --flake $hostData.flake ...$hostData.outputs.nixArgs
+        } else {
+            log info $"(ansi blue_bold)>>>(ansi reset) nixos-rebuild ($subcommand) --flake ($hostData.flake) ($hostData.outputs.nixArgs | str join) --sudo"
+            nixos-rebuild $subcommand --flake $hostData.flake ...$hostData.outputs.nixArgs --sudo
+        }
     }
 }
 
