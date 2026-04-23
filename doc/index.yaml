@@ -12,5 +12,3 @@ template:
 page:
   siteTitle: "nixos-unified"
   siteUrl: https://nixos-unified.org
-  headHtml: |
-    <snippet var="js.highlightjs" />
