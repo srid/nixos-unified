@@ -15,6 +15,7 @@ order: 100
   - Add a default `home.homeDirectory` based on the user's username (#117)
 - Remove use of deprecated alias `--update-input` of `nix flake update`
 - Use `sudo` when activating with nix-darwin (#130)
+- Add an opt-in local NixOS activation mode that runs `nixos-rebuild` itself through `sudo`
 - Fix `nix copy` command for legacy NixOS systems by adding experimental features flag (#138)
 - Switch to runCommand since runCommandNoCC is dropped in newer nixpkgs (#147)
 
