@@ -56,14 +56,24 @@
             (fn: import fn self.nixos-unified.lib.specialArgsFor.common);
       };
 
-      perSystem = { pkgs, ... }: {
+      perSystem = { pkgs, system, ... }: {
         legacyPackages.homeConfigurations =
           forAllNixFiles "${self}/configurations/home"
             (fn: self.nixos-unified.lib.mkHomeConfiguration pkgs fn);
 
         packages =
-          forAllNixFiles "${self}/packages"
-            (fn: pkgs.callPackage fn { });
+          let
+            # Get the parsed platform from system string (computed once)
+            platform = lib.systems.elaborate system;
+          in
+          lib.pipe (forAllNixFiles "${self}/packages" (fn: pkgs.callPackage fn { })) [
+            # Filter out packages that are not available on the current system
+            (lib.filterAttrs (_name: pkg:
+              # Only include the package if it's available on this platform
+              # This respects meta.platforms and meta.badPlatforms
+              lib.meta.availableOn platform pkg
+            ))
+          ];
       };
     };
 }
