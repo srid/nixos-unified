@@ -1,15 +1,78 @@
-name: "CI"
+# CI, ported from vira.hs (Vira <https://vira.nixos.asia/>).
+#
+# Same coverage as before: the four flakes devoured (srid/devour-flake — what
+# Vira itself uses to build a flake), with the same input overrides, built for
+# x86_64-linux and aarch64-darwin (via the matrix). The Vira "signoff" check
+# is replaced by this workflow's own check runs across the matrix (one
+# `devour-flake (os, subflake)` per combination), and the build cache by
+# `cache-nix-action` (store cache persisted across runs).
+#
+# Website deploy is unchanged: build + upload the emanote site on master.
+name: ci
+
 on:
   push:
     branches:
       - master
+  pull_request:
+
 jobs:
+  devour-flake:
+    name: "devour-flake (${{ matrix.os }}, ${{ matrix.flake.name }})"
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # build.systems in the old vira.hs
+          - ubuntu-latest # x86_64-linux
+          - macos-latest  # aarch64-darwin
+        flake:
+          # build.flakes in the old vira.hs. Each is overridden with
+          # flake/nixos-unified = path:$PWD (same as overrideInputs there).
+          - name: doc
+            path: doc
+          - name: macos
+            path: examples/macos
+          - name: home
+            path: examples/home
+          - name: linux
+            path: examples/linux
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      actions: write # cache-nix-action's purge: true requires it
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v34
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 5G
+          gc-max-store-size-macos: 5G
+          purge: true
+          purge-prefixes: nix-${{ runner.os }}-
+          purge-last-accessed: 604800
+          purge-primary-key: never
+
+      # Devour the subflake exactly how Vira builds it (see
+      # packages/devour-flake/src/DevourFlake.hs in juspay/vira): builds every
+      # package, check, devShell, app, ... of the flake for the current system.
+      # overrideInputs nixos-unified=. from vira.hs (a no-op warning on ./doc,
+      # which has no such input).
+      - name: "devour ${{ matrix.flake.name }}"
+        run: >
+          nix build github:srid/devour-flake#default -L --print-out-paths
+          --no-write-lock-file --no-link
+          --override-input flake "path:$PWD/${{ matrix.flake.path }}"
+          --override-input flake/nixos-unified "path:$PWD"
+
   website-upload:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
-      - uses: nixbuild/nix-quick-install-action@v33
+      - uses: nixbuild/nix-quick-install-action@v34
       - name: Build docs
         run: |
           cd doc && nix build
