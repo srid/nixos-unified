@@ -10,6 +10,7 @@ order: 100
 - activate script
   - add `--dry-run` (#104)
   - Remote activation support for home-manager configurations (#143)
+  - Fix `user@localhost` home activation failing with "can't convert nothing to string" on recent Nushell
 - home-manager
   - More unique backup filenames (#97)
   - Add a default `home.homeDirectory` based on the user's username (#117)

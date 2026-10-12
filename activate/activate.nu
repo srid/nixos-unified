@@ -51,7 +51,7 @@ def main [
     }
 }
 
-def activate_home [ user: string, host: string, --dry-run ] {
+def activate_home [ user: string, host?: string, --dry-run ] {
     if (($host | is-empty) or ($host == $CURRENT_HOSTNAME)) {
         activate_home_local $user $host --dry-run=$dry_run
     } else {
@@ -59,7 +59,7 @@ def activate_home [ user: string, host: string, --dry-run ] {
     }
 }
 
-def activate_home_local [ user: string, host: string, --dry-run ] {
+def activate_home_local [ user: string, host?: string, --dry-run ] {
     let name = $"($user)" + (if ($host | is-empty) { "" } else { "@" + $host })
     let extraArgs = if $dry_run { ["--dry-run"] } else { [] }
     log info $"Activating home configuration ($name) (ansi purple)locally(ansi reset)"
