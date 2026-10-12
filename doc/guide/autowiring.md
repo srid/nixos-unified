@@ -133,6 +133,31 @@ The packages will appear as:
 - `packages.${system}.hello-world`
 - `packages.${system}.complex-app`
 
+### Platform Filtering
+
+Packages are automatically filtered based on their `meta.platforms` and `meta.badPlatforms` attributes. This means that a package with `platforms = lib.platforms.linux;` will only appear in the flake outputs for Linux systems, not for macOS or other platforms.
+
+For example, a Linux-only package:
+
+```nix
+{ lib, stdenv }:
+
+stdenv.mkDerivation {
+  pname = "openrgb";
+  version = "master";
+  
+  # ... build configuration ...
+  
+  meta = {
+    description = "Open source RGB lighting control";
+    license = lib.licenses.gpl2Plus;
+    platforms = lib.platforms.linux;  # Only available on Linux
+  };
+}
+```
+
+This package will only be available as `packages.x86_64-linux.openrgb`, `packages.aarch64-linux.openrgb`, etc., and will not appear in `packages.x86_64-darwin.openrgb` or cause `nix flake check --all-systems` to fail on non-Linux platforms.
+
 [^default]: This path could as well be `configurations/nixos/foo/default.nix`. Likewise for other output types.
 
 [^hm-pkgs]: Why `legacyPackages`? Because, creating a home-manager configuration [requires `pkgs`](https://github.com/srid/nixos-unified/blob/47a26bc9118d17500bbe0c4adb5ebc26f776cc36/nix/modules/flake-parts/lib.nix#L97). See <https://github.com/nix-community/home-manager/issues/3075>
